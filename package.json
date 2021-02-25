@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "dev": "nodemon server/index.js -L"
+  },
+  "dependencies": {
+    "deepmerge": "^4.2.2",
+    "fastify": "^3.12.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
