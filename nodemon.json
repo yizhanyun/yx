@@ -5,8 +5,9 @@
     "NODE_ENV": "development"
   },
   "watch": [
-    "sites/**/*",
-    "server/**/*",
+    "sites/",
+    "server/",
+    "server.js",
     "settings.js",
     "settings.development.js",
     "setting.production.js"
