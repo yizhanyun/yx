@@ -2,7 +2,7 @@
 
 Duosite (duo: 多, many in Simplified Chinese) is a web server on top of fastify that aims to host and run many sub sites, each with its own sub setting, folder structure and template / view engine, and file system based routing  as Nextjs.
 
-## why duosite?
+## Why duosite?
 
 The reason to develop duosite is simple: I need a web server that allows me experiment old school html / css / js, with each site and setup indepent of each other.
 
@@ -12,9 +12,9 @@ Say I would like to expriment a subsite with ejs template engine and another one
 
 ## Current goal
 
-The current goal is to provide a convinient environment for development, experiments and web tech teaching and study.
+The current goal is to provide a convinient environment for expirementing, teaching and studying web technology.
 
-Why it matures, duosite may target production level efficiency. But that is NOT the goal yet.
+Why it matures, duosite may target production. But that is NOT the goal yet.
 
 ## Why choose fastify
 
@@ -24,11 +24,13 @@ And its has one cool feature: rewriteUrl that allows duosite to rewrite a reques
 
 ## Development log
 
-This section logs important ideas, design reationale and choices along the development. It is not intended to be complete and well structured but to reflect technology design and choices along the road.
+This section logs important ideas, design reationale and choices along the development. It is not intended to be complete and well structured but to reflect design ideas and choices down the road.
 
 ### Folder structure
 
 duosite
+
+```
  |- server.js : server source code
  |- settings.js : shared settings accross environment
  |- settings.development.js: settings for development only
@@ -49,6 +51,7 @@ duosite
        |- src : source code (html / template etc.)
           |- pages : static html pages or templates subject to each individual engine's interpretation
           |- views / templates / includes / components : source code / templates etc. subject to each individual engine's interpretation
+```
 
 ### Duosite server settings
 
