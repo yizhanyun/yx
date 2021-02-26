@@ -55,10 +55,54 @@ duosite
 
 ### Duosite server settings
 
-Duotsite server settings are composed of three files:
+Duosite server settings are composed of three files:
 
+```
 - `settings.js` : shared settings accross environment
 - `settings.development.js`: settings for development only
 - `settings.production.js` : settings for production
+```
 
 Eventual setting will be a deep merge of `settings.js` and`settings.development.js` in development environment, and  `settings.js` and`settings.production.js` in production environment.
+
+### Subsite setting
+
+Each subsite's settings for renderring each subsite.
+
+Similar to duosite server, it has:
+
+```
+- `settings.js` : shared settings accross environment
+- `settings.development.js`: settings for development only
+- `settings.production.js` : settings for production
+```
+
+### Request decoration with subsite resources
+
+When duosite is booted, each subsite's settings, view engines, plugins ( to be designed ) etc. should be initiated and passed down as property `_duosite` of `request` to handlers.
+
+### Boot duosite
+
+Duosite is booted with following steps:
+
+1. load server settings
+2. scan sites folder, load site list and site settings
+3. initiate view engine and other plugins with site settings
+4. enhance `request` with `_duosite` property, which is a object with properties and methods for the subsite's handlers to use.
+
+### `_duosite` object
+
+`request._duosite` has following shape:
+
+```
+{
+  settings: {...}  // merged subsite settings
+  engine: {...} // instantiated engine instance
+  ... // TBD along development
+}
+
+```
+
+### RewriteUrl
+
+Leveraging fastify's `rewriteUrl` function, http request to `subsite.abc.com/...` is rewritten to `abc.com/subsite/...`
