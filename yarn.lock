@@ -164,6 +164,14 @@ chalk@^3.0.0:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
+chalk@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.1.0.tgz#4e14870a618d9e2edd97dd8345fd9d9dc315646a"
+  integrity sha512-qwx12AxXe2Q5xQ43Ac//I6v5aXTipYrSESdOgzrN+9XjgEpyjpKuvSGaN4qE93f7TQTlerQQ8S+EQ0EyDoVL1A==
+  dependencies:
+    ansi-styles "^4.1.0"
+    supports-color "^7.1.0"
+
 chokidar@^3.2.2:
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.5.1.tgz#ee9ce7bbebd2b79f49f304799d5468e31e14e68a"
@@ -718,6 +726,11 @@ light-my-request@^4.2.0:
     fastify-warning "^0.2.0"
     readable-stream "^3.6.0"
     set-cookie-parser "^2.4.1"
+
+liquidjs@^9.23.1:
+  version "9.23.1"
+  resolved "https://registry.yarnpkg.com/liquidjs/-/liquidjs-9.23.1.tgz#139c3d8f44623039c8d4ba5859232f03c9aa59e1"
+  integrity sha512-crXVNWw3eAgJ+GaTntwGAV5BX2Nhzs/rzDsAlx6DTMDIq14jt84X07PX4y5GyZRFD9N4k6Wr48FZn0peD7la8w==
 
 lowercase-keys@^1.0.0, lowercase-keys@^1.0.1:
   version "1.0.1"

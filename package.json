@@ -3,9 +3,11 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
+    "chalk": "^4.1.0",
     "deepmerge": "^4.2.2",
     "fastify": "^3.12.0",
-    "fastify-static": "^4.0.1"
+    "fastify-static": "^4.0.1",
+    "liquidjs": "^9.23.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
