@@ -15,7 +15,7 @@
     "liquidjs": "^9.23.1"
   },
   "bin": {
-    "duosite": "./duosite.js"
+    "duosite": "./server.js"
   },
   "devDependencies": {
     "nodemon": "^2.0.7",

@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // requires
 
 const deepmerge = require('deepmerge')
