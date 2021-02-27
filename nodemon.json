@@ -6,7 +6,7 @@
   },
   "watch": [
     "sites/",
-    "server/",
+    "src/",
     "server.js",
     "settings.js",
     "settings.development.js",

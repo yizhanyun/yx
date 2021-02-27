@@ -18,9 +18,15 @@ Why it matures, duosite may target production. But that is NOT the goal yet.
 
 ## Why choose fastify
 
-Of course because I used it before and liked it.
+Of course because I used it before and liked it, but also some of its cool features.
+
+### rewriteUrl
 
 And its has one cool feature: rewriteUrl that allows duosite to rewrite a request like `my-site-in-ejs.localhost/index.html` to `localhost/my-site-in-ejs/index.html`.
+
+### plugin
+
+Fastify supports plugin with `prefix`, which makes it perfect to handle each subsite's request as a plugin for a prefix.
 
 ## Development log
 
