@@ -11,7 +11,7 @@ if (env !== 'prod' && env !== 'dev') {
 
 const DUOSITE_ROOT = process.cwd()
 
-const cwd = __dirname
+const cwd = DUOSITE_ROOT
 
 if (env === 'dev')
   shell.exec('yarn dev', {
