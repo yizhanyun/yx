@@ -5,7 +5,7 @@ console.log('>>>>>', process.argv)
 const env = process.argv[2]
 
 if (env !== 'prod' && env !== 'dev') {
-  console.log('Wrong argument. \nPlease run duosite with dev or duosite prod')
+  console.log('Wrong argument. o\nPlease run duosite with dev or duosite prod')
   return
 }
 
