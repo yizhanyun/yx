@@ -1,26 +1,14 @@
 const nodemon = require('nodemon')
 
-let nodemonConfig = {
-  ignore: ['.git', '.cache', '.yarn', 'node_modules/**/node_modules'],
-  verbose: true,
-  env: {
-    NODE_ENV: 'development',
-  },
-  watch: [
-    'sites/',
-    'src/',
-    'server.js',
-    'settings.js',
-    'settings.development.js',
-    'setting.production.js',
-  ],
-  ext: 'js, html, marko, css, boot.js',
-}
+let nodemonConfig = {}
+
+const cwd = process.cwd()
 
 try {
-  nodemonConfig = require('./nodemon.json')
+  nodemonConfig = require(`${cwd}/nodemon.json`)
   console.log('Use nodemon.json')
 } catch (e) {
+  nodemonConfig = require(`./nodemon.json`)
   console.log('No nodemon config file. Use default')
 }
 
