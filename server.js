@@ -4,16 +4,16 @@ const deepmerge = require('deepmerge')
 
 const path = require('path')
 
-
-
 const { getDirectories, getSubsite } = require('./src/utils')
 
 const chalk = require('chalk')
 
 // consts
 
-const sitesRoot = 'sites'
-const pagesRoot = 'pages'
+const siteRootName = 'sites'
+
+// root of user project
+const root = process.cwd()
 
 const requireOption = path => {
   try {
@@ -25,8 +25,7 @@ const requireOption = path => {
 
 // loading sites list and config
 
-const sites = getDirectories(path.join(__dirname, sitesRoot))
-
+const sites = getDirectories(path.join(root, siteRootName))
 
 // const load plugin
 
@@ -34,11 +33,11 @@ const subsitePlugin = require('./src/plugins/subsite')
 
 // load global settings
 
-const sharedSetting = requireOption('./settings') || {}
+const sharedSetting = requireOption(path.join(root, 'settings')) || {}
 const byEnironmentSetting =
   process.env.NODE_ENV === 'production'
-    ? requireOption('./settings.production') || {}
-    : requireOption('./settings.development') || {}
+    ? requireOption(path.join(root, 'settings.production')) || {}
+    : requireOption(path.join(root, 'settings.development')) || {}
 
 const settings = deepmerge(sharedSetting, byEnironmentSetting)
 
@@ -55,10 +54,8 @@ const i18n = requireOption(`./src/lang/${lang}`)
 const fastify = requireOption('fastify')({
   logger: true,
   rewriteUrl(req) {
-    
-    const subsite = getSubsite(req.headers.host,defaultSite)
+    const subsite = getSubsite(req.headers.host, defaultSite)
     return subsite + req.url
-    
   },
 })
 
@@ -68,8 +65,8 @@ for (const site of sites) {
   fastify.register(subsitePlugin, {
     prefix: site,
     _duosite: {
-      siteRoot: path.join(__dirname, sitesRoot, site)
-    }
+      siteRoot: path.join(root, siteRootName, site),
+    },
   })
 }
 
