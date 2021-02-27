@@ -4,6 +4,8 @@ let nodemonConfig = {}
 
 const cwd = process.cwd()
 
+console.log('cwd is === ', cwd)
+
 try {
   nodemonConfig = require(`${cwd}/nodemon.json`)
   console.log('Use nodemon.json')
