@@ -42,7 +42,7 @@ const bootServer = () => {
 
   const settings = deepmerge(sharedSetting, byEnironmentSetting)
 
-  const { defaultSite = 'www', lang = 'en', port = 5000 } = settings
+  const { defaultSite = 'www', lang = 'zh-cn', port = 5000 } = settings
 
   // load lang
 
