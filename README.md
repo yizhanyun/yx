@@ -120,6 +120,16 @@ Duosite follows pratical functional programming principles:
 7. buildLocalSerServices: (localSettingObject, globalServicesObject) => localServicesObject
 8. enhanceLocalServices: (localSettingObject, globalServicesObject, localSericesObject) => localServicesObject
 
+### GET try rules
+
+When a request hit, the URL will be resovled to a handler. The handler needs to decide the rules to try different resources. Duosite follows the following rules:
+
+1. ends with `.[non view engine ext]`: server static file.
+2. ends with `.[view engine ext]`: run engine and serve output
+3. ends with `/` : try `/index.html`, `/index.[view engine ext]`
+4. ends with `/abc`, try `/abc.html`, `/abc.[view engine ext]`, `/abc/index.html`, `/index.[view engine ext]`
+5. when resolve to view template, try to locate `abc.ext.boot.js`, run `getServerProps, getStaticProps`
+
 ### `_duosite` object
 
 `request._duosite` has following shape:

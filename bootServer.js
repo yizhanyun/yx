@@ -9,7 +9,7 @@ const bootServer = () => {
 
   const chalk = require('chalk')
 
-  // consts
+  // const
 
   const siteRootName = 'sites'
 
@@ -53,7 +53,7 @@ const bootServer = () => {
   // Get subsite list
 
   const fastify = requireOption('fastify')({
-    logger: true,
+    logger: { level: 'trace' },
     rewriteUrl(req) {
       const subsite = getSubsite(req.headers.host, defaultSite)
       return subsite + req.url
