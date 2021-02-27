@@ -21,9 +21,9 @@ const getSubsite = (host, defaultSite) => {
  */
 
 const suffix = filename => {
-  const segments = suffix.split('.')
+  const segments = filename.split('.')
   if (segments.length === 1) return ''
-  else return segments[segments.length - 1]
+  else return '.' + segments[segments.length - 1]
 }
 
 /**
@@ -57,16 +57,20 @@ const resolveUrlToFile = async (siteRoot, url, viewEngine) => {
   const { ext } = viewEngine || {}
   try {
     if (url.endsWith('/')) {
-      // /index.html or /index.ext
+      // resolve /abc/ to /abc/index.html or /abc/index.ext
 
       const htmlPath = path.join(siteRoot, 'pages', url, 'index.html') // check html
-      console.log(htmlPath)
+
       try {
+        // resolve /abc/ to /abc/index.html
+
         await fsp.stat(htmlPath)
         return [htmlPath, '.html']
       } catch (_) {
         if (!ext) return undefined
         else {
+          // resolve /abc/ to /abc/index.ext
+
           const viewPath = path.join(siteRoot, 'pages', url, 'index', ext)
           await fsp.stat(viewPath)
           return [viewPath, ext]
@@ -78,18 +82,34 @@ const resolveUrlToFile = async (siteRoot, url, viewEngine) => {
 
       const ext = suffix(lastSegment)
 
+      console.log('>>>%%%', ext)
       if (ext) {
+        // resolve /abc/def.suffix to actual file /abc/def.suffix
+
         return await fileExist(path.join(siteRoot, 'pages', url), ext)
       } else {
         const r = await fileExist(
-          path.join(siteRoot, 'pages', url, '.html'),
+          // resolve /abc/def to /abc/def/index.html
+
+          path.join(siteRoot, 'pages', url + '.html'),
           '.html'
         )
         if (r) return r
         else {
-          const r = await fileExist(path.join(siteRoot, 'pages', url, ext), ext)
-          if (r) return r
-          else return resolveUrlToFile(siteRoot + '/', 'pages', url, viewEngine)
+          if (ext) {
+            // resolve /abc/def to /abc/def/index.ext
+
+            const r = await fileExist(
+              path.join(siteRoot, 'pages', url + ext),
+              ext
+            )
+
+            if (r) return r
+            // resolve /abc/def to /abc/def/
+            else return resolveUrlToFile(siteRoot, url + '/', viewEngine)
+          }
+          // resolve /abc/def to /abc/def/
+          else return resolveUrlToFile(siteRoot, url + '/', viewEngine)
         }
       }
     }

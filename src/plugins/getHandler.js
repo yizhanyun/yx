@@ -19,17 +19,12 @@ const getHandler = {
         param: request.params,
         _duosite,
         url,
+        r,
       })
       return reply
     } else {
       const [file] = r
-      const segs = file.split('/')
-
-      const fileName = segs.pop()
-      console.log(fileName, path.join(...segs))
-      reply.sendFile(fileName, path.join('/', ...segs))
-      // reply.send(path)
-      // reply.sendFile(file, '')
+      reply.sendFile(file, '/')
       return reply
     }
   },
