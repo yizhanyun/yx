@@ -13,8 +13,8 @@ const chalk = require('chalk')
 const siteRootName = 'sites'
 
 // root of user project
-const root = process.cwd()
-
+const root = process.env.DUOSITE_ROOT || process.cwd()
+console.log('project root ...', root)
 const requireOption = path => {
   try {
     return require(path)

@@ -8,4 +8,13 @@ if (env !== 'prod' && env !== 'dev') {
   console.log('Wrong argument. \nPlease run duosite with dev or duosite prod')
   return
 }
-if (env === 'dev') shell.exec('yarn dev')
+
+const DUOSITE_ROOT = process.cwd()
+
+const cwd = __dirname
+
+if (env === 'dev')
+  shell.exec('yarn dev', {
+    cwd,
+    env: { ...process.env, DUOSITE_ROOT },
+  })
