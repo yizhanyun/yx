@@ -11,8 +11,10 @@ if (env !== 'prod' && env !== 'dev') {
 
 const DUOSITE_ROOT = process.cwd()
 
-const cwd = DUOSITE_ROOT
+const cwd = __dirname
 
+// set cwd to duosite folder
+// set duosite project root to user's project root
 if (env === 'dev')
   shell.exec('yarn dev', {
     cwd,

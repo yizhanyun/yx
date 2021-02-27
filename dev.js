@@ -2,12 +2,12 @@ const nodemon = require('nodemon')
 
 let nodemonConfig = {}
 
-const cwd = process.cwd()
+const root = process.env.DUOSITE_ROOT || process.cwd()
 
-console.log('cwd is === ', cwd)
+console.log('root is === ', root)
 
 try {
-  nodemonConfig = require(`${cwd}/nodemon.json`)
+  nodemonConfig = require(`${root}/nodemon.json`)
   console.log('Use nodemon.json')
 } catch (e) {
   nodemonConfig = require(`./nodemon.json`)
