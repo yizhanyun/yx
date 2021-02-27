@@ -14,7 +14,7 @@ const DUOSITE_ROOT = process.cwd()
 const cwd = __dirname
 
 if (env === 'dev')
-  shell.exec('yarn dev', {
+  shell.exec('yarn nodemon ./server.js', {
     cwd,
     env: { ...process.env, DUOSITE_ROOT },
   })
