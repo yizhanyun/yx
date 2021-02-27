@@ -1,3 +1,5 @@
+# Work In Progress
+
 # duosite
 
 Duosite (duo: 多, many in Simplified Chinese) is a web server on top of fastify that aims to host and run many sub sites, each with its own sub setting, folder structure and template / view engine, and file system based routing  as Nextjs.
@@ -98,6 +100,25 @@ Duosite is booted with following steps:
 2. scan sites folder, load site list and site settings
 3. initiate view engine and other plugins with site settings
 4. enhance `request` with `_duosite` property, which is a object with properties and methods for the subsite's handlers to use.
+
+### Practical Functional Programming
+
+Duosite follows pratical functional programming principles:
+
+1. Avoid side effects unless absolutely necessary
+2. Avoid closure / external variables unless absolutely necessary
+3. Avoid too much functional abstraction for code readability
+
+### Booting functions
+
+1. loadGlobalSettings: siteRoot => globalSettingsObject
+2. enhanceGlobalSettings: globalSettingsObject => globalSettingsObject
+3. buildGlobalServices: globalSettingObject => globalServicesObject
+4. enahceGlobalServicesObject: (globalSettingsObject, globalServicesObject) => globalServicesObject
+5. loadLocalSettings: siteRoot => localSettingObject
+6. enhanceLocalSettings: localSettingObject => localSettingObject
+7. buildLocalSerServices: (localSettingObject, globalServicesObject) => localServicesObject
+8. enhanceLocalServices: (localSettingObject, globalServicesObject, localSericesObject) => localServicesObject
 
 ### `_duosite` object
 
