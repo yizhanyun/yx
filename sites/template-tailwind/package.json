@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Tailwind CSS template.",
   "main": "index.js",
-  "author": "fqye",
+  "author": "yizhanyun",
   "license": "MIT",
   "scripts": {
     "tailwind-dev": "yarn postcss ./src/css/**/*.css --dir ./bundle/css/",

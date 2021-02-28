@@ -1,10 +1,8 @@
 # Todos
 
-1. add html hotload
-2. add tailwind template
-3. add scripts
+1. add scripts
 - copy from templates
 - set view engine
 - add tailwind
-4. i18n
+2. i18n
 - use i18n for all messages
