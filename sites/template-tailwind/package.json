@@ -6,9 +6,9 @@
   "author": "yizhanyun",
   "license": "MIT",
   "scripts": {
-    "tailwind-dev": "yarn postcss ./src/css/**/*.css --dir ./bundle/css/",
-    "tailwind-watch": "yarn postcss ./src/css/**/*.css --dir ./bundle/css/ --watch",
-    "tailwind-prod": "NODE_ENV=production yarn postcss ./src/css/**/*.css --dir ./bundle/css/"
+    "tailwind-dev": "yarn postcss ./src/css/**/*.css --dir ./public/bundle/css/",
+    "tailwind-watch": "yarn postcss ./src/css/**/*.css --dir ./public/bundle/css/ --watch",
+    "tailwind-prod": "NODE_ENV=production yarn postcss ./src/css/**/*.css --dir ./public/bundle/css/"
   },
   "dependencies": {},
   "devDependencies": {

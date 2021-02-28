@@ -40,13 +40,13 @@ const subsite = function (fastify, opts, done) {
   const { name, ext, options = {} } = viewEngine
 
   fastify.register(fastifyStatic, {
-    root: path.join(siteRoot, staticRoot),
+    root: path.join(siteRoot, 'public', staticRoot),
     prefix: `/${staticRoot}`,
   })
 
   if (staticCompiledRoot !== staticRoot) {
     fastify.register(fastifyStatic, {
-      root: path.join(siteRoot, staticCompiledRoot),
+      root: path.join(siteRoot, 'public', staticCompiledRoot),
       prefix: `/${staticCompiledRoot}`,
       decorateReply: false, // the reply decorator has been added by the first plugin registration
     })
