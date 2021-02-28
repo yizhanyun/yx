@@ -3,7 +3,6 @@ const fastifyStatic = require('fastify-static')
 const path = require('path')
 
 const { genericGetRoute } = require('./getHandler')
-const { resolveUrlToFile } = require('../utils')
 
 const buildEngine = require('./engines')
 
@@ -21,7 +20,6 @@ const requireOption = path => {
 
 const subsite = function (fastify, opts, done) {
   const {
-    prefix: site,
     _duosite: { siteRoot },
   } = opts
 
@@ -46,16 +44,17 @@ const subsite = function (fastify, opts, done) {
     prefix: `/${staticRoot}`,
   })
 
-  if (staticCompiledRoot !== staticRoot)
+  if (staticCompiledRoot !== staticRoot) {
     fastify.register(fastifyStatic, {
       root: path.join(siteRoot, staticCompiledRoot),
       prefix: `/${staticCompiledRoot}`,
       decorateReply: false, // the reply decorator has been added by the first plugin registration
     })
+  }
 
   fastify.decorateRequest('_duosite', null)
 
-  let engine = undefined
+  let engine
 
   if (name && ext) {
     engine = buildEngine(siteRoot, name, ext, options)

@@ -1,6 +1,5 @@
 // Basic get handler
 const { resolveUrlToFile } = require('../utils')
-const path = require('path')
 
 const genericGetHandler = async function (request, reply) {
   const { _duosite } = request
@@ -9,7 +8,7 @@ const genericGetHandler = async function (request, reply) {
 
   const { viewEngine = {} } = settings
 
-  const { name, ext, options } = viewEngine
+  const { ext } = viewEngine
 
   const url = request.params['*']
   const r = await resolveUrlToFile(siteRoot, url, viewEngine)

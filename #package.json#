@@ -29,7 +29,7 @@
     "prettier": "^2.2.1",
     "shelljs": "^0.8.4"
   },
-  "peerDependencies": {
+  "peerDependencies": {fbo
     "nodemon": "^2.0.7",
     "point-of-view": "^4.13.0"
   },

@@ -112,9 +112,7 @@ const resolveUrlToFile = async (siteRoot, url, viewEngine) => {
             if (r) return [rpath, viewEngineExt]
             // resolve /abc/def to /abc/def/
             else return resolveUrlToFile(siteRoot, url + '/', viewEngine)
-          }
-          // resolve /abc/def to /abc/def/
-          else return resolveUrlToFile(siteRoot, url + '/', viewEngine)
+          } else return resolveUrlToFile(siteRoot, url + '/', viewEngine) // resolve /abc/def to /abc/def/
         }
       }
     }

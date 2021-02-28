@@ -10,7 +10,7 @@ try {
   nodemonConfig = require(`${root}/nodemon.json`)
   console.log('Use nodemon.json')
 } catch (e) {
-  nodemonConfig = require('./nodemon.json')
+  nodemonConfig = require('./nodemon.json')pf
   console.log('No nodemon config file. Use default')
 }
 

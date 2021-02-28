@@ -54,7 +54,7 @@ const bootServer = () => {
 
   const fastify = requireOption('fastify')({
     logger: { level: 'trace' },
-    rewriteUrl(req) {
+    rewriteUrl: function (req) {
       const subsite = getSubsite(req.headers.host, defaultSite)
       return subsite + req.url
     },

@@ -5,7 +5,7 @@ const engines = {
 }
 
 const buildEngine = (viewEngine, lang) => {
-  const { name, ext, options } = viewEngine
+  const { name } = viewEngine
   const i18n = require(`../lang/${lang}`)
   if (!engines[name]) throw new Error(i18n.engineNotSupported)
 
