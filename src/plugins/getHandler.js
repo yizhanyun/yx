@@ -24,12 +24,10 @@ const genericGetHandler = async function (request, reply) {
   } else {
     const [file, resovledExt] = r
 
-    console.log(file)
     if (ext === resovledExt) {
       const output = await engine.renderFile(file, {
         text: 'from template engine',
       })
-      console.log('>>>', output)
       reply.send(output)
       return reply
     } else {

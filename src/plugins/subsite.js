@@ -69,11 +69,6 @@ const subsite = function (fastify, opts, done) {
 
   fastify.route(genericGetRoute)
 
-  // fastify.get('/', async (request, reply) => {
-  //   console.log(request._duosite)
-  //   return { hello: 'world from plugin' }
-  // })
-
   done()
 }
 

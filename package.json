@@ -9,6 +9,7 @@
     "lint": "yarn eslint . src/**"
   },
   "dependencies": {
+    "@gquittet/graceful-server": "^2.3.1",
     "chalk": "^4.1.0",
     "deepmerge": "^4.2.2",
     "fastify": "^3.12.0",

@@ -5,7 +5,7 @@ const isSubdomainValid = require('is-subdomain-valid')
 const fs = require('fs-extra')
 
 const shell = require('shelljs')
-console.log('>>>>>', process.argv)
+
 const cmd = process.argv[2]
 
 if (cmd !== 'prod' && cmd !== 'dev' && cmd !== 'new') {
@@ -23,7 +23,8 @@ if (cmd !== 'prod' && cmd !== 'dev' && cmd !== 'new') {
   if (cmd === 'dev') {
     shell.exec('yarn dev', {
       cwd,
-      cmd: { ...process.cmd, DUOSITE_ROOT },
+      cmd: process.cmd,
+      env: { ...process.env, DUOSITE_ROOT },
     })
   } else if (cmd === 'new') {
     const fromTemplate = process.argv[3]

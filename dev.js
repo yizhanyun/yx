@@ -1,10 +1,10 @@
+const path = require('path')
+
 const nodemon = require('nodemon')
 
 let nodemonConfig = {}
 
 const root = process.env.DUOSITE_ROOT || process.cwd()
-
-console.log('root is === ', root)
 
 try {
   nodemonConfig = require(`${root}/nodemon.json`)
@@ -14,8 +14,13 @@ try {
   console.log('No nodemon config file. Use default')
 }
 
+const { watch } = nodemonConfig
+
+const watchWithRoot = watch.map(p => path.join(root, p))
+
 nodemon({
   ...nodemonConfig,
+  watch: watchWithRoot,
   script: './server.js',
 })
 
