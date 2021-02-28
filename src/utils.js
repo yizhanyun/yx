@@ -13,7 +13,10 @@ const getDirectories = source =>
 // get subsite
 const getSubsite = (host, defaultSite) => {
   const segments = host.split('.')
-  return segments.length > 1 ? segments[0] : defaultSite
+
+  // For [...].nn.abc.com && nn.abc.com, return nn as subsite domain
+  // For abc.com, return defaultSite
+  return segments.length > 1 ? segments[segments.length - 2] : defaultSite
 }
 
 /**
