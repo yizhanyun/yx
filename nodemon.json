@@ -12,5 +12,5 @@
     "settings.development.js",
     "setting.production.js"
   ],
-  "ext": "js, html, marko, css, boot.js"
+  "ext": "js, css, boot.js"
 }

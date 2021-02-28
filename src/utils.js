@@ -54,26 +54,30 @@ const fileExist = async (path, ext) => {
  */
 
 const resolveUrlToFile = async (siteRoot, url, viewEngine) => {
-  const { ext } = viewEngine || {}
+  const { ext: viewEngineExt } = viewEngine || {}
+
   try {
     if (url.endsWith('/')) {
       // resolve /abc/ to /abc/index.html or /abc/index.ext
 
-      const htmlPath = path.join(siteRoot, 'pages', url, 'index.html') // check html
+      const rpath = path.join('pages', url, 'index.html')
+      const htmlPath = path.join(siteRoot, rpath) // check html
 
       try {
         // resolve /abc/ to /abc/index.html
 
         await fsp.stat(htmlPath)
-        return [htmlPath, '.html']
+        return [rpath, '.html']
       } catch (_) {
-        if (!ext) return undefined
+        if (!viewEngineExt) return undefined
         else {
           // resolve /abc/ to /abc/index.ext
 
-          const viewPath = path.join(siteRoot, 'pages', url, 'index', ext)
+          const rpath = path.join('pages', url, 'index' + viewEngineExt)
+
+          const viewPath = path.join(siteRoot, rpath)
           await fsp.stat(viewPath)
-          return [viewPath, ext]
+          return [rpath, viewEngineExt]
         }
       }
     } else {
@@ -82,29 +86,30 @@ const resolveUrlToFile = async (siteRoot, url, viewEngine) => {
 
       const ext = suffix(lastSegment)
 
-      console.log('>>>%%%', ext)
       if (ext) {
         // resolve /abc/def.suffix to actual file /abc/def.suffix
-
-        return await fileExist(path.join(siteRoot, 'pages', url), ext)
+        const rpath = path.join('pages', url)
+        await fileExist(path.join(siteRoot, 'pages', url), ext)
+        return [rpath, ext]
       } else {
+        const rpath = path.join('pages', url + '.html')
+
         const r = await fileExist(
           // resolve /abc/def to /abc/def/index.html
 
-          path.join(siteRoot, 'pages', url + '.html'),
+          path.join(siteRoot, rpath),
           '.html'
         )
-        if (r) return r
+        if (r) return [rpath, '.html']
         else {
-          if (ext) {
+          if (viewEngineExt) {
             // resolve /abc/def to /abc/def/index.ext
 
-            const r = await fileExist(
-              path.join(siteRoot, 'pages', url + ext),
-              ext
-            )
+            const rpath = path.join('pages', url + viewEngineExt)
 
-            if (r) return r
+            const r = await fileExist(path.join(siteRoot, rpath), viewEngineExt)
+
+            if (r) return [rpath, viewEngineExt]
             // resolve /abc/def to /abc/def/
             else return resolveUrlToFile(siteRoot, url + '/', viewEngine)
           }
@@ -114,6 +119,7 @@ const resolveUrlToFile = async (siteRoot, url, viewEngine) => {
       }
     }
   } catch (e) {
+    console.log(e)
     return undefined
   }
 }
