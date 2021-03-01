@@ -20,7 +20,7 @@ const requireOption = path => {
 
 const subsite = function (fastify, opts, done) {
   const {
-    _duosite: { siteRoot, globalSettings, globalServices },
+    _duosite: { siteRoot, globalSettings, globalServices, i18nMessages, site },
   } = opts
 
   const sharedSetting = requireOption(`${siteRoot}/settings`) || {}
@@ -57,11 +57,12 @@ const subsite = function (fastify, opts, done) {
   let engine
 
   if (name && ext) {
-    engine = buildEngine(siteRoot, name, ext, options)
+    engine = buildEngine(siteRoot, name, ext, options, i18nMessages)
   }
 
   // run local enhancer
 
+  console.log(i18nMessages.runningSiteEnhancer(site))
   const enhance = requireOption(`${siteRoot}/src/enhancer`)
 
   enhance &&

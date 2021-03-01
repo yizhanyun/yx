@@ -144,6 +144,21 @@ When a request hit, the URL will be resovled to a handler. The handler needs to 
 
 ```
 
+### i18n
+
+i18n is supported by message dictionary of messages per key or function to generate message per key for each locale with following folder structure:
+
+```
+|- src
+  |- lang
+  |- messages  // for server and application messages
+  |- handlers  // for handlers
+
+```
+
+i18n will be merged in the order of <duosite-source>/src/lang and <site-root>/src/lang/
+site i18n will loaded from site.
+
 ### RewriteUrl
 
 Leveraging fastify's `rewriteUrl` function, http request to `subsite.abc.com/...` is rewritten to `abc.com/subsite/...`

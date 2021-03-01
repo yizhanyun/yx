@@ -26,11 +26,11 @@ nodemon({
 
 nodemon
   .on('start', function () {
-    console.log('App has started')
+    console.log('Nodemon: App has started')
   })
   .on('quit', function () {
-    console.log('App has quit')
+    console.log('Nodemon: App has quit')
   })
   .on('restart', function (files) {
-    console.log('App restarted due to: ', files)
+    console.log('Nodemon: App restarted due to: ', files)
   })

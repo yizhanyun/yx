@@ -5,9 +5,9 @@ const enhance = (
   subsiteRoot,
   siteSettings,
   globalSettings,
-  globalServices
+  globalServices,
+  i18nm
 ) => {
-  console.log('==> running local enhancer')
   fastify.get('/', function (request, reply) {
     reply.send({ hello: 'world from overrided get handler in enhancer' })
   })

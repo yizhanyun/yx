@@ -54,7 +54,8 @@ const bootServer = () => {
 
   const i18nMessagesDefault = requireOption(`./src/lang/${lang}`)
 
-  if (!i18nSite && !i18nDefault) throw new Error('Lang dictionary not found')
+  if (!i18nMessagesSite && !i18nMessagesDefault)
+    throw new Error('Lang dictionary not found')
 
   // Build global services
 
@@ -82,22 +83,22 @@ const bootServer = () => {
   const gracefulServer = GracefulServer(fastify.server)
 
   gracefulServer.on(GracefulServer.READY, () => {
-    console.log('Server is ready')
+    console.log(i18nm.serverReady)
   })
 
   gracefulServer.on(GracefulServer.SHUTTING_DOWN, () => {
-    console.log('Server is shutting down')
+    console.log(i18nm.serverShuttingDown)
   })
 
   gracefulServer.on(GracefulServer.SHUTDOWN, error => {
-    console.log('Server is down because of', error.message)
+    console.log(i18nm.serverDownFor, error.message)
   })
 
   // run global enhancer
 
   const enhance = requireOption(`${root}/src/enhancer`)
 
-  enhance && enhance(fastify, root, settings, globalServices)
+  enhance && enhance(fastify, root, settings, globalServices, i18nm)
 
   // boot subsite servers
 
@@ -108,6 +109,8 @@ const bootServer = () => {
         siteRoot: path.join(root, siteRootName, site),
         globalSettings,
         globalServices,
+        i18nMessages: i18nm,
+        site,
       },
     })
   }
