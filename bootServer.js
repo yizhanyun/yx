@@ -50,9 +50,9 @@ const bootServer = () => {
 
   // load lang
 
-  const i18nSite = requireOption(`${root}/src/lang/${lang}`)
+  const i18nMessagesSite = requireOption(`${root}/src/lang/messages/${lang}`)
 
-  const i18nDefault = requireOption(`${root}/src/lang/${lang}`)
+  const i18nMessagesDefault = requireOption(`./src/lang/${lang}`)
 
   if (!i18nSite && !i18nDefault) throw new Error('Lang dictionary not found')
 
@@ -64,7 +64,8 @@ const bootServer = () => {
     ? buildGlobalServices(settings, root)
     : {}
 
-  const i18n = deepmerge(i18nDefault || {}, i18nSite || {})
+  // i18n for messages
+  const i18nm = deepmerge(i18nMessagesDefault || {}, i18nMessagesSite || {})
 
   // load engine getter
 
@@ -118,7 +119,7 @@ const bootServer = () => {
       process.exit(1)
     }
     gracefulServer.setReady()
-    console.log(chalk.green(i18n.startMessage(port)))
+    console.log(chalk.green(i18nm.startMessage(port)))
   })
 }
 
