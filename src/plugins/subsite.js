@@ -20,7 +20,7 @@ const requireOption = path => {
 
 const subsite = function (fastify, opts, done) {
   const {
-    _duosite: { siteRoot },
+    _duosite: { siteRoot, globalSettings, globalServices },
   } = opts
 
   const sharedSetting = requireOption(`${siteRoot}/settings`) || {}
@@ -60,10 +60,23 @@ const subsite = function (fastify, opts, done) {
     engine = buildEngine(siteRoot, name, ext, options)
   }
 
+  // run local enhancer
+
+  const enhance = requireOption(`${siteRoot}/src/enhancer`)
+
+  enhance &&
+    enhance(fastify, siteRoot, settings, globalSettings, globalServices)
+
   // enhance request
 
   fastify.addHook('preHandler', (request, reply, done) => {
-    request._duosite = { settings, siteRoot, engine }
+    request._duosite = {
+      settings,
+      siteRoot,
+      engine,
+      globalSettings,
+      globalServices,
+    }
     done()
   })
 

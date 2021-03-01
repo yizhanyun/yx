@@ -41,11 +41,30 @@ const bootServer = () => {
 
   const settings = deepmerge(sharedSetting, byEnironmentSetting)
 
-  const { defaultSite = 'www', lang = 'zh-cn', port = 5000 } = settings
+  const {
+    defaultSite = 'www',
+    lang = 'zh-cn',
+    port = 5000,
+    globalSettings = {},
+  } = settings
 
   // load lang
 
-  const i18n = requireOption(`./src/lang/${lang}`)
+  const i18nSite = requireOption(`${root}/src/lang/${lang}`)
+
+  const i18nDefault = requireOption(`${root}/src/lang/${lang}`)
+
+  if (!i18nSite && !i18nDefault) throw new Error('Lang dictionary not found')
+
+  // Build global services
+
+  const buildGlobalServices = requireOption(`${root}/src/globalServices`)
+
+  const globalServices = buildGlobalServices
+    ? buildGlobalServices(settings, root)
+    : {}
+
+  const i18n = deepmerge(i18nDefault || {}, i18nSite || {})
 
   // load engine getter
 
@@ -73,11 +92,21 @@ const bootServer = () => {
     console.log('Server is down because of', error.message)
   })
 
+  // run global enhancer
+
+  const enhance = requireOption(`${root}/src/enhancer`)
+
+  enhance && enhance(fastify, root, settings, globalServices)
+
+  // boot subsite servers
+
   for (const site of sites) {
     fastify.register(subsitePlugin, {
       prefix: site,
       _duosite: {
         siteRoot: path.join(root, siteRootName, site),
+        globalSettings,
+        globalServices,
       },
     })
   }

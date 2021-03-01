@@ -51,6 +51,11 @@
     "@fastify/forwarded" "^1.0.0"
     ipaddr.js "^2.0.0"
 
+"@gquittet/graceful-server@^2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@gquittet/graceful-server/-/graceful-server-2.3.1.tgz#776865e25a309b239c9126f2339c6b60c6bef2eb"
+  integrity sha512-u6TAJs5424JhzRsIDKiCUSFHGPO+sjTMRylHE+QBhruLmXEQWdhRG2VJ2bB+8jNaEizzXhhm+HtMCO9MO8DSdw==
+
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"

@@ -147,3 +147,45 @@ When a request hit, the URL will be resovled to a handler. The handler needs to 
 ### RewriteUrl
 
 Leveraging fastify's `rewriteUrl` function, http request to `subsite.abc.com/...` is rewritten to `abc.com/subsite/...`
+
+
+### Duosite enhancers
+
+Duosite should allow developers to enhance fasity server:
+
+- global enhancer: enhance the global fastify server
+- site enhancer: enhance the local site server
+
+### globalSettings
+
+Sometimes server needs to pass down some sharedSettings to all subsites. Site settings can set globalSettings property.
+
+### globalServices
+
+Sometimes server needs to pass down global services such as database connection etc. to all subsites. Duosite booter will require this file `<root>/src/globalServices.js`, which should export default `buildGlobalServices` function with following signature:
+
+```
+const buildGlobalServices = (settings, root) => Object
+```
+
+
+
+#### Global enhancer
+
+Booter will require this file `<root>/src/enhancer.js` to get the enhancer function, which should have following signature:
+
+```
+const enhancer = (fastify, duositeRoot, duositeSettings, globalServices) => void
+```
+
+Server booter will call enhancer with the global fastify object, siteRoot,  siteSettings and globalServices
+
+### Local enhancer
+
+Booter will require this file `<root>/sites/<subsite>/src/enhancer.js` to get the site enhancer function, which should have following signature:
+
+```
+const enhancer = (fastify, subsiteRoot, siteSettings, globalSettings, globalServices) => void
+```
+
+Subsite server booter will call enhancer with the global fastify object, subsiteRoot,  siteSettings, globalSettings and globalServices.
