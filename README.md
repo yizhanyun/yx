@@ -151,13 +151,19 @@ i18n is supported by message dictionary of messages per key or function to gener
 ```
 |- src
   |- lang
-  |- messages  // for server and application messages
-  |- handlers  // for handlers
+    |- messages  // for server and application messages
 
 ```
 
 i18n will be merged in the order of <duosite-source>/src/lang and <site-root>/src/lang/
 site i18n will loaded from site.
+
+```
+|- src
+  |- lang
+    |- handlers  // for handlers
+
+```
 
 ### RewriteUrl
 

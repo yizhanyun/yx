@@ -19,10 +19,17 @@ const requireOption = path => {
 // opts: { prefix, _duosite: { siteRoot }}
 
 const subsite = function (fastify, opts, done) {
-  const {
-    _duosite: { siteRoot, globalSettings, globalServices, i18nMessages, site },
-  } = opts
+  const { _duosite } = opts
 
+  const {
+    siteRoot,
+    globalSettings,
+    globalServices,
+    i18nMessages,
+    site,
+    lang,
+    i18nSiteHandlers,
+  } = _duosite
   const sharedSetting = requireOption(`${siteRoot}/settings`) || {}
   const byEnironmentSetting =
     process.env.NODE_ENV === 'production'
@@ -62,21 +69,24 @@ const subsite = function (fastify, opts, done) {
 
   // run local enhancer
 
-  console.log(i18nMessages.runningSiteEnhancer(site))
   const enhance = requireOption(`${siteRoot}/src/enhancer`)
 
   enhance &&
-    enhance(fastify, siteRoot, settings, globalSettings, globalServices)
+    enhance(fastify, {
+      siteRoot,
+      settings,
+      globalSettings,
+      globalServices,
+      lang,
+    })
 
   // enhance request
 
   fastify.addHook('preHandler', (request, reply, done) => {
     request._duosite = {
+      ..._duosite,
       settings,
-      siteRoot,
       engine,
-      globalSettings,
-      globalServices,
     }
     done()
   })

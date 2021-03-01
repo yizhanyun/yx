@@ -98,11 +98,22 @@ const bootServer = () => {
 
   const enhance = requireOption(`${root}/src/enhancer`)
 
-  enhance && enhance(fastify, root, settings, globalServices, i18nm)
+  enhance && enhance(fastify, { root, settings, globalServices, i18nm, lang })
 
   // boot subsite servers
 
   for (const site of sites) {
+    const i18nSiteHandlers = requireOption(
+      path.join(
+        root,
+        siteRootName,
+        site,
+        'src',
+        'lang',
+        'handlers',
+        `${lang}.js`
+      )
+    )
     fastify.register(subsitePlugin, {
       prefix: site,
       _duosite: {
@@ -110,7 +121,9 @@ const bootServer = () => {
         globalSettings,
         globalServices,
         i18nMessages: i18nm,
+        i18nSiteHandlers,
         site,
+        lang,
       },
     })
   }
