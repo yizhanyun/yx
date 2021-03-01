@@ -210,3 +210,28 @@ const enhancer = (fastify, subsiteRoot, siteSettings, globalSettings, globalServ
 ```
 
 Subsite server booter will call enhancer with the global fastify object, subsiteRoot,  siteSettings, globalSettings and globalServices.
+
+### Local view engine first, then global default view engine
+
+Duosite provides global default view engines. Developers can bring their own view engines.
+
+Each subsite can provide its own engines through this file:
+
+```
+<site-root>
+ |- src
+    |- engines.js
+```
+
+`engines.js` should expose a default function build with signature of
+```
+const build = (siteRoot, name, ext, options, lang, i18n)  => engineObject
+```
+
+engine object should has at least one async method: renderFile with signature of:
+
+```
+async renderFile(filepath)
+```
+
+`filepath` is relative path under site root.

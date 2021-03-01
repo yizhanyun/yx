@@ -4,8 +4,6 @@ const { resolveUrlToFile } = require('../utils')
 const genericGetHandler = async function (request, reply) {
   const { _duosite } = request
 
-  console.log('>>>>', _duosite)
-
   const { siteRoot, settings = {}, engine } = _duosite
 
   const { viewEngine = {} } = settings

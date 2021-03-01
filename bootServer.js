@@ -15,13 +15,14 @@ const requireOption = path => {
   }
 }
 
+const siteRootName = 'sites'
+
+const root = process.env.DUOSITE_ROOT || process.cwd()
+
 const bootServer = () => {
   // const
 
-  const siteRootName = 'sites'
-
   // root of user project
-  const root = process.env.DUOSITE_ROOT || process.cwd()
 
   // loading sites list and config
 

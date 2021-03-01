@@ -2,10 +2,10 @@
 
 const { Liquid } = require('liquidjs')
 
-const build = (root, name, ext, options, i18n) => {
+const build = (siteRoot, name, ext, options, lang, i18n) => {
   switch (name) {
     case 'liquid': {
-      return new Liquid({ ...options, root })
+      return new Liquid({ ...options, siteRoot })
     }
     default:
       throw new Error(i18n.engineNotSupported)

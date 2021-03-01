@@ -4,8 +4,6 @@ const path = require('path')
 
 const { genericGetRoute } = require('./getHandler')
 
-const buildEngine = require('./engines')
-
 const requireOption = path => {
   try {
     return require(path)
@@ -64,7 +62,16 @@ const subsite = function (fastify, opts, done) {
   let engine
 
   if (name && ext) {
-    engine = buildEngine(siteRoot, name, ext, options, i18nMessages)
+    const buildEngine = requireOption(`${siteRoot}/engines`)
+    if (buildEngine)
+      // use local provided engines
+      engine = buildEngine(siteRoot, name, ext, options, i18nMessages)
+    else {
+      // use global engines
+      const buildEngine = requireOption(`./engines`)
+      if (buildEngine)
+        engine = buildEngine(siteRoot, name, ext, options, i18nMessages)
+    }
   }
 
   // run local enhancer
