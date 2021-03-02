@@ -3,6 +3,16 @@ const path = require('path')
 
 const fsp = require('fs/promises')
 
+const deepmerge = require('deepmerge')
+
+const requireOption = path => {
+  try {
+    return require(path)
+  } catch (e) {
+    return undefined
+  }
+}
+
 // Get directories of a directory
 const getDirectories = source =>
   fs
@@ -125,9 +135,47 @@ const resolveUrlToFile = async (siteRoot, url, viewEngine) => {
   }
 }
 
+/** Load global settings
+ * @param { string} duositeRoot - duosite root
+ * @return { Object } globalSettings - global settings
+ */
+
+const loadGlobalSettings = root => {
+  const sharedSetting = requireOption(path.join(root, 'settings')) || {}
+  const byEnironmentSetting =
+    process.env.NODE_ENV === 'production'
+      ? requireOption(path.join(root, 'settings.production')) || {}
+      : requireOption(path.join(root, 'settings.development')) || {}
+
+  return deepmerge(sharedSetting, byEnironmentSetting)
+}
+
+/** Load global i18n messages
+ * @param { string} duositeRoot - duosite root
+ * @param { string} lang - language locale
+ * @return { Object } i18n messages
+ */
+
+const loadGlobalI18NMessages = (duositeRoot, lang) => {
+  const i18nMessagesSite =
+    requireOption(`${duositeRoot}/src/lang/messages/${lang}`) ||
+    requireOption(`${duositeRoot}/src/lang/messages/en`)
+
+  const i18nMessagesDefault =
+    requireOption(`./lang/messages/${lang}`) ||
+    requireOption(`./lang/messages/en`)
+
+  if (!i18nMessagesSite && !i18nMessagesDefault) {
+    throw new Error('Lang dictionary not found')
+  }
+  return deepmerge(i18nMessagesSite, i18nMessagesDefault)
+}
+
 module.exports = {
   getDirectories,
   getSubsite,
   resolveUrlToFile,
   fileExist,
+  loadGlobalSettings,
+  loadGlobalI18NMessages,
 }

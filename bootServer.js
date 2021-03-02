@@ -4,7 +4,12 @@ const GracefulServer = require('@gquittet/graceful-server')
 const deepmerge = require('deepmerge')
 
 const path = require('path')
-const { getDirectories, getSubsite } = require('./src/utils')
+const {
+  getDirectories,
+  getSubsite,
+  loadGlobalSettings,
+  loadGlobalI18NMessages,
+} = require('./src/utils')
 const chalk = require('chalk')
 
 const requireOption = path => {
@@ -38,13 +43,13 @@ const bootServer = onStarted => {
 
   // load global settings
 
-  const sharedSetting = requireOption(path.join(root, 'settings')) || {}
-  const byEnironmentSetting =
-    process.env.NODE_ENV === 'production'
-      ? requireOption(path.join(root, 'settings.production')) || {}
-      : requireOption(path.join(root, 'settings.development')) || {}
+  // const sharedSetting = requireOption(path.join(root, 'settings')) || {}
+  // const byEnironmentSetting =
+  //   process.env.NODE_ENV === 'production'
+  //     ? requireOption(path.join(root, 'settings.production')) || {}
+  //     : requireOption(path.join(root, 'settings.development')) || {}
 
-  const settings = deepmerge(sharedSetting, byEnironmentSetting)
+  const settings = loadGlobalSettings(root) //deepmerge(sharedSetting, byEnironmentSetting)
 
   const {
     defaultSite = 'www',
