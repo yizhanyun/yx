@@ -1,4 +1,4 @@
-[中文](./README.cn.md]
+[中文](#中文]
 
 # duosite
 
@@ -235,3 +235,5 @@ async renderFile(filepath)
 ```
 
 `filepath` is relative path under site root.
+
+# 中文
