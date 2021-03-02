@@ -98,8 +98,10 @@ const resolveUrlToFile = async (siteRoot, url, viewEngine) => {
       const lastSegment = segments[segments.length - 1]
 
       const ext = suffix(lastSegment)
-
-      if (ext) {
+      if (ext && url.endsWith('.boot.js')) {
+        // special file
+        return undefined
+      } else if (ext) {
         // resolve /abc/def.suffix to actual file /abc/def.suffix
         const rpath = path.join('pages', url)
         await fileExist(path.join(siteRoot, 'pages', url), ext)

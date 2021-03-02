@@ -28,6 +28,8 @@ const subsite = function (fastify, opts, done) {
     lang,
     i18nSiteHandlers,
   } = _duosite
+
+  console.log('&&&&&&&&&&&&', _duosite, siteRoot)
   const sharedSetting = requireOption(`${siteRoot}/settings`) || {}
   const byEnironmentSetting =
     process.env.NODE_ENV === 'production'
@@ -57,20 +59,22 @@ const subsite = function (fastify, opts, done) {
     })
   }
 
-  fastify.decorateRequest('_duosite', null)
+  // fastify.decorateRequest('_duosite', null)
 
   let engine
 
   if (name && ext) {
-    const buildEngine = requireOption(`${siteRoot}/engines`)
+    const buildEngine = requireOption(`${siteRoot}/plugins/engines`)
+
     if (buildEngine)
       // use local provided engines
-      engine = buildEngine(siteRoot, name, ext, options, i18nMessages)
+
+      engine = buildEngine(siteRoot, name, ext, options, lang, i18nMessages)
     else {
       // use global engines
       const buildEngine = requireOption(`./engines`)
       if (buildEngine)
-        engine = buildEngine(siteRoot, name, ext, options, i18nMessages)
+        engine = buildEngine(siteRoot, name, ext, options, lang, i18nMessages)
     }
   }
 

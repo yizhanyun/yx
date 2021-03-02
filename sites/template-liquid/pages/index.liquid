@@ -1,9 +1,19 @@
 {% assign people = "alice, bob, carol" | split: ", " -%}
 
-<p>
+<!doctype html>
+<html>
+  <head>
+    <title>Hello from liquid</title>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+  <p>
     {{ text }}
 </p>
 
+<p>
+Below is from template
+</p>
 <ul>
 {%- for person in people %}
   <li>
@@ -13,3 +23,5 @@
   </li>
 {%- endfor%}
 </ul>
+  </body>
+  </html>

@@ -1,4 +1,6 @@
 // Basic get handler
+const path = require('path')
+
 const { resolveUrlToFile } = require('../utils')
 
 const genericGetHandler = async function (request, reply) {
@@ -13,21 +15,30 @@ const genericGetHandler = async function (request, reply) {
   const url = request.params['*']
   const r = await resolveUrlToFile(siteRoot, url, viewEngine)
   if (!r) {
-    reply.send({
-      hello: 'NOT resolved from generic handler',
-      param: request.params,
-      _duosite,
-      url,
-      r,
-    })
+    reply.statusCode = 404
+    reply.send()
     return reply
   } else {
     const [file, resovledExt] = r
 
     if (ext === resovledExt) {
+      let booted
+      let bootJs
+      try {
+        bootJs = require(path.join(siteRoot, file + '.boot.js'))
+      } catch (e) {
+        console.log(e)
+      }
+
+      if (bootJs && bootJs.getServerProps) {
+        booted = await bootJs.getServerProps({ request, reply })
+      }
+
       const output = await engine.renderFile(file, {
-        text: 'from template engine',
+        ...booted,
+        _ctx: { request, reply },
       })
+      reply.headers({ ['Content-Type']: 'text/html' })
       reply.send(output)
       return reply
     } else {
