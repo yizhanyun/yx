@@ -87,7 +87,7 @@ const subsite = function (fastify, opts, done) {
       lang,
     })
 
-  // enhance request
+  // enhance request with _duosite
 
   fastify.addHook('preHandler', (request, reply, done) => {
     request._duosite = {

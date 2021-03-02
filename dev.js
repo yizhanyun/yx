@@ -1,6 +1,8 @@
 const path = require('path')
 
-const nodemon = require('nodemon')
+let nodemon = require('nodemon')
+
+const bootServer = require('./bootServer')
 
 let nodemonConfig = {}
 
@@ -23,6 +25,7 @@ nodemon({
   watch: watchWithRoot,
   script: './server.js',
 })
+console.log('===', nodemonConfig, watchWithRoot)
 
 nodemon
   .on('start', function () {
@@ -30,6 +33,7 @@ nodemon
   })
   .on('quit', function () {
     console.log('Nodemon: App has quit')
+    nodemon = null
   })
   .on('restart', function (files) {
     console.log('Nodemon: App restarted due to: ', files)

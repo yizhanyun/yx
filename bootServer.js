@@ -19,7 +19,11 @@ const siteRootName = 'sites'
 
 const root = process.env.DUOSITE_ROOT || process.cwd()
 
-const bootServer = () => {
+/**
+ * @param {function} onStarted - called this with fastify server
+ */
+
+const bootServer = onStarted => {
   // const
 
   // root of user project
@@ -89,10 +93,12 @@ const bootServer = () => {
 
   gracefulServer.on(GracefulServer.SHUTTING_DOWN, () => {
     console.log(i18nm.serverShuttingDown)
+    fastify.close()
   })
 
   gracefulServer.on(GracefulServer.SHUTDOWN, error => {
     console.log(i18nm.serverDownFor, error.message)
+    fastify.close()
   })
 
   // run global enhancer
@@ -135,6 +141,7 @@ const bootServer = () => {
       fastify.log.error(err)
       process.exit(1)
     }
+    if (onStarted) onStarted(fastify)
     gracefulServer.setReady()
     console.log(chalk.green(i18nm.startMessage(port)))
   })
