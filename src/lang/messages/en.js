@@ -12,7 +12,7 @@ module.exports = {
   nodemonQuit: 'Nodemon: duosite quit',
   nodemonRestart: 'Nodemon: duosite restarted duo to:',
   duositeUsage:
-    '\n!Error:Wrong argument. \nUsage:\n  duosite dev - run devevelopment\n  duosite prod = run production\n  duosite new - create new site from template',
+    '\n!Error:Wrong argument. \nUsage:\n  duosite ls - show templates\n  duosite dev - run devevelopment\n  duosite prod = run production\n  duosite new - create new site from template',
   duositeNewUsage:
     '\n!Error: Wrong arguments. \nUsage: \n  duosite new <template-name> <new-site-name>',
   duositeWrongTemplateName: '\n!!Error: Wrong template name',

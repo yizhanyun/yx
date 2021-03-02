@@ -6,7 +6,13 @@ const fs = require('fs-extra')
 
 const shell = require('shelljs')
 
-const { loadGlobalSettings, loadGlobalI18NMessages } = require('./src/utils')
+const path = require('path')
+
+const {
+  getDirectories,
+  loadGlobalSettings,
+  loadGlobalI18NMessages,
+} = require('./src/utils')
 
 const DUOSITE_ROOT = process.cwd()
 
@@ -16,15 +22,24 @@ const i18nm = loadGlobalI18NMessages(__dirname, settings.lang)
 
 const cmd = process.argv[2]
 
-if (cmd !== 'prod' && cmd !== 'dev' && cmd !== 'new') {
+if (cmd !== 'prod' && cmd !== 'dev' && cmd !== 'new' && cmd !== 'ls') {
   console.log(i18nm.duositeUsage)
   return -1
 } else {
   const cwd = __dirname
 
+  if (cmd === 'ls') {
+    const sites = getDirectories(path.join(cwd, 'sites')).filter(site =>
+      site.startsWith('template-')
+    )
+    console.log(`\nFound ${sites.length} templates`)
+    sites.map(site => {
+      console.log(`  ${site}`)
+    })
+  }
   // set cwd to duosite folder
   // set duosite project root to user's project root
-  if (cmd === 'dev') {
+  else if (cmd === 'dev') {
     shell.exec('yarn dev', {
       cwd,
       cmd: process.cmd,

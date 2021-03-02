@@ -12,7 +12,7 @@ module.exports = {
   nodemonQuit: 'Nodemon: duosite已退出',
   nodemonRestart: 'Nodemon: duosite因为如下修改重启:',
   duositeUsage:
-    '\n!!错误: 错误的参数. \n用法:\n  duosite dev - 运行开发环境\n  duosite prod - 运行生产环境\n  duosite new - 使用模板创建新站点',
+    '\n!!错误: 错误的参数. \n用法:\n  duosite ls - 模板列表\n  duosite dev - 运行开发环境\n  duosite prod - 运行生产环境\n  duosite new - 使用模板创建新站点',
   duositeNewUsage:
     '\n!!错误: 错误的参数. \n用法:\n  duosite new <template-name> <new-site-name>',
   duositeWrongTemplateName: '\n!!错误: 错误的模板名',
