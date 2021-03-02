@@ -2,8 +2,6 @@ const path = require('path')
 
 let nodemon = require('nodemon')
 
-const bootServer = require('./bootServer')
-
 const { loadGlobalSettings, loadGlobalI18NMessages } = require('./src/utils')
 
 let nodemonConfig = {}
@@ -14,7 +12,6 @@ const globalSettings = loadGlobalSettings(root)
 
 const i18nm = loadGlobalI18NMessages(root, globalSettings.lang)
 
-console.log('>>>', i18nm)
 try {
   nodemonConfig = require(`${root}/nodemon.json`)
   console.log(i18nm.useCustomNodemonJson)

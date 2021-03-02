@@ -24,12 +24,9 @@ const subsite = function (fastify, opts, done) {
     globalSettings,
     globalServices,
     i18nMessages,
-    site,
     lang,
-    i18nSiteHandlers,
   } = _duosite
 
-  console.log('&&&&&&&&&&&&', _duosite, siteRoot)
   const sharedSetting = requireOption(`${siteRoot}/settings`) || {}
   const byEnironmentSetting =
     process.env.NODE_ENV === 'production'
@@ -66,15 +63,16 @@ const subsite = function (fastify, opts, done) {
   if (name && ext) {
     const buildEngine = requireOption(`${siteRoot}/plugins/engines`)
 
-    if (buildEngine)
+    if (buildEngine) {
       // use local provided engines
 
       engine = buildEngine(siteRoot, name, ext, options, lang, i18nMessages)
-    else {
+    } else {
       // use global engines
-      const buildEngine = requireOption(`./engines`)
-      if (buildEngine)
+      const buildEngine = requireOption('./engines')
+      if (buildEngine) {
         engine = buildEngine(siteRoot, name, ext, options, lang, i18nMessages)
+      }
     }
   }
 

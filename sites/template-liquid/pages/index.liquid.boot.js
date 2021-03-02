@@ -1,6 +1,6 @@
 const getServerProps = async ctx => {
   return {
-    text: 'Hello from boot.js ',
+    text: 'Hello from index.liquid.boot.js ',
   }
 }
 

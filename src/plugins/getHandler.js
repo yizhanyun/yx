@@ -38,7 +38,7 @@ const genericGetHandler = async function (request, reply) {
         ...booted,
         _ctx: { request, reply },
       })
-      reply.headers({ ['Content-Type']: 'text/html' })
+      reply.headers({ 'Content-Type': 'text/html' })
       reply.send(output)
       return reply
     } else {

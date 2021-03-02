@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node dev.js",
     "duosite": "duosite",
-    "lint": "yarn eslint . src/**"
+    "lint": "yarn eslint ./*.js src/**/*.js ./sites/**/*.js"
   },
   "dependencies": {
     "@gquittet/graceful-server": "^2.3.1",

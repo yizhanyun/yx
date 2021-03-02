@@ -214,7 +214,7 @@ The first line is from data from `index.liquid.boot.js`:
 ```
 const getServerProps = async ctx => {
   return {
-    text: 'Hello from boot.js ',
+    text: 'Hello from index.liquid.boot.js ',
   }
 }
 

@@ -1,7 +1,6 @@
 // requires
 
 const GracefulServer = require('@gquittet/graceful-server')
-const deepmerge = require('deepmerge')
 
 const path = require('path')
 
@@ -44,7 +43,7 @@ const bootServer = onStarted => {
 
   // load global settings
 
-  const settings = loadGlobalSettings(root) //deepmerge(sharedSetting, byEnironmentSetting)
+  const settings = loadGlobalSettings(root)
 
   const {
     defaultSite = 'www',
