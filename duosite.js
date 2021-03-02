@@ -6,16 +6,20 @@ const fs = require('fs-extra')
 
 const shell = require('shelljs')
 
+const { loadGlobalSettings, loadGlobalI18NMessages } = require('./src/utils')
+
+const DUOSITE_ROOT = process.cwd()
+
+const settings = loadGlobalSettings(DUOSITE_ROOT)
+
+const i18nm = loadGlobalI18NMessages(__dirname, settings.lang)
+
 const cmd = process.argv[2]
 
 if (cmd !== 'prod' && cmd !== 'dev' && cmd !== 'new') {
-  console.log(
-    'Wrong argument. \nUsage:\nduosite dev - run devevelopment\nduosite prod = run production\nduosite new - create new site from template'
-  )
+  console.log(i18nm.duositeUsage)
   return -1
 } else {
-  const DUOSITE_ROOT = process.cwd()
-
   const cwd = __dirname
 
   // set cwd to duosite folder
@@ -30,12 +34,12 @@ if (cmd !== 'prod' && cmd !== 'dev' && cmd !== 'new') {
     const fromTemplate = process.argv[3]
     const toSite = process.argv[4]
     if (!fromTemplate || !toSite) {
-      console.log('Usage: duosite new <template-name> <new-site-name>')
+      console.log(i18nm.duositeNewUsage)
       return -1
     }
 
     if (!fromTemplate.startsWith('template-')) {
-      console.log('Wrong template name')
+      console.log(i18nm.duositeWrongTemplateName)
       return -1
     }
 
@@ -47,17 +51,17 @@ if (cmd !== 'prod' && cmd !== 'dev' && cmd !== 'new') {
     const exist = subsites.find(name => name === fromTemplate)
 
     if (!exist) {
-      console.log('Template not found')
+      console.log(i18nm.duositeTemplateNotFound)
       return -1
     }
 
     if (!isSubdomainValid(toSite)) {
-      console.log('New site name not legal subdomain name')
+      console.log(i18nm.duositeSubdomainError)
       return -1
     }
 
     if (subsites.find(name => name === toSite)) {
-      console.log('New site exists')
+      console.log(i18nm.duositeNewSiteExists)
       return -1
     }
     fs.mkdirpSync(`${DUOSITE_ROOT}/sites/${toSite}`)
@@ -67,6 +71,6 @@ if (cmd !== 'prod' && cmd !== 'dev' && cmd !== 'new') {
       `${DUOSITE_ROOT}/sites/${toSite}`
     )
 
-    console.log(`Create new site ${toSite} done`)
-  } else console.log('Production build is not released yet')
+    console.log(i18nm.createNewSiteDone(toSite))
+  } else console.log(i18nm.productionNotReady)
 }

@@ -156,7 +156,11 @@ const loadGlobalSettings = root => {
  * @return { Object } i18n messages
  */
 
-const loadGlobalI18NMessages = (duositeRoot, lang) => {
+const loadGlobalI18NMessages = (duositeRoot, _lang) => {
+  if (!_lang) console.log('Local not defined in settings. Use English.')
+
+  const lang = _lang || 'en'
+
   const i18nMessagesSite = requireOption(
     `${duositeRoot}/src/lang/messages/${lang}`
   )

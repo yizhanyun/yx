@@ -22,3 +22,4 @@ module.exports = {
   createNewSiteDone: site => `成功创建 ${toSite} `,
   productionNotReady: '!警告: 生产版本尚未发布',
 }
+bs

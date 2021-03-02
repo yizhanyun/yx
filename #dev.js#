@@ -20,7 +20,7 @@ try {
   console.log(i18nm.useCustomNodemonJson)
 } catch (e) {
   nodemonConfig = require('./nodemon.json')
-  console.log(i18nm.useDefaultNodemonJson)
+  console.log(i18nm.useDefaultNodemonfuJson)
 }
 
 const { watch } = nodemonConfig

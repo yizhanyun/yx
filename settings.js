@@ -1,7 +1,7 @@
 // shared settings
 module.exports = {
   defaultSite: 'www',
-  lang: 'pp',
+  lang: 'en',
   port: 5000,
   globalSettings: {
     // settings to be passed down to all subsites
