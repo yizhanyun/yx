@@ -1,4 +1,4 @@
-# Work In Progress
+[中文](./README.cn.md]
 
 # duosite
 
