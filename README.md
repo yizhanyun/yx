@@ -236,11 +236,11 @@ Of course because I used it before and liked it, but also some of its cool featu
 
 ### rewriteUrl
 
-This one cool feature rewriteUrl allows duosite to rewrite a request like `my-site-in-ejs.localhost/index.ejs` to `localhost/my-site-in-ejs/index.ejs`.
+This one cool feature rewriteUrl allows duosite to rewrite a request like `my-site-in-ejs.localhost/index.ejs` to `localhost/my-site-in-ejs/index.ejs`. This allows duosite to use Fasity's plugin with a prefix feature that makes it transparent to develop router and handlers for subsite like a normal request without a subsite context.
 
 ### plugin with prefix and isoloated subserver
 
-Fastify supports plugin with `prefix`, each a subserver isoldated with others, which makes it perfect to handle each subsite's request indepently.
+Fastify supports plugin with `prefix`, with each plugin's fastify server indepedent and isolated with others, which makes it perfect to handle each subsite's request indepently.
 
 
 ## Design and development ideas
@@ -682,4 +682,57 @@ module.exports = {
   getServerProps,
 }
 
+```
+
+## 为什么选择Fastify为基础开发多站 duosite
+
+当然因为我们用过Fastify，而且也觉得Fastify不错，不过更主要是因为它的一些很不错的功能。
+
+### rewriteUrl
+
+ rewriteUrl 让多站duosite可以把其一个类似于 `my-site-in-ejs.localhost/index.ejs` 的请求重写为 `localhost/my-site-in-ejs/index.ejs`. 这个功能结合下面描述的支持前缀的plugin功能，让多站duosite可以就像没有子站点一样，方便的开发路由器与handler。
+
+### 带前缀与独立子服务器的plugin
+
+Fastify支持带有 `prefix`的plugin, 每个plugin的fastify是个独立的子服务器，和其他分开，非常时独立的处理每个子站点的请求。
+
+
+## 设计与开发思想
+
+这部分记录duosite开发中的重要的设计，想法，理念与选择决定。 由于多站 duosite正在早期阶段，本部分不追求完备性和良好的结构，而是及时反应开发中设计理念和决定。
+
+### 多站Duosite 代码目录结构
+
+```
+<duosite代码根目录>
+ |- server.js : 服务器代码
+ |- settings.js : 跨环境共享设置
+ |- settings.development.js: 开发环境设置
+ |- settings.production.js` : 生产环境设置
+ |- src : 服务器端代码目录
+    |- utils.js : 服务器使用的一些功能库
+    |- lang : i18n国际化辞典
+        |- messages : 消息辞典
+          |- zh-cn : 简体中文
+          |- en : 英文
+          |- ...
+    |- engines : view / template模板引擎代码
+ |- sites : 各站点根目录
+    |- www : 默认站点
+    |- site1 : 子站点
+       |- settings.js : 跨环境共享设置
+       |- settings.development.js: 开发环境设置
+       |- settings.production.js` : 生产环境设置
+       |- public : 公开静态文件. 使用链接 <sub-site.host>/[static|bundle]/...
+          |- static : 类似图片、图标等不需要二次处理的静态内容
+          |- bundle : 通过打包工具如webpack、编译器等从其他文件生成的静态文件
+                       bundle可以被添加到 `.gitignore`中。
+       |- pages :  静态html页面或有不同引擎渲染的模板
+       |- src : 源代码 (html / template等.)
+         |- lang : router/handler需要i18n字典
+           |- zh-cn : 简体中文
+           |- en : 英文
+           |- ...
+         |- views / templates / includes / components : 模板源代码
+         |- ... 更多
 ```
