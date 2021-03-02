@@ -157,18 +157,25 @@ const loadGlobalSettings = root => {
  */
 
 const loadGlobalI18NMessages = (duositeRoot, lang) => {
-  const i18nMessagesSite =
-    requireOption(`${duositeRoot}/src/lang/messages/${lang}`) ||
-    requireOption(`${duositeRoot}/src/lang/messages/en`)
+  const i18nMessagesSite = requireOption(
+    `${duositeRoot}/src/lang/messages/${lang}`
+  )
 
-  const i18nMessagesDefault =
-    requireOption(`./lang/messages/${lang}`) ||
-    requireOption(`./lang/messages/en`)
+  const i18nMessagesDefault = requireOption(`./lang/messages/${lang}`)
 
   if (!i18nMessagesSite && !i18nMessagesDefault) {
-    throw new Error('Lang dictionary not found')
-  }
-  return deepmerge(i18nMessagesSite, i18nMessagesDefault)
+    console.log(
+      `Language dictionary for ${lang} not found. Use English as fallback`
+    )
+
+    const _i18nMessagesSite =
+      i18nMessagesSite || requireOption(`${duositeRoot}/src/lang/messages/en`)
+
+    const _i18nMessagesDefault =
+      i18nMessagesDefault || requireOption(`./lang/messages/en`)
+
+    return deepmerge(_i18nMessagesSite, _i18nMessagesDefault)
+  } else return deepmerge(i18nMessagesSite, i18nMessagesDefault)
 }
 
 module.exports = {

@@ -43,12 +43,6 @@ const bootServer = onStarted => {
 
   // load global settings
 
-  // const sharedSetting = requireOption(path.join(root, 'settings')) || {}
-  // const byEnironmentSetting =
-  //   process.env.NODE_ENV === 'production'
-  //     ? requireOption(path.join(root, 'settings.production')) || {}
-  //     : requireOption(path.join(root, 'settings.development')) || {}
-
   const settings = loadGlobalSettings(root) //deepmerge(sharedSetting, byEnironmentSetting)
 
   const {
@@ -60,12 +54,8 @@ const bootServer = onStarted => {
 
   // load lang
 
-  const i18nMessagesSite = requireOption(`${root}/src/lang/messages/${lang}`)
-
-  const i18nMessagesDefault = requireOption(`./src/lang/${lang}`)
-
-  if (!i18nMessagesSite && !i18nMessagesDefault)
-    throw new Error('Lang dictionary not found')
+  // i18n for messages
+  const i18nm = loadGlobalI18NMessages(root, lang)
 
   // Build global services
 
@@ -74,9 +64,6 @@ const bootServer = onStarted => {
   const globalServices = buildGlobalServices
     ? buildGlobalServices(settings, root)
     : {}
-
-  // i18n for messages
-  const i18nm = deepmerge(i18nMessagesDefault || {}, i18nMessagesSite || {})
 
   // load engine getter
 
