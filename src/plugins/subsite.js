@@ -4,6 +4,8 @@ const path = require('path')
 
 const { genericGetRoute } = require('./getHandler')
 
+const siteRootName = 'sites'
+
 const requireOption = path => {
   try {
     return require(path)
@@ -17,16 +19,20 @@ const requireOption = path => {
 // opts: { prefix, _duosite: { siteRoot }}
 
 const subsite = function (fastify, opts, done) {
-  const { _duosite } = opts
+  const { _duosite, prefix: site } = opts
+
+  const { global } = _duosite
 
   const {
-    siteRoot,
-    globalSettings,
-    globalServices,
+    root,
+    settings: globalSettings,
+    services: globalServices,
     i18nMessages,
     lang,
-  } = _duosite
+  } = global
 
+  const siteRoot = path.join(root, siteRootName, site)
+  // load subsite settings
   const sharedSetting = requireOption(`${siteRoot}/settings`) || {}
   const byEnironmentSetting =
     process.env.NODE_ENV === 'production'
@@ -41,23 +47,21 @@ const subsite = function (fastify, opts, done) {
     viewEngine = {},
   } = settings
 
+  // Build global services
+
+  const buildSiteServices = requireOption(`${siteRoot}/src/siteServices`)
+
+  const siteServices = buildSiteServices
+    ? buildSiteServices(globalSettings, settings, root)
+    : {}
+
+  // build site  enhancer
+
+  const enhance = requireOption(`${siteRoot}/src/enhancer`)
+
+  // build site engine
+
   const { name, ext, options = {} } = viewEngine
-
-  fastify.register(fastifyStatic, {
-    root: path.join(siteRoot, 'public', staticRoot),
-    prefix: `/${staticRoot}`,
-  })
-
-  if (staticCompiledRoot !== staticRoot) {
-    fastify.register(fastifyStatic, {
-      root: path.join(siteRoot, 'public', staticCompiledRoot),
-      prefix: `/${staticCompiledRoot}`,
-      decorateReply: false, // the reply decorator has been added by the first plugin registration
-    })
-  }
-
-  // fastify.decorateRequest('_duosite', null)
-
   let engine
 
   if (name && ext) {
@@ -76,31 +80,42 @@ const subsite = function (fastify, opts, done) {
     }
   }
 
-  // run local enhancer
+  // Add static handlers
 
-  const enhance = requireOption(`${siteRoot}/src/enhancer`)
+  fastify.register(fastifyStatic, {
+    root: path.join(siteRoot, 'public', staticRoot),
+    prefix: `/${staticRoot}`,
+  })
 
-  enhance &&
-    enhance(fastify, {
-      siteRoot,
-      settings,
-      globalSettings,
-      globalServices,
-      lang,
+  if (staticCompiledRoot !== staticRoot) {
+    fastify.register(fastifyStatic, {
+      root: path.join(siteRoot, 'public', staticCompiledRoot),
+      prefix: `/${staticCompiledRoot}`,
+      decorateReply: false, // the reply decorator has been added by the first plugin registration
     })
+  }
+
+  fastify.decorateRequest('_duosite', null)
 
   // enhance request with _duosite
 
-  fastify.addHook('preHandler', (request, reply, done) => {
-    request._duosite = {
-      ..._duosite,
+  const duositeConfig = {
+    ..._duosite,
+    site: {
+      root: siteRoot,
       settings,
       engine,
-    }
+      services: siteServices,
+    },
+  }
+  fastify.addHook('preHandler', (request, reply, done) => {
+    request._duosite = duositeConfig
     done()
   })
 
   fastify.route(genericGetRoute)
+
+  enhance && enhance(fastify, duositeConfig)
 
   done()
 }

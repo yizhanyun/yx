@@ -16,6 +16,7 @@ const requireOption = path => {
   try {
     return require(path)
   } catch (e) {
+    console.log(e)
     return undefined
   }
 }
@@ -24,11 +25,16 @@ const siteRootName = 'sites'
 
 const root = process.env.DUOSITE_ROOT || process.cwd()
 
+const isProduction = process.env.NODE_ENV === 'production'
 /**
  * @param {function} onStarted - called this with fastify server
  */
 
 const bootServer = onStarted => {
+  // load global settings
+
+  const settings = loadGlobalSettings(root)
+
   // const
 
   // root of user project
@@ -41,13 +47,9 @@ const bootServer = onStarted => {
 
   const subsitePlugin = require('./src/plugins/subsite')
 
-  // load global settings
-
-  const settings = loadGlobalSettings(root)
-
   const {
     defaultSite = 'www',
-    lang = 'zh-cn',
+    lang = 'en',
     port = 5000,
     globalSettings = {},
   } = settings
@@ -65,12 +67,19 @@ const bootServer = onStarted => {
     ? buildGlobalServices(settings, root)
     : {}
 
-  // load engine getter
+  console.log('##########################', root, `${root}/src/enhancer`)
+
+  // get global enhancer
+
+  const enhance = requireOption(`${root}/src/enhancer`)
 
   // Get subsite list
 
   const fastify = requireOption('fastify')({
-    logger: { level: 'trace' },
+    logger: {
+      level: isProduction ? 'error' : 'trace',
+    },
+    ...settings.fastify,
     rewriteUrl: function (req) {
       const subsite = getSubsite(req.headers.host, defaultSite)
       return subsite + req.url
@@ -93,36 +102,30 @@ const bootServer = onStarted => {
     fastify.close()
   })
 
-  // run global enhancer
-
-  const enhance = requireOption(`${root}/src/enhancer`)
-
-  enhance && enhance(fastify, { root, settings, globalServices, i18nm, lang })
+  enhance &&
+    enhance(fastify, settings, {
+      global: {
+        root,
+        settings: globalSettings,
+        services: globalServices,
+        i18nMessages: i18nm,
+        lang,
+      },
+    })
 
   // boot subsite servers
 
   for (const site of sites) {
-    const i18nSiteHandlers = requireOption(
-      path.join(
-        root,
-        siteRootName,
-        site,
-        'src',
-        'lang',
-        'handlers',
-        `${lang}.js`
-      )
-    )
     fastify.register(subsitePlugin, {
       prefix: site,
       _duosite: {
-        siteRoot: path.join(root, siteRootName, site),
-        globalSettings,
-        globalServices,
-        i18nMessages: i18nm,
-        i18nSiteHandlers,
-        site,
-        lang,
+        global: {
+          root,
+          settings: globalSettings,
+          services: globalServices,
+          i18nMessages: i18nm,
+          lang,
+        },
       },
     })
   }

@@ -153,24 +153,28 @@ To power multiple sites, support customization and enhancement at global level a
 ```
 -- start server
 |- load global settings
+  |- lang
+  |- port
+  |- default site
+  |- fastify options
 |- load global i18n resources
 |- load subsite list
 |-> |- build globalServices
     |- build global enhancer
+    |- build fastify server
     |- run global enhancer
     |-> for each subsite
       |- load subsite settings
-      |- load subsite handler i18n resources
       |- build subsiteServices
       |- build subsiteEnhancer
       |- build subsiteEngine
       |- decorate `request._duosite` object with
-        |- lang
         |- global
           |- settings
           |- services
           |- i18n
           |- root
+          |- lang
         |- site
           |- settings
           |- services

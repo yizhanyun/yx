@@ -1,17 +1,14 @@
 /** Global enhancer
  * @param {Object} fastify - fastify instance
- * @param {Object} config - global config
- * @param {string} config.duositeRoot - duosite root
- * @param {Object} config.duositeSettings - duosite settings
- * @param {Object} config.duositeServices - duosite services
- * @param {Object} config.i18nm - duosite i18n messages
- * @param {string} config.lang - duosite lang
+ * @param {Object} settings - duosite settings
+ * @param {Object} duositeConfig - config generated to be passed down, including globalservices
  * @param {duositSettings}
  */
 
-const enhance = (fastify, config) => {
-  const { duositeRoot, duositeSettings, lang, globalServices, i18nm } = config
-
+const enhance = (fastify, settings, duositeConfig) => {
+  const {
+    global: { i18nMessages: i18nm },
+  } = duositeConfig
   console.log(i18nm.runningGlobalEnhancer)
 }
 

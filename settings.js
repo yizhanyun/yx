@@ -3,7 +3,8 @@ module.exports = {
   defaultSite: 'www',
   lang: 'en',
   port: 5000,
-  globalSettings: {
+  fastify: {},
+  sharedSettings: {
     // settings to be passed down to all subsites
     postgres: {
       user: 'demo_only',
