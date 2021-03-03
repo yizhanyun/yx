@@ -3,7 +3,7 @@ module.exports = {
   engineNotSupported: 'Unsupported view engine',
   serverReady: 'Server ready',
   serverShuttingDown: 'Server is shutting down',
-  serverDownFor: 'Server is hutting dow for：',
+  serverDownFor: 'Server is shutting down for：',
   runningGlobalEnhancer: 'Running global enhancer',
   runningSiteEnhancer: site => `Running ${site} subsite enhancer`,
   useCustomNodemonJson: 'Use custom nodemon configuration',

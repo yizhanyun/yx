@@ -191,7 +191,9 @@ Duosite will gradually add template project set up for typical frameworks or lib
 
 Now following are included.
 
-`template-html` - bare html template project
+`template-blank` - bare html template project
+
+`template-html` -  html template project based on [HTML boilerplat](https://github.com/h5bp/html5-boilerplate)
 
 `template-tailwind` - template for tailwind
 

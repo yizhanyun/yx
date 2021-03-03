@@ -23,13 +23,7 @@ const subsite = function (fastify, opts, done) {
 
   const { global } = _duosite
 
-  const {
-    root,
-    settings: globalSettings,
-    services: globalServices,
-    i18nMessages,
-    lang,
-  } = global
+  const { root, settings: globalSettings, i18nMessages, lang } = global
 
   const siteRoot = path.join(root, siteRootName, site)
   // load subsite settings
