@@ -124,7 +124,7 @@ In future it may support more settings
 
 
 
-## Current goal and most import concepts
+## Current goal and most important concepts
 
 The current goal is to provide a convinient environment for expirementing, studing and demoing web technology that allow co-exist of multiple subsites.
 
