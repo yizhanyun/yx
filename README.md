@@ -359,7 +359,9 @@ This section logs important designs, ideas, reationale and choices along the dev
 
 ```
 <duosite project root>
- |- server.js : server source code
+ |- server.js : code to start server
+ |- bootServer.js : code to boot server
+ |- dev.js : code to start server for development
  |- settings.js : shared settings accross environment
  |- settings.development.js: settings for development only
  |- settings.production.js` : settings for production
@@ -842,7 +844,9 @@ Fastify支持带有 `prefix`的plugin, 每个plugin的fastify是个独立的子�
 
 ```
 <duosite代码根目录>
- |- server.js : 服务器代码
+ |- server.js : 启动服务器代码
+ |- bootServer.js : 初始化服务器代码
+ |- dev.js : 开发环境启动服务器代码
  |- settings.js : 跨环境共享设置
  |- settings.development.js: 开发环境设置
  |- settings.production.js` : 生产环境设置
