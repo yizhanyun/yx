@@ -1,7 +1,7 @@
 {
   "name": "duosite",
   "description": "A web server for many sites",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "repository": "https://github.com/yizhanyun/duosite.git",
   "scripts": {
     "dev": "node dev.js",
@@ -32,7 +32,8 @@
     "shelljs": "^0.8.4"
   },
   "peerDependencies": {
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.7",
+    "shelljs": "^0.8.4"
   },
   "license": "MIT"
 }
