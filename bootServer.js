@@ -67,8 +67,6 @@ const bootServer = onStarted => {
     ? buildGlobalServices(settings, root)
     : {}
 
-  console.log('##########################', root, `${root}/src/enhancer`)
-
   // get global enhancer
 
   const enhance = requireOption(`${root}/src/enhancer`)

@@ -10,7 +10,6 @@ const genericGetHandler = async function (request, reply) {
     site: { root: siteRoot, engine, settings = {} },
   } = _duosite
 
-  console.log('_duosite is >>>>>>>>>>>>>>>', _duosite)
   const { viewEngine = {} } = settings
 
   const { ext } = viewEngine
