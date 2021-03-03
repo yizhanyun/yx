@@ -146,6 +146,41 @@ But if you choose so you can put any static contents in side `pages` folders as 
 
 And if you are a `fastify` developer who wants to further enhance your subsite, you can add routers and handlers to subsite. More documentation is coming for this.
 
+### Structured booting
+
+To power multiple sites, support customization and enhancement at global level and subsite level, duosite took a very structure booting process to prepare the server:
+
+```
+-- start server
+|- load global settings
+|- load global i18n resources
+|- load subsite list
+|-> |- build globalServices
+    |- build global enhancer
+    |- run global enhancer
+    |-> for each subsite
+      |- load subsite settings
+      |- load subsite handler i18n resources
+      |- build subsiteServices
+      |- build subsiteEnhancer
+      |- build subsiteEngine
+      |- decorate `request._duosite` object with
+        |- lang
+        |- global
+          |- settings
+          |- services
+          |- i18n
+          |- root
+        |- site
+          |- settings
+          |- services
+          |- i18n
+          |- root
+          |- engine
+      |- add static file router
+      |- add default router
+      |- run subsite enhancer
+```
 ### Template Projects
 
 Duosite will gradually add template project set up for typical frameworks or libraries,  to save you time.
@@ -592,6 +627,42 @@ module.exports = {
 不过如果您愿意，也可以在 `pages` 目录放置任何静态文件。
 
 如果您是 `fastify` 开发者，想进一步增强您的子站点, 您可以给子站点增加路由与请求处理器。后续将增加这一部分文档。
+
+### 结构化boot服务器
+
+为了支撑多站点，支持定制，支持全局以及子站点强化服务器，多站采用结构化启动流程准备服务器：
+
+```
+-- 启动服务器
+|- 加载全局设置
+|- 加载全局 i18n多语言资源
+|- 加载子站点清单
+|-> |- 构建全局服务
+    |- 构建全局增强器
+    |- 运行全集增强器
+    |-> 对每个子站点
+      |- 加载子站点设置
+      |- 加载子站点i18n多语言资源
+      |- 构建子站点服务
+      |- 构建子站点增强器
+      |- 构建子站点模板/view引擎
+      |- 装饰/生成 `request._duosite` 对象，属性包括
+        |- lang
+        |- global
+          |- settings
+          |- services
+          |- i18n
+          |- root
+        |- site
+          |- settings
+          |- services
+          |- i18n
+          |- root
+          |- engine
+      |- 添加静态文件router
+      |- 添加默认routers
+      |- 运行子站点增强器
+```
 
 ### 项目模板
 
