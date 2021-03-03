@@ -7,6 +7,7 @@ const fs = require('fs-extra')
 const shell = require('shelljs')
 
 const path = require('path')
+const child_process = require('child_process')
 
 const {
   getDirectories,
@@ -40,11 +41,16 @@ if (cmd !== 'prod' && cmd !== 'dev' && cmd !== 'new' && cmd !== 'ls') {
   // set cwd to duosite folder
   // set duosite project root to user's project root
   else if (cmd === 'dev') {
-    shell.exec('yarn dev', {
+    child_process.spawnSync('yarn dev', {
       cwd,
       cmd: process.cmd,
       env: { ...process.env, DUOSITE_ROOT },
     })
+    // shell.exec('yarn dev', {
+    //   cwd,
+    //   cmd: process.cmd,
+    //   env: { ...process.env, DUOSITE_ROOT },
+    // })
   } else if (cmd === 'new') {
     const fromTemplate = process.argv[3]
     const toSite = process.argv[4]
