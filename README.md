@@ -230,6 +230,73 @@ module.exports = {
 
 ```
 
+
+### Duosite enhancers
+
+Duosite should allow developers to enhance fasity server:
+
+- global enhancer: enhance the global fastify server
+- site enhancer: enhance the local site server
+
+#### Global enhancer
+
+Booter will require this file `<root>/src/enhancer.js` to get the enhancer function, which should have following signature:
+
+```
+const enhancer = (fastify, duositeRoot, duositeSettings, globalServices) => void
+```
+
+Server booter will call enhancer with the global fastify object, siteRoot,  siteSettings and globalServices
+
+#### Local enhancer
+
+Booter will require this file `<root>/sites/<subsite>/src/enhancer.js` to get the site enhancer function, which should have following signature:
+
+```
+const enhancer = (fastify, subsiteRoot, siteSettings, globalSettings, globalServices) => void
+```
+
+Subsite server booter will call enhancer with the global fastify object, subsiteRoot,  siteSettings, globalSettings and globalServices.
+
+#### Local view engine first, then global default view engine
+
+Duosite provides global default view engines. Developers can bring their own view engines.
+
+Each subsite can provide its own engines through this file:
+
+```
+<site-root>
+ |- src
+    |- engines.js
+```
+
+`engines.js` should expose a default function build with signature of
+```
+const build = (siteRoot, name, ext, options, lang, i18n)  => engineObject
+```
+
+engine object should has at least one async method: renderFile with signature of:
+
+```
+async renderFile(filepath, data)
+```
+
+`filepath` is relative path under site root.
+
+
+### globalSettings
+
+Sometimes server needs to pass down some sharedSettings to all subsites. Site settings can set globalSettings property.
+
+### globalServices
+
+Sometimes server needs to pass down global services such as database connection etc. to all subsites. Duosite booter will require this file `<root>/src/globalServices.js`, which should export default `buildGlobalServices` function with following signature:
+
+```
+const buildGlobalServices = (settings, root) => Object
+```
+
+
 ## Why choose fastify as the base server
 
 Of course because I used it before and liked it, but also some of its cool features.
@@ -299,7 +366,7 @@ Root forlder of the two is `<site-root>/public`
 
 The current release supports `GET` only.
 
-The server will serve files with follwing try rules in order, a term borrowed from nginx:
+The server will serve files with follwing try rules in order, a term borrowed from nginx. `view-ext` means each subsite's view engine's extension. `ext` is any file extension other then view engine file extension.
 
 - `site-1.abc.com/` or `site-1.abc.com/abcd/.../` - `<site-root>/<url>/index.html`, then `<site-root>/<url>/index.[view-ext]`
 
@@ -322,7 +389,7 @@ Duosite server settings are composed of three files:
 - settings.production.js : settings for production
 ```
 
-Eventual setting will be a deep merge of `settings.js` and`settings.[development|production].js`.
+Eventual setting will be a deep merge of `settings.js` and`settings.[development|production].js`, the latter has higher priority.
 
 ### Subsite setting
 
@@ -335,6 +402,8 @@ Similar to duosite server, it has:
 - settings.development.js: settings for development only
 - settings.production.js : settings for production
 ```
+
+Eventual setting will be a deep merge of `settings.js` and`settings.[development|production].js`, the latter has higher priority.
 
 ### Request decoration to add  `_duosite` to `request`
 
@@ -349,14 +418,6 @@ Duosite is booted with following steps:
 3. initiate view engine and other plugins with site settings
 4. enhance `request` with `_duosite` property, which is a object with properties and methods for the subsite's handlers to use.
 
-### Practical Functional Programming
-
-Duosite follows pratical functional programming principles:
-
-1. Avoid side effects unless absolutely necessary
-2. Avoid closure / external variables unless absolutely necessary
-3. Avoid too much functional abstraction for code readability
-
 ### Booting functions
 
 1. loadGlobalSettings: siteRoot => globalSettingsObject
@@ -368,7 +429,7 @@ Duosite follows pratical functional programming principles:
 7. buildLocalSerServices: (localSettingObject, globalServicesObject) => localServicesObject
 8. enhanceLocalServices: (localSettingObject, globalServicesObject, localSericesObject) => localServicesObject
 
-### GET try rules
+### GET try rules in more detail
 
 When a request hit, the URL will be resovled to a handler. The handler needs to decide the rules to try different resources. Duosite follows the following rules:
 
@@ -414,75 +475,7 @@ site i18n will loaded from site.
 
 ```
 
-### RewriteUrl
 
-Leveraging fastify's `rewriteUrl` function, http request to `subsite.abc.com/...` is rewritten to `abc.com/subsite/...`
-
-
-### Duosite enhancers
-
-Duosite should allow developers to enhance fasity server:
-
-- global enhancer: enhance the global fastify server
-- site enhancer: enhance the local site server
-
-### globalSettings
-
-Sometimes server needs to pass down some sharedSettings to all subsites. Site settings can set globalSettings property.
-
-### globalServices
-
-Sometimes server needs to pass down global services such as database connection etc. to all subsites. Duosite booter will require this file `<root>/src/globalServices.js`, which should export default `buildGlobalServices` function with following signature:
-
-```
-const buildGlobalServices = (settings, root) => Object
-```
-
-
-#### Global enhancer
-
-Booter will require this file `<root>/src/enhancer.js` to get the enhancer function, which should have following signature:
-
-```
-const enhancer = (fastify, duositeRoot, duositeSettings, globalServices) => void
-```
-
-Server booter will call enhancer with the global fastify object, siteRoot,  siteSettings and globalServices
-
-### Local enhancer
-
-Booter will require this file `<root>/sites/<subsite>/src/enhancer.js` to get the site enhancer function, which should have following signature:
-
-```
-const enhancer = (fastify, subsiteRoot, siteSettings, globalSettings, globalServices) => void
-```
-
-Subsite server booter will call enhancer with the global fastify object, subsiteRoot,  siteSettings, globalSettings and globalServices.
-
-### Local view engine first, then global default view engine
-
-Duosite provides global default view engines. Developers can bring their own view engines.
-
-Each subsite can provide its own engines through this file:
-
-```
-<site-root>
- |- src
-    |- engines.js
-```
-
-`engines.js` should expose a default function build with signature of
-```
-const build = (siteRoot, name, ext, options, lang, i18n)  => engineObject
-```
-
-engine object should has at least one async method: renderFile with signature of:
-
-```
-async renderFile(filepath)
-```
-
-`filepath` is relative path under site root.
 
 ## License
 
@@ -684,6 +677,73 @@ module.exports = {
 
 ```
 
+### 多站duosite增强器
+
+多站duosite支持fastify开发者强化fastify服务：
+
+- 全局强化器：增强全局fastify服务器
+- 站点强化器: 增强子站点服务器
+- 站点模板/view 引擎替代：子站点可以提供自己的引擎，取代duosite默认引擎
+
+#### 全局enhancer
+
+多站duosite booter将会 require文件 `<root>/src/enhancer.js` 获得强化器函数，该函数应该有如下签名：
+
+```
+const enhancer = (fastify, duositeRoot, duositeSettings, globalServices) => void
+```
+
+服务器booter将使用全局fastify服务器调用该函数。
+
+#### 子站点enhancer
+
+多站duosite booter将会require文件 `<root>/sites/<subsite>/src/enhancer.js` 获得子站点强化器函数，该函数有如下签名：
+
+```
+const enhancer = (fastify, subsiteRoot, siteSettings, globalSettings, globalServices) => void
+```
+
+子站点服务器将在每个子站点调用该函数。
+
+#### 本地模板/view引擎有限，然后duosite默认引擎
+
+多站提供一组默认模板/view引擎。开发者可以提供自己的引擎。
+
+每个子站点通过如下文件提供引擎：
+
+```
+<site-root>
+ |- src
+    |- engines.js
+```
+
+`engines.js` 应该发布默认函数`build`，签名如下：
+```
+const build = (siteRoot, name, ext, options, lang, i18n)  => engineObject
+```
+
+引擎对象应该起码提供一个异步函数：
+
+```
+async renderFile(filepath, data)
+```
+
+`filepath` 是相对于子站点的模板文件目录。
+
+
+#### 全局设置
+
+有时服务器需要向子站点发布全局共享设置，可以在设置文件中设置`globalSettings`属性。
+
+#### globalServices
+
+有时服务器需要将全局服务例如数据库连接发送到每个子站点服务器。多站duosite将require本文件`<root>/src/globalServices.js`, 该文件应该export默认 `buildGlobalServices` 函数。 函数签名应为:
+
+```
+const buildGlobalServices = (settings, root) => serviceObject
+```
+
+
 ## 为什么选择Fastify为基础开发多站 duosite
 
 当然因为我们用过Fastify，而且也觉得Fastify不错，不过更主要是因为它的一些很不错的功能。
@@ -736,3 +796,125 @@ Fastify支持带有 `prefix`的plugin, 每个plugin的fastify是个独立的子�
          |- views / templates / includes / components : 模板源代码
          |- ... 更多
 ```
+
+### Url try 规则
+
+#### 静态文件
+
+多站Duosite 规定 以 `/static/`或`/bundle/` 开始的url，都指向静态文件，直接发送，不会进行任何解析处理。
+
+`static` 用作不需要额外处理的文件，应该使用代码管理工具如git等管理。
+
+`bundle` 用作由打包工具如webpack、或浏览器生成的文件。一般不使用代码管理工具管理，可以被放到.gitignore里。
+
+这两个目录的根目录是 `<site-root>/public`
+
+#### 非静态文件
+
+当前只支持 `GET` 方法。
+
+服务器使用如下规则，寻找、渲染文件。其中view-ext为每个子站点的模板引擎的后缀，ext为一般后缀
+
+- `site-1.abc.com/` 或者 `site-1.abc.com/<...url>/.../` - `<site-root>/<...url>/index.html`, 然后 `<site-root>/<...url>/index.[view-ext]`
+
+- `site-1.abc.com/<...segments>/abc` - `<site-root>/<...segments>/abc.html`, 然后 `<site-root>/<...segments>/abc.[view-ext]`, 然后 `<site-root>/<segments>/abc/index.html`, 然后 `<site-root>/<segments>/abc/index.[view-ext]`
+
+- `site-1.abc.com/<segments>/abc.[ext]` - `<site-root>/<segments>/abc.[ext]`
+
+
+
+页面文件根目录为 `<site-name>/pages`.
+
+### 多站Duosite服务器配置
+
+多站服务器配置有三个部分构成：
+
+```
+- settings.js : 跨环境配置
+- settings.development.js: 开发环境配置
+- settings.production.js : 生产环境配置
+```
+
+最终配置是 `settings.js` 与 `settings.[development|production].js`的深度合并，其中后者有更高优先级。
+
+### 子站点配置
+
+每个子站点的配置用作渲染每个子站点。
+
+与多站duosite服务器相似：
+
+
+```
+- settings.js : 跨环境配置
+- settings.development.js: 开发环境配置
+- settings.production.js : 生产环境配置
+```
+
+最终配置是 `settings.js` 与 `settings.[development|production].js`的深度合并，其中后者有更高优先级。
+
+### 启动服务的主要函数
+
+1. loadGlobalSettings: siteRoot => globalSettingsObject
+2. enhanceGlobalSettings: globalSettingsObject => globalSettingsObject
+3. buildGlobalServices: globalSettingObject => globalServicesObject
+4. enahceGlobalServicesObject: (globalSettingsObject, globalServicesObject) => globalServicesObject
+5. loadLocalSettings: siteRoot => localSettingObject
+6. enhanceLocalSettings: localSettingObject => localSettingObject
+7. buildLocalSerServices: (localSettingObject, globalServicesObject) => localServicesObject
+8. enhanceLocalServices: (localSettingObject, globalServicesObject, localSericesObject) => localServicesObject
+
+### GET try规则细节
+
+当请求到来时， URL被解析到处理器handler。该handler按照以下规则尝试不同解析规则:
+
+1. 以 `.[ext]`结尾: 发送静态文件
+2. 以 `.[view=ext]`: 调用模板引擎，渲染文件，发送结果
+3. 以 `/`结尾 : 尝试 `/index.html`, `/index.[view-ext]`
+4. 以 `/abc`结尾, 尝试 `/abc.html`, `/abc.[view-ext]`, `/abc/index.html`, `/index.[view-ext]`
+5. 当解析到模板时，同目录下寻找boot.js文件 `[filename].boot.js`, 运行 `getServerProps, getStaticProps`
+
+### `_duosite` object
+
+`request._duosite` 有如下属性
+
+```
+{
+  settings: {...}  // 合并 subsite settings
+  engine: {...} // instantiated engine instance
+  ... // TBD along development
+}
+
+```
+
+### i18n
+
+i18n 通过字典方式实现，每个key对应的值为字符串，或返回字符串的函数。多站服务器运行消息i18n的目录为：
+
+```
+<duosite-root>
+  |- src
+    |- lang
+      |- messages
+        |- zh-cn.js
+        |- en.js
+        |- ...
+
+```
+
+子站点i18n用作handler，文件结构为：
+
+```
+<subsite-root>
+  |- src
+    |- lang
+      |- zh-cn.js
+      |- en.js
+      |- ...
+
+```
+
+
+
+## License
+
+MIT
