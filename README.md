@@ -1,9 +1,9 @@
 
 [中文](#中文)
 
-# duosite
+# 多站 duosite
 
-Duosite (duo: 多, many in Simplified Chinese) is a web server that aims to host and run many sub sites, each with its own sub setting, folder structure and template / view engine, and file system based routing (in progress)  as Nextjs.
+Duosite (duo: 多, many in Chinese, site: 站 in Chinese) is a web server that aims to host and run many sub sites, each with its own sub setting, folder structure and template / view engine, and file system based routing (in progress)  as Nextjs.
 
 Duosite is built on top of the excellent [fastify](https://github.com/fastify/fastify) webserver.
 
