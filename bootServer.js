@@ -16,7 +16,6 @@ const requireOption = path => {
   try {
     return require(path)
   } catch (e) {
-    console.log(e)
     return undefined
   }
 }

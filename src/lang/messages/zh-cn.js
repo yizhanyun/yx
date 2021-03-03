@@ -19,6 +19,6 @@ module.exports = {
   duositeTemplateNotFound: '\n!!错误: 模板未找到',
   duositeSubdomainError: '\n!!错误:  新站点名称不是合法的子域名',
   duositeNewSiteExists: '\n!!错误:  新站点已存在',
-  createNewSiteDone: site => `成功创建 ${toSite} `,
+  createNewSiteDone: site => `成功创建 ${site} `,
   productionNotReady: '!警告: 生产版本尚未发布',
 }

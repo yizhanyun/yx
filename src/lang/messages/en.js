@@ -19,6 +19,6 @@ module.exports = {
   duositeTemplateNotFound: '\n!!Error: Template not found',
   duositeSubdomainError: '\n!!Error: Not a legal subdomain name',
   duositeNewSiteExists: '\n!!Error: New site already exists',
-  createNewSiteDone: site => `Create new site ${toSite} done`,
+  createNewSiteDone: site => `Create new site ${site} done`,
   productionNotReady: '!Warning: Production build is not released yet',
 }
