@@ -19,6 +19,10 @@ Say I would like to expriment a subsite with ejs template engine and another one
 
 The two should coexist in harmony. And I can visit `site-ejs.localhost` and `site-marko.localhost` at the same time. That's the starting idea of duosite.
 
+Duosite should also be a host of template projects for experimenting various frameworks or libraries.
+
+Duosite should have commands to create new projects from template projects.
+
 ## Usage
 
 ### Install
@@ -543,7 +547,10 @@ Duosite基于[fastify](https://github.com/fastify/fastify) web服务器开发。
 
 这两个实验服务器应该可以和谐共存。我可以同时使用比如`site-ejs.localhost` 和 `site-marko.localhost` 。
 
+多站也应该包含针对不同框架或库的项目模板，并提供命令行工具从模板项目创建新项目。
+
 这就是duosite多站的最初想法。
+
 
 ## 用法
 
