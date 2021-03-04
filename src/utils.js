@@ -269,7 +269,7 @@ const segmentsToRoute = segments => {
       index === segments.length - 1 ? removeFileSuffix(segment) : segment
 
     const parsed = parseRouteSegment(name)
-    // console.log('parsed ... &&&&', parsed, segment)
+
     const isRouteSegment =
       parsed && (index === segments.length - 1 ? true : parsed[0] !== '*')
 
@@ -287,7 +287,7 @@ const segmentsToRoute = segments => {
   })
 
   const isFileSystemRoute = hasRouteSegment && !breakRules
-
+  if (!hasRouteSegment) return [false, [[segments.join('/'), [], 'static']]]
   if (!isFileSystemRoute) return [false, []]
 
   let routes
@@ -324,7 +324,6 @@ const segmentsToRoute = segments => {
     routes = [[routeAllWithTail, [variableNames], 'catch']]
   }
 
-  // console.log('>>>>>>>>>> routes is', segments, JSON.stringify(routes, null, 2))
   return [true, routes]
 }
 
@@ -352,6 +351,35 @@ const buildFileRouting = (root, ext, target = 'fastify') => {
   return routes
 }
 
+/** Build file routing
+ * @param {string} root - root for router files
+ * @param {string} ext - extension of template file
+ * @param {string} target - target routing framework, default and only support fastify now
+ * @return {[[string, string]]} - array of [router string, filepath]
+ */
+
+const buildApiRouting = (root, ext, target = 'fastify') => {
+  const dirTree = recursiveReadDirSync(root).filter(([filename, filetype]) => {
+    if (filetype === 'd') return false
+    return filename.endsWith(ext)
+  })
+
+  const routes = dirTree
+    .map(([filename, filetype]) => {
+      const segments = filename.split('/')
+      return [...segmentsToRoute(segments), filename]
+    })
+    .filter(r => {
+      const [isRoute, routeMap, filename] = r
+      if (isRoute) return isRoute
+      else if (filename.endsWith('.js')) return true
+      else return false
+    })
+    .map(([_, routeMaps, filename]) => [routeMaps, filename])
+
+  return routes
+}
+
 module.exports = {
   getDirectories,
   getSubsite,
@@ -362,6 +390,7 @@ module.exports = {
   recursiveReadDirSync,
   removeFileSuffix,
   buildFileRouting,
+  buildApiRouting,
   segmentsToRoute,
   parseRouteSegment,
 }

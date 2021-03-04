@@ -2,8 +2,12 @@ const deepmerge = require('deepmerge')
 const fastifyStatic = require('fastify-static')
 const path = require('path')
 
-const { genericGetRoute, buildFileRouters } = require('./getHandler')
-const { buildFileRouting } = require('../utils')
+const {
+  genericGetRoute,
+  buildFileRouters,
+  buildApiRouters,
+} = require('./getHandler')
+const { buildFileRouting, buildApiRouting } = require('../utils')
 
 const siteRootName = 'sites'
 
@@ -117,10 +121,26 @@ const subsite = function (fastify, opts, done) {
   fileRouting.forEach(([routes, filename]) => {
     const routers = buildFileRouters(routes, filename)
     routers.forEach(router => {
-      console.log('....', router)
+      // console.log('file routers....', router)
       fastify.route(router)
     })
   })
+
+  // Build file based api routing
+
+  try {
+    const apiRouting = buildApiRouting(path.join(siteRoot, 'api'), '.js')
+
+    apiRouting.forEach(([routes, filename]) => {
+      const routers = buildApiRouters(routes, filename, siteRoot)
+
+      routers.forEach(router => {
+        fastify.route(router)
+      })
+    })
+  } catch (e) {
+    console.log(e)
+  }
 
   enhance && enhance(fastify, duositeConfig)
 
