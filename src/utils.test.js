@@ -2,9 +2,10 @@ const path = require('path')
 
 const {
   recursiveReadDirSync,
-  removeFileSuffix,
-  buildFileRouting,
+  removeSuffix,
+  buildFileRoutingTable,
   segmentsToRoute,
+  segmentsToRouteNew,
   parseRouteSegment,
 } = require('./utils')
 
@@ -19,13 +20,13 @@ test('Recusively read dir sync build folder tree successfully', () => {
 })
 
 test('Remove file suffix correctly', () => {
-  const abc = removeFileSuffix('abc.js', 'js')
+  const abc = removeSuffix('abc.js', 'js')
 
   expect(abc).toBe('abc')
 })
 
 test('Built file routing correctly', () => {
-  const r = buildFileRouting(
+  const r = buildFileRoutingTable(
     path.join(process.cwd(), 'sites', 'test-1', 'pages'),
     '.liquid'
   )

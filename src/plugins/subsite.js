@@ -7,7 +7,7 @@ const {
   buildFileRouters,
   buildApiRouters,
 } = require('./getHandler')
-const { buildFileRouting, buildApiRouting } = require('../utils')
+const { buildFileRoutingTable, buildApiRoutingTable } = require('../utils')
 
 const siteRootName = 'sites'
 
@@ -116,7 +116,7 @@ const subsite = function (fastify, opts, done) {
 
   // Build file based routing
 
-  const fileRouting = buildFileRouting(path.join(siteRoot, 'pages'), ext)
+  const fileRouting = buildFileRoutingTable(path.join(siteRoot, 'pages'), ext)
 
   fileRouting.forEach(([routes, filename]) => {
     const routers = buildFileRouters(routes, filename)
@@ -129,7 +129,7 @@ const subsite = function (fastify, opts, done) {
   // Build file based api routing
 
   try {
-    const apiRouting = buildApiRouting(path.join(siteRoot, 'api'), '.js')
+    const apiRouting = buildApiRoutingTable(path.join(siteRoot, 'api'), '.js')
 
     apiRouting.forEach(([routes, filename]) => {
       const routers = buildApiRouters(routes, filename, siteRoot)

@@ -1,3 +1,5 @@
+'use strict'
+
 const fs = require('fs')
 const path = require('path')
 
@@ -214,7 +216,7 @@ const recursiveReadDirSync = (dir, arr = [], rootDir = dir) => {
  * @return {string} filename without suffix
  */
 
-const removeFileSuffix = filepath => {
+const removeSuffix = filepath => {
   const segs = filepath.split('.')
 
   if (segs.length === 1) return filepath
@@ -234,24 +236,77 @@ const parseRouteSegment = segment => {
   {
     const optionalCatchAllRgex = /\[\[\.\.\.([A-Za-z_]\w*)\]\]/g
     const result = optionalCatchAllRgex.exec(segment)
-    if (result) return ['*', result[1], 'optionalCatchAll'] // optional catch all
+    if (result) return [result[1], 'optionalCatchAll'] // optional catch all
   }
 
   {
     const catchAllRgex = /\[\.\.\.([A-Za-z_]\w*)\]/g
     const result = catchAllRgex.exec(segment)
-    if (result) return ['*', result[1], 'catchAll'] // catch all
+    if (result) return [result[1], 'catchAll'] // catch all
   }
 
   {
-    if (segment.startsWith('[[') || segment.endsWith(']]')) return null
+    if (segment.startsWith('[[') || segment.endsWith(']]'))
+      return [segment, 'error']
 
     const catchRgex = /\[([A-Za-z_]\w*)\]/g
     const result = catchRgex.exec(segment)
-    if (result) return [result[1], result[1], 'catch'] // catch all
+    if (result) return [result[1], 'catch'] // catch all
   }
 
-  return null
+  {
+    const staticRgex = /(^[A-Za-z_]\w*)/g
+    const result = staticRgex.exec(segment)
+    if (result) return [segment, 'static']
+    // catch all
+    else return [segment, 'error']
+  }
+}
+
+/**
+ * segmentTypes: catch, catchAll, optionalCatchAll, static, error
+ */
+
+/**
+ * @param {string[]} segments - route segments
+ * @return {[boolean, [routeSegment]} [is route or not, routes]
+ *  routeSegment format : [':paramName', paramName] or ['*', paramName]
+ */
+
+const segmentsToRouteNew = segments => {
+  const parsedSegments = segments.map(segment => parseRouteSegment(segment))
+
+  let hasCatchBeforeLast = false
+  let hasStaticAfterCatch = false
+  let hasCatchAllBeforeLast = false
+  let lastSegmentType
+  let hasError = false
+
+  const length = parsedSegments.length - 1
+  parsedSegments.forEach((parsed, index) => {
+    // before last item
+    console.log(parsed, index)
+    const [, segmentType] = parsed
+    if (hasCatchBeforeLast && segmentType === 'static')
+      hasStaticAfterCatch = true
+
+    hasError = hasError || segmentType === 'error'
+
+    if (index < length - 1) {
+      if (segmentType === 'catch') hasCatchBeforeLast = true
+      if (segmentType === 'catchAll' || segmentType === 'optionalCatchAll')
+        hasCatchAllBeforeLst = true
+    } else {
+      lastSegmentType = segmentType
+    }
+  })
+
+  const routeType =
+    hasError || hasStaticAfterCatch || hasCatchAllBeforeLast
+      ? 'error'
+      : lastSegmentType
+
+  return [routeType, parsedSegments]
 }
 
 /**
@@ -265,8 +320,7 @@ const segmentsToRoute = segments => {
   let breakRules = false
   const parsedSegments = []
   segments.forEach((segment, index) => {
-    const name =
-      index === segments.length - 1 ? removeFileSuffix(segment) : segment
+    const name = index === segments.length - 1 ? removeSuffix(segment) : segment
 
     const parsed = parseRouteSegment(name)
 
@@ -334,7 +388,7 @@ const segmentsToRoute = segments => {
  * @return {[[string, string]]} - array of [router string, filepath]
  */
 
-const buildFileRouting = (root, ext, target = 'fastify') => {
+const buildFileRoutingTable = (root, ext, target = 'fastify') => {
   const dirTree = recursiveReadDirSync(root).filter(([filename, filetype]) => {
     if (filetype === 'd') return false
     return filename.endsWith(ext)
@@ -358,7 +412,7 @@ const buildFileRouting = (root, ext, target = 'fastify') => {
  * @return {[[string, string]]} - array of [router string, filepath]
  */
 
-const buildApiRouting = (root, ext, target = 'fastify') => {
+const buildApiRoutingTable = (root, ext, target = 'fastify') => {
   const dirTree = recursiveReadDirSync(root).filter(([filename, filetype]) => {
     if (filetype === 'd') return false
     return filename.endsWith(ext)
@@ -388,9 +442,10 @@ module.exports = {
   loadGlobalSettings,
   loadGlobalI18NMessages,
   recursiveReadDirSync,
-  removeFileSuffix,
-  buildFileRouting,
-  buildApiRouting,
+  removeSuffix,
+  buildFileRoutingTable,
+  buildApiRoutingTable,
   segmentsToRoute,
+  segmentsToRouteNew,
   parseRouteSegment,
 }

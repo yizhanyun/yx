@@ -1,7 +1,7 @@
 // Basic get handler
 const path = require('path')
 
-const { resolveUrlToFile, removeFileSuffix } = require('../utils')
+const { resolveUrlToFile, removeSuffix } = require('../utils')
 
 const genericGetHandler = async function (request, reply) {
   const { _duosite } = request
@@ -121,7 +121,7 @@ const buildApiRouter = (routeDef, file, siteRoot) => {
   } else if (url && type !== 'static') return { ...router, url: '/api' + url }
   // parsed router
   else {
-    const _url = removeFileSuffix(file)
+    const _url = removeSuffix(file)
 
     return { ...router, url: '/api' + _url }
   }
