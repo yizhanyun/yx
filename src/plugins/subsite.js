@@ -5,9 +5,14 @@ const path = require('path')
 const {
   genericGetRoute,
   buildFileRouters,
+  buildFileRoutersNew,
   buildApiRouters,
 } = require('./getHandler')
-const { buildFileRoutingTable, buildApiRoutingTable } = require('../utils')
+const {
+  buildFileRoutingTableNew,
+  buildFileRoutingTable,
+  buildApiRoutingTable,
+} = require('../utils')
 
 const siteRootName = 'sites'
 
@@ -118,8 +123,13 @@ const subsite = function (fastify, opts, done) {
 
   const fileRouting = buildFileRoutingTable(path.join(siteRoot, 'pages'), ext)
 
-  fileRouting.forEach(([routes, filename]) => {
-    const routers = buildFileRouters(routes, filename)
+  const fileRoutingNew = buildFileRoutingTableNew(
+    path.join(siteRoot, 'pages'),
+    ext
+  )
+
+  fileRoutingNew.forEach(([routeType, routes, filename]) => {
+    const routers = buildFileRoutersNew(routeType, routes, filename)
     routers.forEach(router => {
       // console.log('file routers....', router)
       fastify.route(router)

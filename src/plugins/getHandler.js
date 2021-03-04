@@ -99,6 +99,59 @@ const buildFileRouteHanlder = (routeDef, file) => {
   return handler
 }
 
+const buildFileRouteHanlderNew = (route, file) => {
+  const handler = async (request, reply) => {
+    const [type, segments] = routeDef
+
+    const variables = segments
+      .filter(([segName, segType]) => segType !== 'static')
+      .map(segName => segName)
+
+    let params = {}
+
+    if (type === 'optionalCatchAllWithTail') {
+      params[variables[0]] = request.params['*'].split('/')
+    } else if (type === 'optionalCatchAllWithNoTail') {
+      params[variables[0]] = undefined
+    } else if (type === 'catch') params = request.params
+
+    // render template
+
+    const { _duosite } = request
+
+    const {
+      site: { root: siteRoot, engine },
+    } = _duosite
+
+    let booted
+    let bootJs
+    try {
+      bootJs = require(path.join(siteRoot, file + '.boot.js'))
+    } catch (e) {
+      // console.log(e)
+    }
+
+    if (bootJs && bootJs.getServerProps) {
+      booted = await bootJs.getServerProps({
+        _ctx: { request, reply },
+        params,
+        query: request.query,
+      })
+    }
+
+    const output = await engine.renderFile(file, {
+      ...booted,
+      params,
+      query: request.query,
+      _ctx: { request, reply },
+    })
+    reply.headers({ 'Content-Type': 'text/html' })
+    reply.send(output)
+    return reply
+  }
+  return handler
+}
+
 const allMethods = ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'OPTIONS']
 
 const buildApiRouter = (routeDef, file, siteRoot) => {
@@ -144,6 +197,25 @@ const buildFileRouters = (route, filename) => {
   })
 }
 
+const buildFileRoutersNew = (routeType, route, filename) => {
+  console.log('route ====', routeType, route)
+
+  if (routeType === 'catch') {
+    const url = route.map(([segName, segType]) =>
+      segType === 'static' ? segName : segType === 'catch' ? ':' + segName : '*'
+    )
+    return route.map(routeDef => {
+      // console.log('routeDef ====', routeDef)
+      const [url] = routeDef
+      return {
+        method: ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'OPTIONS'],
+        url,
+        handler: buildFileRouteHanlder(routeDef, path.join('pages', filename)),
+      }
+    })
+  }
+}
+
 const buildApiRouters = (route, filename, siteRoot) => {
   return route.map(routeDef => {
     return buildApiRouter(routeDef, filename, siteRoot)
@@ -153,5 +225,6 @@ const buildApiRouters = (route, filename, siteRoot) => {
 module.exports = {
   genericGetRoute,
   buildFileRouters,
+  buildFileRoutersNew,
   buildApiRouters,
 }

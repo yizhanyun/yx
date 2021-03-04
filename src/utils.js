@@ -405,6 +405,22 @@ const buildFileRoutingTable = (root, ext, target = 'fastify') => {
   return routes
 }
 
+const buildFileRoutingTableNew = (root, ext, target = 'fastify') => {
+  const dirTree = recursiveReadDirSync(root).filter(([filename, filetype]) => {
+    if (filetype === 'd') return false
+    return filename.endsWith(ext)
+  })
+
+  const routes = dirTree
+    .map(([filename, filetype]) => {
+      const segments = filename.split('/').filter(s => !!s)
+      return [...segmentsToRouteNew(segments), filename]
+    })
+    .filter(([routeType]) => routeType !== 'error' && routeType !== 'static')
+
+  return routes
+}
+
 /** Build file routing
  * @param {string} root - root for router files
  * @param {string} ext - extension of template file
@@ -421,6 +437,7 @@ const buildApiRoutingTable = (root, ext, target = 'fastify') => {
   const routes = dirTree
     .map(([filename, filetype]) => {
       const segments = filename.split('/')
+
       return [...segmentsToRoute(segments), filename]
     })
     .filter(r => {
@@ -444,6 +461,7 @@ module.exports = {
   recursiveReadDirSync,
   removeSuffix,
   buildFileRoutingTable,
+  buildFileRoutingTableNew,
   buildApiRoutingTable,
   segmentsToRoute,
   segmentsToRouteNew,

@@ -3,10 +3,11 @@ const path = require('path')
 const {
   recursiveReadDirSync,
   removeSuffix,
-  buildFileRoutingTable,
   segmentsToRoute,
   segmentsToRouteNew,
   parseRouteSegment,
+  buildFileRoutingTable,
+  buildFileRoutingTableNew,
 } = require('./utils')
 
 test('Parse route segments new 1', () => {
@@ -84,4 +85,27 @@ test('Parse route segments new 12', () => {
   const routeTable = segmentsToRouteNew(['mm.ejs'])
   console.log(routeTable)
   expect(routeTable[0]).toBe('static')
+})
+
+test('Parse route segments new 13', () => {
+  const routeTable = segmentsToRouteNew([
+    'a',
+    'b',
+    '[c]',
+    '[d]',
+    '[e]',
+    '[f].liquid',
+  ])
+  console.log(routeTable)
+  expect(routeTable[0]).toBe('catch')
+})
+
+test('Build file routing table case 1', () => {
+  const routingTable = buildFileRoutingTableNew(
+    '/home/fqye/projects/duosite-mono/duosite/sites/test-1/pages',
+    '.liquid'
+  )
+
+  console.log('routingTable >>>>', JSON.stringify(routingTable, null, 2))
+  expect(true).toBeTruthy()
 })
