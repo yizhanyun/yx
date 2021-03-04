@@ -184,6 +184,174 @@ const loadGlobalI18NMessages = (duositeRoot, _lang) => {
   } else return deepmerge(i18nMessagesSite, i18nMessagesDefault)
 }
 
+/**
+ * Recursively read directory
+ * @param  {string[]=[]} arr This doesn't have to be provided, it's used for the recursion
+ * @param  {string=dir`} rootDir Used to replace the initial path, only the relative path is left, it's faster than path.relative.
+ * @returns Array holding all relative paths with file type as [path, 'f' | 'd'], f -> file, d -> directory
+ */
+const recursiveReadDirSync = (dir, arr = [], rootDir = dir) => {
+  const result = fs.readdirSync(dir)
+
+  result.forEach(part => {
+    const absolutePath = path.join(dir, part)
+    const pathStat = fs.statSync(absolutePath)
+
+    if (pathStat.isDirectory()) {
+      arr.push([absolutePath.replace(rootDir, ''), 'd'])
+      recursiveReadDirSync(absolutePath, arr, rootDir)
+      return
+    }
+    arr.push([absolutePath.replace(rootDir, ''), 'f'])
+  })
+
+  return arr
+}
+
+/**
+ * Remove a filepath's suffix
+ * @param {string} filepath - file path
+ * @return {string} filename without suffix
+ */
+
+const removeFileSuffix = filepath => {
+  const segs = filepath.split('.')
+
+  if (segs.length === 1) return filepath
+
+  segs.pop()
+
+  return segs.join('.')
+}
+
+/** last item of array
+ *
+ */
+
+const lastItem = arr => arr[arr.length - 1]
+
+const parseRouteSegment = segment => {
+  {
+    const optionalCatchAllRgex = /\[\[\.\.\.([A-Za-z_]\w*)\]\]/g
+    const result = optionalCatchAllRgex.exec(segment)
+    if (result) return ['*', result[1], 'optionalCatchAll'] // optional catch all
+  }
+
+  {
+    const catchAllRgex = /\[\.\.\.([A-Za-z_]\w*)\]/g
+    const result = catchAllRgex.exec(segment)
+    if (result) return ['*', result[1], 'catchAll'] // catch all
+  }
+
+  {
+    if (segment.startsWith('[[') || segment.endsWith(']]')) return null
+
+    const catchRgex = /\[([A-Za-z_]\w*)\]/g
+    const result = catchRgex.exec(segment)
+    if (result) return [result[1], result[1], 'catch'] // catch all
+  }
+
+  return null
+}
+
+/**
+ * @param {string[]} segments - route segments
+ * @return {[boolean, [routeSegment]} [is route or not, routes]
+ *  routeSegment format : [':paramName', paramName] or ['*', paramName]
+ */
+
+const segmentsToRoute = segments => {
+  let hasRouteSegment = false
+  let breakRules = false
+  const parsedSegments = []
+  segments.forEach((segment, index) => {
+    const name =
+      index === segments.length - 1 ? removeFileSuffix(segment) : segment
+
+    const parsed = parseRouteSegment(name)
+    // console.log('parsed ... &&&&', parsed, segment)
+    const isRouteSegment =
+      parsed && (index === segments.length - 1 ? true : parsed[0] !== '*')
+
+    breakRules = breakRules || (hasRouteSegment && !isRouteSegment) // from first dynamic route to the end should all be dynamic
+    if (
+      hasRouteSegment &&
+      index === segments.length - 1 &&
+      parsed &&
+      (parsed[2] === 'catchAll' || parsed[2] === 'optionalCatchAll')
+    )
+      breakRules = true
+
+    hasRouteSegment = isRouteSegment || hasRouteSegment // has at at least one
+    parsedSegments.push(isRouteSegment ? parsed : [name, name, 'plain'])
+  })
+
+  const isFileSystemRoute = hasRouteSegment && !breakRules
+
+  if (!isFileSystemRoute) return [false, []]
+
+  let routes
+  if (lastItem(parsedSegments)[2] === 'optionalCatchAll') {
+    const variableName = lastItem(parsedSegments)[1]
+    const segs = parsedSegments.map(([segment, variableName, type]) =>
+      segment === '*' || type === 'plain' ? segment : ':' + segment
+    )
+    const routeAllWithTail = segs.join('/')
+    segs.pop()
+    const routeAllWithNoTail = segs.join('/')
+    routes = [
+      [routeAllWithTail, [variableName], 'optionalCatchAllWithTail'],
+      [routeAllWithNoTail, [variableName], 'optionalCatchAllWithNoTail'],
+    ]
+  } else if (lastItem(parsedSegments)[2] === 'catchAll') {
+    const variableName = lastItem(parsedSegments)[1]
+
+    const segs = parsedSegments.map(([segment, variableName, type]) =>
+      segment === '*' || type === 'plain' ? segment : ':' + segment
+    )
+
+    const routeAllWithTail = segs.join('/')
+    routes = [[routeAllWithTail, [variableName], 'optionalCatchAllWithTail']]
+  } else {
+    const segs = parsedSegments.map(([segment, variableName, type]) =>
+      segment === '*' || type === 'plain' ? segment : ':' + segment
+    )
+
+    const variableNames = parsedSegments
+      .filter(([segment, variableName, type]) => type === 'catch')
+      .map(([segment, variableName, type]) => variableName)
+    const routeAllWithTail = segs.join('/')
+    routes = [[routeAllWithTail, [variableNames], 'catch']]
+  }
+
+  // console.log('>>>>>>>>>> routes is', segments, JSON.stringify(routes, null, 2))
+  return [true, routes]
+}
+
+/** Build file routing
+ * @param {string} root - root for router files
+ * @param {string} ext - extension of template file
+ * @param {string} target - target routing framework, default and only support fastify now
+ * @return {[[string, string]]} - array of [router string, filepath]
+ */
+
+const buildFileRouting = (root, ext, target = 'fastify') => {
+  const dirTree = recursiveReadDirSync(root).filter(([filename, filetype]) => {
+    if (filetype === 'd') return false
+    return filename.endsWith(ext)
+  })
+
+  const routes = dirTree
+    .map(([filename, filetype]) => {
+      const segments = filename.split('/')
+      return [...segmentsToRoute(segments), filename]
+    })
+    .filter(([isRoute]) => isRoute)
+    .map(([_, routeMaps, filename]) => [routeMaps, filename])
+
+  return routes
+}
+
 module.exports = {
   getDirectories,
   getSubsite,
@@ -191,4 +359,9 @@ module.exports = {
   fileExist,
   loadGlobalSettings,
   loadGlobalI18NMessages,
+  recursiveReadDirSync,
+  removeFileSuffix,
+  buildFileRouting,
+  segmentsToRoute,
+  parseRouteSegment,
 }

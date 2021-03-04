@@ -2,7 +2,8 @@ const deepmerge = require('deepmerge')
 const fastifyStatic = require('fastify-static')
 const path = require('path')
 
-const { genericGetRoute } = require('./getHandler')
+const { genericGetRoute, buildFileRouters } = require('./getHandler')
+const { buildFileRouting } = require('../utils')
 
 const siteRootName = 'sites'
 
@@ -108,6 +109,18 @@ const subsite = function (fastify, opts, done) {
   })
 
   fastify.route(genericGetRoute)
+
+  // Build file based routing
+
+  const fileRouting = buildFileRouting(path.join(siteRoot, 'pages'), ext)
+
+  fileRouting.forEach(([routes, filename]) => {
+    const routers = buildFileRouters(routes, filename)
+    routers.forEach(router => {
+      console.log('....', router)
+      fastify.route(router)
+    })
+  })
 
   enhance && enhance(fastify, duositeConfig)
 
