@@ -8,6 +8,7 @@ const {
   parseRouteSegment,
   buildFileRoutingTable,
   buildFileRoutingTableNew,
+  buildFileRouteUrlVariableTable,
 } = require('./utils')
 
 test('Parse route segments new 1', () => {
@@ -106,6 +107,21 @@ test('Build file routing table case 1', () => {
     '.liquid'
   )
 
+  expect(true).toBeTruthy()
+})
+
+test('Build file route url variables table case 1', () => {
+  const routingTable = buildFileRoutingTableNew(
+    '/home/fqye/projects/duosite-mono/duosite/sites/test-1/pages',
+    '.liquid'
+  )
+
   console.log('routingTable >>>>', JSON.stringify(routingTable, null, 2))
+  const urlVariablesTable = buildFileRouteUrlVariableTable(routingTable)
+  console.log(
+    'urlVariablesTable >>>>',
+    JSON.stringify(urlVariablesTable, null, 2)
+  )
+
   expect(true).toBeTruthy()
 })

@@ -421,6 +421,76 @@ const buildFileRoutingTableNew = (root, ext, target = 'fastify') => {
   return routes
 }
 
+const buildFileRouteUrlVariableTable = (routes, target = 'fastify') => {
+  return routes.map(([routeType, segments]) => {
+    if (routeType === 'catch') {
+      const _variables = []
+      const segs = []
+
+      segments.forEach(([segName, segType]) => {
+        if (segType !== 'static') {
+          _variables.push(segName)
+          segs.push(':' + segName)
+        } else segs.push(segName)
+      })
+
+      // console.log('$$$$$$$$$$$$$$', routeType, segments, _variables, segs)
+      // const variables = _variables.filter(segName => !!segName)
+
+      const url = segs.join('/')
+      return [url, _variables]
+    } else if (routeType === 'catchAll') {
+      const _variables = []
+      const segs = []
+
+      segments.forEach(([segName, segType], index) => {
+        if (segType !== 'static') {
+          if (segType === 'catchAll') {
+            _variables.push('*')
+          } else _variables.push(segName)
+        }
+        if (index === segments.length - 1) {
+          segs.push('*')
+        } else if (segType !== 'static') segs.push(':' + segName)
+        else segs.push(segName)
+      })
+
+      // const variables = _variables.filter(segName => !!segName)
+
+      const url = segs.join('/')
+      return [url, _variables]
+    } else {
+      const _variables = []
+      const segsWithTail = []
+      const segsWithNoTail = []
+
+      segments.forEach(([segName, segType], index) => {
+        if (segType !== 'static') {
+          if (segType === 'optionalCatchAll') {
+            _variables.push('*')
+          } else _variables.push(segName)
+        }
+        if (index === segments.length - 1) {
+          segsWithTail.push('*')
+        } else if (segType !== 'static') {
+          segsWithTail.push(':' + segName)
+          segsWithNoTail.push(':' + segName)
+        } else {
+          segsWithTail.push(segName)
+          segsWithNoTail.push(segName)
+        }
+      })
+
+      const urlWithTail = segsWithTail.join('/')
+      const urlWithNoTail = segsWithNoTail.join('/')
+      return [
+        [urlWithTail, _variables],
+        [urlWithNoTail, _variables],
+      ]
+    }
+  })
+}
+
 /** Build file routing
  * @param {string} root - root for router files
  * @param {string} ext - extension of template file
@@ -466,4 +536,5 @@ module.exports = {
   segmentsToRoute,
   segmentsToRouteNew,
   parseRouteSegment,
+  buildFileRouteUrlVariableTable,
 }
