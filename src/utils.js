@@ -438,7 +438,7 @@ const buildFileRouteUrlVariableTable = (routes, target = 'fastify') => {
       // const variables = _variables.filter(segName => !!segName)
 
       const url = segs.join('/')
-      return [url, _variables, filename]
+      return [[url, _variables, filename]]
     } else if (routeType === 'catchAll') {
       const _variables = []
       const segs = []
@@ -458,7 +458,7 @@ const buildFileRouteUrlVariableTable = (routes, target = 'fastify') => {
       // const variables = _variables.filter(segName => !!segName)
 
       const url = segs.join('/')
-      return [url, _variables, filename]
+      return [[url, _variables, filename]]
     } else {
       const _variables = []
       const segsWithTail = []

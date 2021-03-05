@@ -99,21 +99,14 @@ const buildFileRouteHanlder = (routeDef, file) => {
   return handler
 }
 
-const buildFileRouteHanlderNew = (route, file) => {
+const buildFileRouteHanlderNew = table => {
+  const [url, variables, filename] = table
+
+  console.log('...', table, filename)
+  const file = path.join('pages', filename)
+
   const handler = async (request, reply) => {
-    const [type, segments] = routeDef
-
-    const variables = segments
-      .filter(([segName, segType]) => segType !== 'static')
-      .map(segName => segName)
-
-    let params = {}
-
-    if (type === 'optionalCatchAllWithTail') {
-      params[variables[0]] = request.params['*'].split('/')
-    } else if (type === 'optionalCatchAllWithNoTail') {
-      params[variables[0]] = undefined
-    } else if (type === 'catch') params = request.params
+    const params = request.params
 
     // render template
 
@@ -197,22 +190,13 @@ const buildFileRouters = (route, filename) => {
   })
 }
 
-const buildFileRoutersNew = (routeType, route, filename) => {
-  console.log('route ====', routeType, route)
+const buildFileRoutersNew = table => {
+  const [url, varialbes, filename] = table
 
-  if (routeType === 'catch') {
-    const url = route.map(([segName, segType]) =>
-      segType === 'static' ? segName : segType === 'catch' ? ':' + segName : '*'
-    )
-    return route.map(routeDef => {
-      // console.log('routeDef ====', routeDef)
-      const [url] = routeDef
-      return {
-        method: ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'OPTIONS'],
-        url,
-        handler: buildFileRouteHanlder(routeDef, path.join('pages', filename)),
-      }
-    })
+  return {
+    method: ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'OPTIONS'],
+    url: '/' + url,
+    handler: buildFileRouteHanlderNew(table),
   }
 }
 

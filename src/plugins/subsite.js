@@ -12,6 +12,7 @@ const {
   buildFileRoutingTableNew,
   buildFileRoutingTable,
   buildApiRoutingTable,
+  buildFileRouteUrlVariableTable,
 } = require('../utils')
 
 const siteRootName = 'sites'
@@ -121,36 +122,55 @@ const subsite = function (fastify, opts, done) {
 
   // Build file based routing
 
-  const fileRouting = buildFileRoutingTable(path.join(siteRoot, 'pages'), ext)
+  // const fileRouting = buildFileRoutingTable(path.join(siteRoot, 'pages'), ext)
 
-  const fileRoutingNew = buildFileRoutingTableNew(
+  const fileRoutingTable = buildFileRoutingTableNew(
     path.join(siteRoot, 'pages'),
     ext
   )
 
-  fileRoutingNew.forEach(([routeType, routes, filename]) => {
-    const routers = buildFileRoutersNew(routeType, routes, filename)
-    routers.forEach(router => {
-      // console.log('file routers....', router)
+  const fileRoutingUrlVariableTable = buildFileRouteUrlVariableTable(
+    fileRoutingTable
+  )
+
+  fileRoutingUrlVariableTable.forEach(tables => {
+    console.log('%%%%%%%%%%%%%%%%', tables)
+
+    tables.forEach(table => {
+      const router = buildFileRoutersNew(table)
+      console.log(router)
       fastify.route(router)
     })
+
+    //   routers.forEach(router => {
+    //     // console.log('file routers....', router)
+    //     fastify.route(router)
+    //   })
   })
+
+  // fileRoutingNew.forEach(([routeType, routes, filename]) => {
+  //   const routers = buildFileRoutersNew(routeType, routes, filename)
+  //   routers.forEach(router => {
+  //     // console.log('file routers....', router)
+  //     fastify.route(router)
+  //   })
+  // })
 
   // Build file based api routing
 
-  try {
-    const apiRouting = buildApiRoutingTable(path.join(siteRoot, 'api'), '.js')
+  // try {
+  //   const apiRouting = buildApiRoutingTable(path.join(siteRoot, 'api'), '.js')
 
-    apiRouting.forEach(([routes, filename]) => {
-      const routers = buildApiRouters(routes, filename, siteRoot)
+  //   apiRouting.forEach(([routes, filename]) => {
+  //     const routers = buildApiRouters(routes, filename, siteRoot)
 
-      routers.forEach(router => {
-        fastify.route(router)
-      })
-    })
-  } catch (e) {
-    console.log(e)
-  }
+  //     routers.forEach(router => {
+  //       fastify.route(router)
+  //     })
+  //   })
+  // } catch (e) {
+  //   console.log(e)
+  // }
 
   enhance && enhance(fastify, duositeConfig)
 
