@@ -285,7 +285,6 @@ const segmentsToRoute = segments => {
   const length = parsedSegments.length - 1
   parsedSegments.forEach((parsed, index) => {
     // before last item
-    console.log(parsed, index)
     const [, segmentType] = parsed
     if (hasCatchBeforeLast && segmentType === 'static')
       hasStaticAfterCatch = true

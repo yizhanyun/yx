@@ -24,7 +24,13 @@ const i18nm = loadGlobalI18NMessages(__dirname, settings.lang)
 
 const cmd = process.argv[2]
 
-if (cmd !== 'prod' && cmd !== 'dev' && cmd !== 'new' && cmd !== 'ls') {
+if (
+  cmd !== 'prod' &&
+  cmd !== 'dev' &&
+  cmd !== 'new' &&
+  cmd !== 'ls' &&
+  cmd !== 'build'
+) {
   console.warn(chalk.yellow(i18nm.duositeUsage))
   return -1
 } else {
@@ -38,6 +44,8 @@ if (cmd !== 'prod' && cmd !== 'dev' && cmd !== 'new' && cmd !== 'ls') {
     sites.map(site => {
       console.log(chalk.green(`  ${site}`))
     })
+  } else if (cmd === 'build') {
+    const target = process.argv[3] || '*'
   }
   // set cwd to duosite folder
   // set duosite project root to user's project root

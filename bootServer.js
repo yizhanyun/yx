@@ -29,10 +29,10 @@ const isProduction = process.env.NODE_ENV === 'production'
  * @param {function} onStarted - called this with fastify server when server started
  */
 
-const bootServer = opts => {
+const bootServer = async opts => {
   // load global settings
 
-  const { onStarted, root: _root, env } = opts || {}
+  const { onStarted, root: _root, env, build, buildTarget } = opts || {}
 
   if (env === 'production') process.env['NODE_ENV'] = 'production'
 
@@ -48,9 +48,19 @@ const bootServer = opts => {
 
   const sites = getDirectories(path.join(root, siteRootName))
 
+  if (
+    build &&
+    buildTarget !== '*' &&
+    !sites.find(site => site === buildTarget)
+  ) {
+    console.log('site not found')
+    return
+  }
+
   // const load plugin
 
-  const subsitePlugin = require('./src/plugins/subsite')
+  const buildSubsitePlugin = require('./src/plugins/subsite')
+  const subsitePlugin = buildSubsitePlugin(build, buildTarget)
 
   const {
     defaultSite = 'www',
@@ -93,16 +103,21 @@ const bootServer = opts => {
 
   gracefulServer.on(GracefulServer.READY, () => {
     console.log(i18nm.serverReady)
+    console.log('Fastify started')
+    if (build) {
+      console.log('Finished building. Shutting down...')
+      fastify && fastify.close()
+    }
   })
 
   gracefulServer.on(GracefulServer.SHUTTING_DOWN, () => {
     console.log(i18nm.serverShuttingDown)
-    fastify.close()
+    fastify && fastify.close()
   })
 
   gracefulServer.on(GracefulServer.SHUTDOWN, error => {
-    console.log(i18nm.serverDownFor, error.message)
-    fastify.close()
+    if (error) console.log(i18nm.serverDownFor, error.message)
+    fastify && fastify.close()
   })
 
   enhance &&
@@ -115,6 +130,41 @@ const bootServer = opts => {
         lang,
       },
     })
+
+  if (build) {
+    let defaultBuildGlobal
+    try {
+      defaultBuildGlobal = require('./src/buildGlobal')
+    } catch (e) {
+      console.log(e)
+    }
+
+    let customBuildGlobal
+
+    try {
+      customBuildGlobal = require(path.join(root, 'src/buildGlobal'))
+    } catch (e) {
+      console.log(e)
+    }
+
+    const prebuild =
+      (customBuildGlobal && customBuildGlobal.prebuild) ||
+      (defaultBuildGlobal && defaultBuildGlobal.prebuild)
+
+    prebuild && prebuild(root, settings, globalServices)
+
+    const _build =
+      (customBuildGlobal && customBuildGlobal.build) ||
+      (defaultBuildGlobal && defaultBuildGlobal.build)
+
+    _build && _build(root, settings, globalServices)
+
+    const postbuild =
+      (customBuildGlobal && customBuildGlobal.postbuild) ||
+      (defaultBuildGlobal && defaultBuildGlobal.postbuild)
+
+    postbuild && postbuild(root, settings, globalServices)
+  }
 
   // boot subsite servers
 
@@ -134,12 +184,15 @@ const bootServer = opts => {
   }
 
   // Run the server!
+
   fastify.listen(port, function (err, address) {
     if (err) {
       fastify.log.error(err)
       process.exit(1)
     }
-    if (onStarted) onStarted(fastify)
+    if (onStarted) {
+      onStarted(fastify)
+    }
     gracefulServer.setReady()
     console.log(chalk.green(i18nm.startMessage(port)))
   })

@@ -120,7 +120,6 @@ const buildApiRouter = (table, siteRoot) => {
   else {
     const _url = removeSuffix(url)
 
-    console.log('**** **', _url)
     return { ...router, url: '/api/' + _url }
   }
 }

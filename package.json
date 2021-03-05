@@ -5,6 +5,8 @@
   "repository": "https://github.com/yizhanyun/duosite.git",
   "scripts": {
     "dev": "node dev.js",
+    "build": "node build.js",
+    "prod": "NODE_ENV=production node prod.js",
     "duosite": "duosite",
     "test": "jest",
     "lint": "yarn eslint ./*.js src/**/*.js ./sites/**/*.js"
@@ -17,7 +19,8 @@
     "fastify-static": "^4.0.1",
     "fs-extra": "^9.1.0",
     "is-subdomain-valid": "^1.0.0",
-    "liquidjs": "^9.23.1"
+    "liquidjs": "^9.23.1",
+    "rimraf": "^3.0.2"
   },
   "bin": {
     "duosite": "./duosite.js"
