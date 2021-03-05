@@ -25,6 +25,8 @@ const requireOption = path => {
   }
 }
 
+const isProduction = process.env.NODE_ENV === 'production'
+
 //  Plugin to handle each subsite's request
 
 // opts: { prefix, _duosite: { siteRoot }}
@@ -36,7 +38,12 @@ const subsite = function (fastify, opts, done) {
 
   const { root, settings: globalSettings, i18nMessages, lang } = global
 
-  const siteRoot = path.join(root, siteRootName, site)
+  const siteRoot = path.join(
+    root,
+    siteRootName,
+    site,
+    isProduction ? '.production' : ''
+  )
   // load subsite settings
   const sharedSetting = requireOption(`${siteRoot}/settings`) || {}
   const byEnironmentSetting =
@@ -120,23 +127,23 @@ const subsite = function (fastify, opts, done) {
 
   fastify.route(genericGetRoute)
 
-  const fileRoutingTable = buildFileRoutingTable(
-    path.join(siteRoot, 'pages'),
-    ext
-  )
-
-  const fileRoutingUrlVariableTable = buildFileRouteUrlVariableTable(
-    fileRoutingTable
-  )
-
-  fileRoutingUrlVariableTable.forEach(tables => {
-    tables.forEach(table => {
-      const router = buildFileRouter(table)
-      fastify.route(router)
-    })
-  })
-
   try {
+    const fileRoutingTable = buildFileRoutingTable(
+      path.join(siteRoot, 'pages'),
+      ext
+    )
+
+    const fileRoutingUrlVariableTable = buildFileRouteUrlVariableTable(
+      fileRoutingTable
+    )
+
+    fileRoutingUrlVariableTable.forEach(tables => {
+      tables.forEach(table => {
+        const router = buildFileRouter(table)
+        fastify.route(router)
+      })
+    })
+
     const apiRoutingTable = buildApiRoutingTable(
       path.join(siteRoot, 'api'),
       '.js'

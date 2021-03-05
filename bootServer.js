@@ -32,7 +32,9 @@ const isProduction = process.env.NODE_ENV === 'production'
 const bootServer = opts => {
   // load global settings
 
-  const { onStarted, root: _root } = opts || {}
+  const { onStarted, root: _root, env } = opts || {}
+
+  if (env === 'production') process.env['NODE_ENV'] = 'production'
 
   const root = _root || process.env.DUOSITE_ROOT || process.cwd()
 

@@ -8,6 +8,8 @@ const fs = require('fs-extra')
 
 const path = require('path')
 
+const childProcess = require('child_process')
+
 const {
   getDirectories,
   loadGlobalSettings,
@@ -84,5 +86,10 @@ if (cmd !== 'prod' && cmd !== 'dev' && cmd !== 'new' && cmd !== 'ls') {
     )
 
     console.log(chalk.blue(i18nm.createNewSiteDone(toSite)))
-  } else console.log(chalk.yellow(i18nm.productionNotReady))
+  } else {
+    const bootServer = require('./bootServer')
+    bootServer({ root: DUOSITE_ROOT, env: 'production' })
+
+    // console.log(chalk.yellow(i18nm.productionNotReady))
+  }
 }
