@@ -50,57 +50,8 @@ const genericGetHandler = async function (request, reply) {
   }
 }
 
-const buildFileRouteHanlder = (routeDef, file) => {
-  const handler = async (request, reply) => {
-    const [variables, type] = routeDef
-
-    let params = {}
-
-    if (type === 'optionalCatchAllWithTail') {
-      params[variables[0]] = request.params['*'].split('/')
-    } else if (type === 'optionalCatchAllWithNoTail') {
-      params[variables[0]] = undefined
-    } else if (type === 'catch') params = request.params
-
-    // render template
-
-    const { _duosite } = request
-
-    const {
-      site: { root: siteRoot, engine },
-    } = _duosite
-
-    let booted
-    let bootJs
-    try {
-      bootJs = require(path.join(siteRoot, file + '.boot.js'))
-    } catch (e) {
-      // console.log(e)
-    }
-
-    if (bootJs && bootJs.getServerProps) {
-      booted = await bootJs.getServerProps({
-        _ctx: { request, reply },
-        params,
-        query: request.query,
-      })
-    }
-
-    const output = await engine.renderFile(file, {
-      ...booted,
-      params,
-      query: request.query,
-      _ctx: { request, reply },
-    })
-    reply.headers({ 'Content-Type': 'text/html' })
-    reply.send(output)
-    return reply
-  }
-  return handler
-}
-
 const buildFileRouteHanlderNew = table => {
-  const [url, variables, filename] = table
+  const [, , filename] = table
 
   console.log('...', table, filename)
   const file = path.join('pages', filename)
@@ -147,10 +98,10 @@ const buildFileRouteHanlderNew = table => {
 
 const allMethods = ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'OPTIONS']
 
-const buildApiRouter = (routeDef, file, siteRoot) => {
+const buildApiRouter = (table, siteRoot) => {
   let router
 
-  const [url, , type] = routeDef
+  const [url, , file, type] = table
 
   try {
     router = require(path.join(siteRoot, 'api', file))
@@ -164,12 +115,13 @@ const buildApiRouter = (routeDef, file, siteRoot) => {
         reply.send()
       },
     }
-  } else if (url && type !== 'static') return { ...router, url: '/api' + url }
+  } else if (url && type !== 'static') return { ...router, url: '/api/' + url }
   // parsed router
   else {
-    const _url = removeSuffix(file)
+    const _url = removeSuffix(url)
 
-    return { ...router, url: '/api' + _url }
+    console.log('**** **', _url)
+    return { ...router, url: '/api/' + _url }
   }
 }
 
@@ -179,19 +131,8 @@ const genericGetRoute = {
   handler: genericGetHandler,
 }
 
-const buildFileRouters = (route, filename) => {
-  return route.map(routeDef => {
-    const [url] = routeDef
-    return {
-      method: ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'OPTIONS'],
-      url,
-      handler: buildFileRouteHanlder(routeDef, path.join('pages', filename)),
-    }
-  })
-}
-
-const buildFileRoutersNew = table => {
-  const [url, varialbes, filename] = table
+const buildFileRouter = table => {
+  const [url] = table
 
   return {
     method: ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'OPTIONS'],
@@ -200,15 +141,8 @@ const buildFileRoutersNew = table => {
   }
 }
 
-const buildApiRouters = (route, filename, siteRoot) => {
-  return route.map(routeDef => {
-    return buildApiRouter(routeDef, filename, siteRoot)
-  })
-}
-
 module.exports = {
   genericGetRoute,
-  buildFileRouters,
-  buildFileRoutersNew,
-  buildApiRouters,
+  buildFileRouter,
+  buildApiRouter,
 }

@@ -273,7 +273,7 @@ const parseRouteSegment = segment => {
  *  routeSegment format : [':paramName', paramName] or ['*', paramName]
  */
 
-const segmentsToRouteNew = segments => {
+const segmentsToRoute = segments => {
   const parsedSegments = segments.map(segment => parseRouteSegment(segment))
 
   let hasCatchBeforeLast = false
@@ -309,78 +309,6 @@ const segmentsToRouteNew = segments => {
   return [routeType, parsedSegments]
 }
 
-/**
- * @param {string[]} segments - route segments
- * @return {[boolean, [routeSegment]} [is route or not, routes]
- *  routeSegment format : [':paramName', paramName] or ['*', paramName]
- */
-
-const segmentsToRoute = segments => {
-  let hasRouteSegment = false
-  let breakRules = false
-  const parsedSegments = []
-  segments.forEach((segment, index) => {
-    const name = index === segments.length - 1 ? removeSuffix(segment) : segment
-
-    const parsed = parseRouteSegment(name)
-
-    const isRouteSegment =
-      parsed && (index === segments.length - 1 ? true : parsed[0] !== '*')
-
-    breakRules = breakRules || (hasRouteSegment && !isRouteSegment) // from first dynamic route to the end should all be dynamic
-    if (
-      hasRouteSegment &&
-      index === segments.length - 1 &&
-      parsed &&
-      (parsed[2] === 'catchAll' || parsed[2] === 'optionalCatchAll')
-    )
-      breakRules = true
-
-    hasRouteSegment = isRouteSegment || hasRouteSegment // has at at least one
-    parsedSegments.push(isRouteSegment ? parsed : [name, name, 'plain'])
-  })
-
-  const isFileSystemRoute = hasRouteSegment && !breakRules
-  if (!hasRouteSegment) return [false, [[segments.join('/'), [], 'static']]]
-  if (!isFileSystemRoute) return [false, []]
-
-  let routes
-  if (lastItem(parsedSegments)[2] === 'optionalCatchAll') {
-    const variableName = lastItem(parsedSegments)[1]
-    const segs = parsedSegments.map(([segment, variableName, type]) =>
-      segment === '*' || type === 'plain' ? segment : ':' + segment
-    )
-    const routeAllWithTail = segs.join('/')
-    segs.pop()
-    const routeAllWithNoTail = segs.join('/')
-    routes = [
-      [routeAllWithTail, [variableName], 'optionalCatchAllWithTail'],
-      [routeAllWithNoTail, [variableName], 'optionalCatchAllWithNoTail'],
-    ]
-  } else if (lastItem(parsedSegments)[2] === 'catchAll') {
-    const variableName = lastItem(parsedSegments)[1]
-
-    const segs = parsedSegments.map(([segment, variableName, type]) =>
-      segment === '*' || type === 'plain' ? segment : ':' + segment
-    )
-
-    const routeAllWithTail = segs.join('/')
-    routes = [[routeAllWithTail, [variableName], 'optionalCatchAllWithTail']]
-  } else {
-    const segs = parsedSegments.map(([segment, variableName, type]) =>
-      segment === '*' || type === 'plain' ? segment : ':' + segment
-    )
-
-    const variableNames = parsedSegments
-      .filter(([segment, variableName, type]) => type === 'catch')
-      .map(([segment, variableName, type]) => variableName)
-    const routeAllWithTail = segs.join('/')
-    routes = [[routeAllWithTail, [variableNames], 'catch']]
-  }
-
-  return [true, routes]
-}
-
 /** Build file routing
  * @param {string} root - root for router files
  * @param {string} ext - extension of template file
@@ -396,16 +324,15 @@ const buildFileRoutingTable = (root, ext, target = 'fastify') => {
 
   const routes = dirTree
     .map(([filename, filetype]) => {
-      const segments = filename.split('/')
+      const segments = filename.split('/').filter(s => !!s)
       return [...segmentsToRoute(segments), filename]
     })
-    .filter(([isRoute]) => isRoute)
-    .map(([_, routeMaps, filename]) => [routeMaps, filename])
+    .filter(([routeType]) => routeType !== 'error' && routeType !== 'static')
 
   return routes
 }
 
-const buildFileRoutingTableNew = (root, ext, target = 'fastify') => {
+const buildApiRoutingTable = (root, ext, target = 'fastify') => {
   const dirTree = recursiveReadDirSync(root).filter(([filename, filetype]) => {
     if (filetype === 'd') return false
     return filename.endsWith(ext)
@@ -414,9 +341,9 @@ const buildFileRoutingTableNew = (root, ext, target = 'fastify') => {
   const routes = dirTree
     .map(([filename, filetype]) => {
       const segments = filename.split('/').filter(s => !!s)
-      return [...segmentsToRouteNew(segments), filename]
+      return [...segmentsToRoute(segments), filename]
     })
-    .filter(([routeType]) => routeType !== 'error' && routeType !== 'static')
+    .filter(([routeType]) => routeType !== 'error')
 
   return routes
 }
@@ -434,11 +361,8 @@ const buildFileRouteUrlVariableTable = (routes, target = 'fastify') => {
         } else segs.push(segName)
       })
 
-      // console.log('$$$$$$$$$$$$$$', routeType, segments, _variables, segs)
-      // const variables = _variables.filter(segName => !!segName)
-
       const url = segs.join('/')
-      return [[url, _variables, filename]]
+      return [[url, _variables, filename, routeType]]
     } else if (routeType === 'catchAll') {
       const _variables = []
       const segs = []
@@ -458,7 +382,7 @@ const buildFileRouteUrlVariableTable = (routes, target = 'fastify') => {
       // const variables = _variables.filter(segName => !!segName)
 
       const url = segs.join('/')
-      return [[url, _variables, filename]]
+      return [[url, _variables, filename, routeType]]
     } else {
       const _variables = []
       const segsWithTail = []
@@ -484,8 +408,111 @@ const buildFileRouteUrlVariableTable = (routes, target = 'fastify') => {
       const urlWithTail = segsWithTail.join('/')
       const urlWithNoTail = segsWithNoTail.join('/')
       return [
-        [urlWithTail, _variables, filename],
-        [urlWithNoTail, _variables, filename],
+        [urlWithTail, _variables, filename, routeType],
+        [urlWithNoTail, _variables, filename, routeType],
+      ]
+    }
+  })
+}
+
+const buildApiRouteUrlVariableTable = (routes, target = 'fastify') => {
+  return routes.map(([routeType, segments, filename]) => {
+    if (routeType === 'static') {
+      const _variables = []
+      const segs = []
+
+      segments.forEach(([segName, segType]) => {
+        segs.push(segName)
+      })
+
+      // console.log('$$$$$$$$$$$$$$', routeType, segments, _variables, segs)
+      // const variables = _variables.filter(segName => !!segName)
+
+      const url = segs.join('/')
+      return [[url, _variables, filename, routeType]]
+    } else if (routeType === 'catchAll') {
+      const _variables = []
+      const segs = []
+
+      segments.forEach(([segName, segType], index) => {
+        if (segType !== 'static') {
+          if (segType === 'catchAll') {
+            _variables.push('*')
+          } else _variables.push(segName)
+        }
+        if (index === segments.length - 1) {
+          segs.push('*')
+        } else if (segType !== 'static') segs.push(':' + segName)
+        else segs.push(segName)
+      })
+
+      // const variables = _variables.filter(segName => !!segName)
+
+      const url = segs.join('/')
+      return [[url, _variables, filename, routeType]]
+    } else if (routeType === 'catch') {
+      const _variables = []
+      const segs = []
+
+      segments.forEach(([segName, segType]) => {
+        if (segType !== 'static') {
+          _variables.push(segName)
+          segs.push(':' + segName)
+        } else segs.push(segName)
+      })
+
+      // console.log('$$$$$$$$$$$$$$', routeType, segments, _variables, segs)
+      // const variables = _variables.filter(segName => !!segName)
+
+      const url = segs.join('/')
+      return [[url, _variables, filename, routeType]]
+    } else if (routeType === 'catchAll') {
+      const _variables = []
+      const segs = []
+
+      segments.forEach(([segName, segType], index) => {
+        if (segType !== 'static') {
+          if (segType === 'catchAll') {
+            _variables.push('*')
+          } else _variables.push(segName)
+        }
+        if (index === segments.length - 1) {
+          segs.push('*')
+        } else if (segType !== 'static') segs.push(':' + segName)
+        else segs.push(segName)
+      })
+
+      // const variables = _variables.filter(segName => !!segName)
+
+      const url = segs.join('/')
+      return [[url, _variables, filename, routeType]]
+    } else {
+      const _variables = []
+      const segsWithTail = []
+      const segsWithNoTail = []
+
+      segments.forEach(([segName, segType], index) => {
+        if (segType !== 'static') {
+          if (segType === 'optionalCatchAll') {
+            _variables.push('*')
+          } else _variables.push(segName)
+        }
+        if (index === segments.length - 1) {
+          segsWithTail.push('*')
+        } else if (segType !== 'static') {
+          segsWithTail.push(':' + segName)
+          segsWithNoTail.push(':' + segName)
+        } else {
+          segsWithTail.push(segName)
+          segsWithNoTail.push(segName)
+        }
+      })
+
+      const urlWithTail = segsWithTail.join('/')
+      const urlWithNoTail = segsWithNoTail.join('/')
+      return [
+        [urlWithTail, _variables, filename, routeType],
+        [urlWithNoTail, _variables, filename, routeType],
       ]
     }
   })
@@ -498,29 +525,6 @@ const buildFileRouteUrlVariableTable = (routes, target = 'fastify') => {
  * @return {[[string, string]]} - array of [router string, filepath]
  */
 
-const buildApiRoutingTable = (root, ext, target = 'fastify') => {
-  const dirTree = recursiveReadDirSync(root).filter(([filename, filetype]) => {
-    if (filetype === 'd') return false
-    return filename.endsWith(ext)
-  })
-
-  const routes = dirTree
-    .map(([filename, filetype]) => {
-      const segments = filename.split('/')
-
-      return [...segmentsToRoute(segments), filename]
-    })
-    .filter(r => {
-      const [isRoute, routeMap, filename] = r
-      if (isRoute) return isRoute
-      else if (filename.endsWith('.js')) return true
-      else return false
-    })
-    .map(([_, routeMaps, filename]) => [routeMaps, filename])
-
-  return routes
-}
-
 module.exports = {
   getDirectories,
   getSubsite,
@@ -531,10 +535,9 @@ module.exports = {
   recursiveReadDirSync,
   removeSuffix,
   buildFileRoutingTable,
-  buildFileRoutingTableNew,
   buildApiRoutingTable,
   segmentsToRoute,
-  segmentsToRouteNew,
   parseRouteSegment,
   buildFileRouteUrlVariableTable,
+  buildApiRouteUrlVariableTable,
 }
