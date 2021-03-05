@@ -422,7 +422,7 @@ const buildFileRoutingTableNew = (root, ext, target = 'fastify') => {
 }
 
 const buildFileRouteUrlVariableTable = (routes, target = 'fastify') => {
-  return routes.map(([routeType, segments]) => {
+  return routes.map(([routeType, segments, filename]) => {
     if (routeType === 'catch') {
       const _variables = []
       const segs = []
@@ -438,7 +438,7 @@ const buildFileRouteUrlVariableTable = (routes, target = 'fastify') => {
       // const variables = _variables.filter(segName => !!segName)
 
       const url = segs.join('/')
-      return [url, _variables]
+      return [url, _variables, filename]
     } else if (routeType === 'catchAll') {
       const _variables = []
       const segs = []
@@ -458,7 +458,7 @@ const buildFileRouteUrlVariableTable = (routes, target = 'fastify') => {
       // const variables = _variables.filter(segName => !!segName)
 
       const url = segs.join('/')
-      return [url, _variables]
+      return [url, _variables, filename]
     } else {
       const _variables = []
       const segsWithTail = []
@@ -484,8 +484,8 @@ const buildFileRouteUrlVariableTable = (routes, target = 'fastify') => {
       const urlWithTail = segsWithTail.join('/')
       const urlWithNoTail = segsWithNoTail.join('/')
       return [
-        [urlWithTail, _variables],
-        [urlWithNoTail, _variables],
+        [urlWithTail, _variables, filename],
+        [urlWithNoTail, _variables, filename],
       ]
     }
   })
