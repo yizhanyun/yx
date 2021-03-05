@@ -1,24 +1,16 @@
-// requires
+import GracefulServer from '@gquittet/graceful-server'
 
-const GracefulServer = require('@gquittet/graceful-server')
+import path from 'path'
+import fastify from 'fastify'
 
-const path = require('path')
-
-const {
+import {
   getDirectories,
   getSubsite,
   loadGlobalSettings,
   loadGlobalI18NMessages,
-} = require('./src/utils')
-const chalk = require('chalk')
+} from './src/utils'
 
-const requireOption = path => {
-  try {
-    return require(path)
-  } catch (e) {
-    return undefined
-  }
-}
+import chalk from 'chalk'
 
 const siteRootName = 'sites'
 
@@ -76,19 +68,24 @@ const bootServer = async opts => {
 
   // Build global services
 
-  const buildGlobalServices = requireOption(`${root}/src/globalServices`)
+  let buildGlobalServices
+  try {
+    buildGlobalServices = await import(`${root}/src/globalServices`)
+  } catch {}
 
   const globalServices = buildGlobalServices
     ? buildGlobalServices(settings, root)
     : {}
 
   // get global enhancer
+  let enhance
 
-  const enhance = requireOption(`${root}/src/enhancer`)
-
+  try {
+    enhance = await import(`${root}/src/enhancer`)
+  } catch (e) {}
   // Get subsite list
 
-  const fastify = requireOption('fastify')({
+  const duositeFastify = fastify({
     logger: {
       level: isProduction ? 'error' : 'trace',
     },
@@ -99,29 +96,29 @@ const bootServer = async opts => {
     },
   })
 
-  const gracefulServer = GracefulServer(fastify.server)
+  const gracefulServer = GracefulServer(duositeFastify.server)
 
   gracefulServer.on(GracefulServer.READY, () => {
     console.log(i18nm.serverReady)
     console.log('Fastify started')
     if (build) {
       console.log('Finished building. Shutting down...')
-      fastify && fastify.close()
+      duositeFastify && duositeFastify.close()
     }
   })
 
   gracefulServer.on(GracefulServer.SHUTTING_DOWN, () => {
     console.log(i18nm.serverShuttingDown)
-    fastify && fastify.close()
+    duositeFastify && duositeFastify.close()
   })
 
   gracefulServer.on(GracefulServer.SHUTDOWN, error => {
     if (error) console.log(i18nm.serverDownFor, error.message)
-    fastify && fastify.close()
+    duositeFastify && duositeFastify.close()
   })
 
   enhance &&
-    enhance(fastify, settings, {
+    enhance(duositeFastify, settings, {
       global: {
         root,
         settings: globalSettings,
@@ -134,7 +131,7 @@ const bootServer = async opts => {
   if (build) {
     let defaultBuildGlobal
     try {
-      defaultBuildGlobal = require('./src/buildGlobal')
+      defaultBuildGlobal = await import('./src/buildGlobal')
     } catch (e) {
       console.log(e)
     }
@@ -142,7 +139,7 @@ const bootServer = async opts => {
     let customBuildGlobal
 
     try {
-      customBuildGlobal = require(path.join(root, 'src/buildGlobal'))
+      customBuildGlobal = await import(path.join(root, 'src/buildGlobal'))
     } catch (e) {
       console.log(e)
     }
@@ -169,7 +166,7 @@ const bootServer = async opts => {
   // boot subsite servers
 
   for (const site of sites) {
-    fastify.register(subsitePlugin, {
+    duositeFastify.register(subsitePlugin, {
       prefix: site,
       _duosite: {
         global: {
@@ -185,17 +182,17 @@ const bootServer = async opts => {
 
   // Run the server!
 
-  fastify.listen(port, function (err, address) {
+  duositeFastify.listen(port, function (err, address) {
     if (err) {
-      fastify.log.error(err)
+      duositeFastify.log.error(err)
       process.exit(1)
     }
     if (onStarted) {
-      onStarted(fastify)
+      onStarted(duositeFastify)
     }
     gracefulServer.setReady()
     console.log(chalk.green(i18nm.startMessage(port)))
   })
 }
 
-module.exports = bootServer
+export default bootServer

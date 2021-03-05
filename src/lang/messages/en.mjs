@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   startMessage: port => `Server started at port ${port}`,
   engineNotSupported: 'Unsupported view engine',
   serverReady: 'Server ready',

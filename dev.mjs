@@ -1,19 +1,27 @@
-const path = require('path')
+import path from 'path'
 
-let nodemon = require('nodemon')
+// const path = require('path')
 
-const { loadGlobalSettings, loadGlobalI18NMessages } = require('./src/utils')
+import nodemon from 'nodemon'
+
+import { readFile } from 'fs/promises'
+
+import { loadGlobalSettings, loadGlobalI18NMessages } from './src/utils.mjs'
 
 let nodemonConfig = {}
 
 const root = process.env.DUOSITE_ROOT || process.cwd()
 
-const globalSettings = loadGlobalSettings(root)
+const globalSettings = await loadGlobalSettings(root)
 
-const i18nm = loadGlobalI18NMessages(root, globalSettings.lang)
+const i18nm = await loadGlobalI18NMessages(root, globalSettings.lang)
 
 try {
-  nodemonConfig = require(`${root}/nodemon.json`)
+  // nodemonConfig = require(`${root}/nodemon.json`)
+  nodemonConfig = JSON.parse(
+    await readFile(new URL(`${root}/nodemon.json`, import.meta.url))
+  )
+
   console.log(i18nm.useCustomNodemonJson)
 } catch (e) {
   nodemonConfig = require('./nodemon.json')

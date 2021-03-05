@@ -1,5 +1,5 @@
 // shared settings
-module.exports = {
+const settings = {
   defaultSite: 'www',
   lang: 'en',
   port: 5000,
@@ -11,3 +11,5 @@ module.exports = {
     },
   },
 }
+
+export default settings

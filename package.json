@@ -4,7 +4,7 @@
   "version": "0.1.1",
   "repository": "https://github.com/yizhanyun/duosite.git",
   "scripts": {
-    "dev": "node dev.js",
+    "dev": "node dev.mjs",
     "build": "node build.js",
     "prod": "NODE_ENV=production node prod.js",
     "duosite": "duosite",

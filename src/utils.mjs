@@ -1,19 +1,18 @@
-'use strict'
+import fs from 'fs'
+import path from 'path'
 
-const fs = require('fs')
-const path = require('path')
+import fsp from 'fs/promises'
 
-const fsp = require('fs/promises')
+import deepmerge from 'deepmerge'
 
-const deepmerge = require('deepmerge')
-
-const requireOption = path => {
-  try {
-    return require(path)
-  } catch (e) {
-    return undefined
-  }
-}
+// const requireOption = path => {
+//   try {
+//     return require(path)
+//   } catch (e) {
+//     console.log(e)
+//     return undefined
+//   }
+// }
 
 // Get directories of a directory
 const getDirectories = source =>
@@ -144,14 +143,18 @@ const resolveUrlToFile = async (siteRoot, url, viewEngine) => {
  * @return { Object } globalSettings - global settings
  */
 
-const loadGlobalSettings = root => {
-  const sharedSetting = requireOption(path.join(root, 'settings')) || {}
-  const byEnironmentSetting =
-    process.env.NODE_ENV === 'production'
-      ? requireOption(path.join(root, 'settings.production')) || {}
-      : requireOption(path.join(root, 'settings.development')) || {}
+const loadGlobalSettings = async root => {
+  let sharedSetting, byEnironmentSetting
+  try {
+    sharedSetting = (await import(path.join(root, 'settings.mjs'))).default
+    byEnironmentSetting =
+      process.env.NODE_ENV === 'production'
+        ? (await import(path.join(root, 'settings.production.mjs'))).default
+        : (await import(path.join(root, 'settings.development.mjs'))).default
+  } catch (e) {}
 
-  return deepmerge(sharedSetting, byEnironmentSetting)
+  console.log(sharedSetting, byEnironmentSetting)
+  return deepmerge(sharedSetting || {}, byEnironmentSetting || {})
 }
 
 /** Load global i18n messages
@@ -160,29 +163,37 @@ const loadGlobalSettings = root => {
  * @return { Object } i18n messages
  */
 
-const loadGlobalI18NMessages = (duositeRoot, _lang) => {
+const loadGlobalI18NMessages = async (duositeRoot, _lang) => {
   if (!_lang) console.log('Local not defined in settings. Use English.')
 
   const lang = _lang || 'en'
 
-  const i18nMessagesSite = requireOption(
-    `${duositeRoot}/src/lang/messages/${lang}`
-  )
+  let i18nMessagesSite, i18nMessagesDefault
 
-  const i18nMessagesDefault = requireOption(`./lang/messages/${lang}`)
+  console.log(`${duositeRoot}/src/lang/messages/${lang}`)
+  try {
+    i18nMessagesSite = (
+      await import(`${duositeRoot}/src/lang/messages/${lang}.mjs`)
+    ).default
+    i18nMessagesDefault = (await import(`./lang/messages/${lang}.mjs`)).default
+  } catch (e) {}
 
   if (!i18nMessagesSite && !i18nMessagesDefault) {
     console.log(
       `Language dictionary for ${lang} not found. Use English as fallback`
     )
 
-    const _i18nMessagesSite =
-      i18nMessagesSite || requireOption(`${duositeRoot}/src/lang/messages/en`)
+    let _i18nMessagesSite, _i18nMessagesDefault
 
-    const _i18nMessagesDefault =
-      i18nMessagesDefault || requireOption(`./lang/messages/en`)
+    try {
+      _i18nMessagesSite =
+        i18nMessagesSite ||
+        (await import(`${duositeRoot}/src/lang/messages/en`)).default
+      _i18nMessagesDefault =
+        i18nMessagesDefault || (await import(`./lang/messages/en`)).default
+    } catch (e) {}
 
-    return deepmerge(_i18nMessagesSite, _i18nMessagesDefault)
+    return deepmerge(_i18nMessagesSite || {}, _i18nMessagesDefault || {})
   } else return deepmerge(i18nMessagesSite, i18nMessagesDefault)
 }
 
@@ -524,7 +535,7 @@ const buildApiRouteUrlVariableTable = (routes, target = 'fastify') => {
  * @return {[[string, string]]} - array of [router string, filepath]
  */
 
-module.exports = {
+export {
   getDirectories,
   getSubsite,
   resolveUrlToFile,
