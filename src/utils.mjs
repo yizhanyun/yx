@@ -327,6 +327,7 @@ const segmentsToRoute = segments => {
  */
 
 const buildFileRoutingTable = (root, ext, target = 'fastify') => {
+
   const dirTree = recursiveReadDirSync(root).filter(([filename, filetype]) => {
     if (filetype === 'd') return false
     return filename.endsWith(ext)

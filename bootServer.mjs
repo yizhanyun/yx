@@ -8,7 +8,9 @@ import {
   getSubsite,
   loadGlobalSettings,
   loadGlobalI18NMessages,
-} from './src/utils'
+} from './src/utils.mjs'
+
+import buildSubsitePlugin from './src/plugins/subsite.mjs'
 
 import chalk from 'chalk'
 
@@ -30,7 +32,7 @@ const bootServer = async opts => {
 
   const root = _root || process.env.DUOSITE_ROOT || process.cwd()
 
-  const settings = loadGlobalSettings(root)
+  const settings = await loadGlobalSettings(root)
 
   // const
 
@@ -51,8 +53,8 @@ const bootServer = async opts => {
 
   // const load plugin
 
-  const buildSubsitePlugin = require('./src/plugins/subsite')
-  const subsitePlugin = buildSubsitePlugin(build, buildTarget)
+
+  const subsitePlugin = await buildSubsitePlugin(build, buildTarget)
 
   const {
     defaultSite = 'www',
@@ -64,16 +66,16 @@ const bootServer = async opts => {
   // load lang
 
   // i18n for messages
-  const i18nm = loadGlobalI18NMessages(root, lang)
+  const i18nm = await loadGlobalI18NMessages(root, lang)
 
   // Build global services
 
   let buildGlobalServices
   try {
-    buildGlobalServices = await import(`${root}/src/globalServices`)
+    buildGlobalServices = (await import(`${root}/src/globalServices.mjs`)).default
   } catch {}
 
-  const globalServices = buildGlobalServices
+  const globalServices = await buildGlobalServices
     ? buildGlobalServices(settings, root)
     : {}
 
@@ -81,7 +83,7 @@ const bootServer = async opts => {
   let enhance
 
   try {
-    enhance = await import(`${root}/src/enhancer`)
+    enhance = (await import(`${root}/src/enhancer.mjs`)).default
   } catch (e) {}
   // Get subsite list
 
@@ -118,7 +120,7 @@ const bootServer = async opts => {
   })
 
   enhance &&
-    enhance(duositeFastify, settings, {
+    await enhance(duositeFastify, settings, {
       global: {
         root,
         settings: globalSettings,
@@ -131,7 +133,7 @@ const bootServer = async opts => {
   if (build) {
     let defaultBuildGlobal
     try {
-      defaultBuildGlobal = await import('./src/buildGlobal')
+      defaultBuildGlobal = (await import('./src/buildGlobal.mjs')).default
     } catch (e) {
       console.log(e)
     }
@@ -139,7 +141,7 @@ const bootServer = async opts => {
     let customBuildGlobal
 
     try {
-      customBuildGlobal = await import(path.join(root, 'src/buildGlobal'))
+      customBuildGlobal = (await import(path.join(root, 'src/buildGlobal.mjs'))).default
     } catch (e) {
       console.log(e)
     }
@@ -148,19 +150,19 @@ const bootServer = async opts => {
       (customBuildGlobal && customBuildGlobal.prebuild) ||
       (defaultBuildGlobal && defaultBuildGlobal.prebuild)
 
-    prebuild && prebuild(root, settings, globalServices)
+    prebuild && await prebuild(root, settings, globalServices)
 
     const _build =
       (customBuildGlobal && customBuildGlobal.build) ||
       (defaultBuildGlobal && defaultBuildGlobal.build)
 
-    _build && _build(root, settings, globalServices)
+    _build && await _build(root, settings, globalServices)
 
     const postbuild =
       (customBuildGlobal && customBuildGlobal.postbuild) ||
       (defaultBuildGlobal && defaultBuildGlobal.postbuild)
 
-    postbuild && postbuild(root, settings, globalServices)
+    postbuild && await postbuild(root, settings, globalServices)
   }
 
   // boot subsite servers

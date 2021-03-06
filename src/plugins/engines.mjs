@@ -1,9 +1,9 @@
 // Build engines
 
-const { Liquid } = require('liquidjs')
+import { Liquid } from 'liquidjs'
 
-const build = (siteRoot, name, ext, options, lang, i18n, i18nm) => {
-  switch (name) {
+const build = async (siteRoot, extName, ext, options, lang, i18n, i18nm) => {
+  switch (extName) {
     case 'liquid': {
       return new Liquid({ ...options, root: siteRoot })
     }
@@ -12,4 +12,4 @@ const build = (siteRoot, name, ext, options, lang, i18n, i18nm) => {
   }
 }
 
-module.exports = build
+export default build

@@ -1,29 +1,23 @@
-const deepmerge = require('deepmerge')
-const fastifyStatic = require('fastify-static')
-const path = require('path')
+import deepmerge from 'deepmerge'
+import fastifyStatic from 'fastify-static'
+import path from 'path'
 
-const {
+import {
   genericGetRoute,
   buildFileRouter,
   buildApiRouter,
-} = require('./getHandler')
-const {
+} from './getHandler.mjs'
+
+import {
   buildFileRoutingTable,
   buildApiRoutingTable,
   buildApiRouteUrlVariableTable,
 
   buildFileRouteUrlVariableTable,
-} = require('../utils')
+} from '../utils.mjs'
 
 const siteRootName = 'sites'
 
-const requireOption = path => {
-  try {
-    return require(path)
-  } catch (e) {
-    return undefined
-  }
-}
 
 const isProduction = process.env.NODE_ENV === 'production'
 
@@ -31,8 +25,8 @@ const isProduction = process.env.NODE_ENV === 'production'
 
 // opts: { prefix, _duosite: { siteRoot }}
 
-const buildSubsitePlugin = (buildSite, target) => {
-  const subsite = function (fastify, opts, done) {
+const buildSubsitePlugin = async (buildSite, target) => {
+  const subsite = async function (fastify, opts, done) {
     const { _duosite, prefix: site } = opts
 
     const { global } = _duosite
@@ -46,13 +40,20 @@ const buildSubsitePlugin = (buildSite, target) => {
       isProduction ? '.production' : ''
     )
     // load subsite settings
-    const sharedSetting = requireOption(`${siteRoot}/settings`) || {}
-    const byEnironmentSetting =
+    let sharedSetting, byEnironmentSetting
+    try {
+      sharedSetting = (await import(`${siteRoot}/settings.mjs`)).default
+     byEnironmentSetting =
       process.env.NODE_ENV === 'production'
-        ? requireOption(`./${siteRoot}/settings.production`) || {}
-        : requireOption(`./${siteRoot}/settings.development`) || {}
+        ? (await import(`./${siteRoot}/settings.production.mjs`)).default || {}
+      : (await import(`./${siteRoot}/settings.development.mjs`)).default || {}
+    } catch (e) {
+      console.log(e)
+    }
 
-    const settings = deepmerge(sharedSetting, byEnironmentSetting)
+    const settings = deepmerge(sharedSetting || {}, byEnironmentSetting || {})
+
+
 
     const {
       staticRoot = 'static', // Root for statics that are serverved as is.
@@ -62,7 +63,12 @@ const buildSubsitePlugin = (buildSite, target) => {
 
     // Build global services
 
-    const buildSiteServices = requireOption(`${siteRoot}/src/siteServices`)
+    let buildSiteServices
+    
+    try {
+      buildSiteServices  =  (await import(`${siteRoot}/src/siteServices`)).default
+    } catch (e) {
+    }
 
     const siteServices = buildSiteServices
       ? buildSiteServices(globalSettings, settings, root)
@@ -70,25 +76,45 @@ const buildSubsitePlugin = (buildSite, target) => {
 
     // build site  enhancer
 
-    const enhance = requireOption(`${siteRoot}/src/enhancer`)
+    let enhance
+    try {
+      ehance    = (await import(`${siteRoot}/src/enhancer.mjs`)).default
+    } catch (e) {
 
+    }
     // build site engine
 
+
     const { name, ext, options = {} } = viewEngine
+
+    site === 'test-1' && console.log('%%%%%%%%%%%%%%%%%%%%%% viewEngine ', viewEngine, site )      
+
     let engine
 
     if (name && ext) {
-      const buildEngine = requireOption(`${siteRoot}/plugins/engines`)
+      let buildEngine
+
+      try {
+        buildEngine = (await import(`${siteRoot}/plugins/engines.mjs`)).default
+      } catch (e) {
+          console.log(e)
+      }
 
       if (buildEngine) {
         // use local provided engines
 
-        engine = buildEngine(siteRoot, name, ext, options, lang, i18nMessages)
+        engine = await buildEngine(siteRoot, name, ext, options, lang, i18nMessages)
       } else {
         // use global engines
-        const buildEngine = requireOption('./engines')
+        let buildEngine
+        try {
+          buildEngine   = (await import('./engines.mjs')).default
+        } catch (e) {
+          console.log(e)
+        }
         if (buildEngine) {
-          engine = buildEngine(siteRoot, name, ext, options, lang, i18nMessages)
+          console.log('%%%%%%%%%%%%%%%%%%%%%% buildEngine ', buildEngine )      
+          engine = await buildEngine(siteRoot, name, ext, options, lang, i18nMessages)
         }
       }
     }
@@ -168,7 +194,7 @@ const buildSubsitePlugin = (buildSite, target) => {
     if (buildSite && (target === '*' || target === site)) {
       let defaultBuildSite
       try {
-        defaultBuildSite = require('./src/buildSite')
+        defaultBuildSite = (await import('./src/buildSite.mjs')).default
       } catch (e) {
         console.log(e)
       }
@@ -180,7 +206,7 @@ const buildSubsitePlugin = (buildSite, target) => {
 
       const devSiteRoot = segs.join('/')
       try {
-        customBuildSite = require(path.join(devSiteRoot, 'src', 'buildSite'))
+        customBuildSite = (await import(path.join(devSiteRoot, 'src', 'buildSite.mjs'))).default
       } catch (e) {
         console.log(e)
       }
@@ -189,19 +215,19 @@ const buildSubsitePlugin = (buildSite, target) => {
         (customBuildSite && customBuildSite.prebuild) ||
         (defaultBuildSite && defaultBuildSite.prebuild)
 
-      prebuild && prebuild(devSiteRoot, duositeConfig)
+      prebuild && await prebuild(devSiteRoot, duositeConfig)
 
       const _build =
         (customBuildSite && customBuildSite.build) ||
         (defaultBuildSite && defaultBuildSite.build)
 
-      _build && _build(devSiteRoot, duositeConfig)
+      _build && await _build(devSiteRoot, duositeConfig)
 
       const postbuild =
         (customBuildSite && customBuildSite.postbuild) ||
         (defaultBuildSite && defaultBuildSite.postbuild)
 
-      postbuild && postbuild(devSiteRoot, duositeConfig)
+      postbuild && await postbuild(devSiteRoot, duositeConfig)
     }
 
     done()
@@ -210,4 +236,4 @@ const buildSubsitePlugin = (buildSite, target) => {
   return subsite
 }
 
-module.exports = buildSubsitePlugin
+export default buildSubsitePlugin

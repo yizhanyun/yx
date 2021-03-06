@@ -1,7 +1,7 @@
 // build global services
 // this is a sample services with an `id` function
 
-const buildGlobalServices = (settings, root) => {
+const buildGlobalServices = async (settings, root) => {
   return {
     id: function (id) {
       return id
@@ -9,4 +9,4 @@ const buildGlobalServices = (settings, root) => {
   }
 }
 
-module.exports = buildGlobalServices
+ export default buildGlobalServices

@@ -24,7 +24,10 @@ try {
 
   console.log(i18nm.useCustomNodemonJson)
 } catch (e) {
-  nodemonConfig = require('./nodemon.json')
+  nodemonConfig = JSON.parse(
+    await readFile(new URL(`./nodemon.json`, import.meta.url))
+  )
+
   console.log(i18nm.useDefaultNodemonJson)
 }
 
@@ -35,7 +38,7 @@ const watchWithRoot = watch.map(p => path.join(root, p))
 nodemon({
   ...nodemonConfig,
   watch: watchWithRoot,
-  script: './server.js',
+  script: './server.mjs',
 })
 
 nodemon

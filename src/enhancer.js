@@ -5,11 +5,11 @@
  * @param {duositSettings}
  */
 
-const enhance = (fastify, settings, duositeConfig) => {
+const enhance = async (fastify, settings, duositeConfig) => {
   const {
     global: { i18nMessages: i18nm },
   } = duositeConfig
   console.log(i18nm.runningGlobalEnhancer)
 }
 
-module.exports = enhance
+export default enhance

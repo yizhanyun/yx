@@ -9,7 +9,7 @@
     "prod": "NODE_ENV=production node prod.js",
     "duosite": "duosite",
     "test": "jest",
-    "lint": "yarn eslint ./*.js src/**/*.js ./sites/**/*.js"
+    "lint": "yarn eslint ./*.js src/**/*.js ./sites/**/*.js ./*.mjs src/**/*.mjs ./sites/**/*.mjs"
   },
   "dependencies": {
     "@gquittet/graceful-server": "^2.3.1",

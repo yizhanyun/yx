@@ -1,7 +1,7 @@
 // Basic get handler
-const path = require('path')
+import path from 'path'
 
-const { resolveUrlToFile, removeSuffix } = require('../utils')
+import { resolveUrlToFile, removeSuffix } from '../utils.mjs'
 
 const genericGetHandler = async function (request, reply) {
   const { _duosite } = request
@@ -10,6 +10,7 @@ const genericGetHandler = async function (request, reply) {
     site: { root: siteRoot, engine, settings = {} },
   } = _duosite
 
+  console.log('####################', _duosite)
   const { viewEngine = {} } = settings
 
   const { ext } = viewEngine
@@ -27,7 +28,7 @@ const genericGetHandler = async function (request, reply) {
       let booted
       let bootJs
       try {
-        bootJs = require(path.join(siteRoot, file + '.boot.js'))
+        bootJs = (await import(path.join(siteRoot, file + '.boot.mjs'))).default
       } catch (e) {
         console.log(e)
       }
@@ -70,7 +71,7 @@ const buildFileRouteHanlderNew = table => {
     let booted
     let bootJs
     try {
-      bootJs = require(path.join(siteRoot, file + '.boot.js'))
+      bootJs = (await import(path.join(siteRoot, file + '.boot.mjs'))).default
     } catch (e) {
       // console.log(e)
     }
@@ -98,13 +99,13 @@ const buildFileRouteHanlderNew = table => {
 
 const allMethods = ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'OPTIONS']
 
-const buildApiRouter = (table, siteRoot) => {
+const buildApiRouter = async (table, siteRoot) => {
   let router
 
   const [url, , file, type] = table
 
   try {
-    router = require(path.join(siteRoot, 'api', file))
+    router = (await import(path.join(siteRoot, 'api', file))).default
   } catch (e) {}
 
   if (!router) {
@@ -140,7 +141,7 @@ const buildFileRouter = table => {
   }
 }
 
-module.exports = {
+export {
   genericGetRoute,
   buildFileRouter,
   buildApiRouter,
