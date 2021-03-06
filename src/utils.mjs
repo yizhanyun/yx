@@ -5,15 +5,6 @@ import fsp from 'fs/promises'
 
 import deepmerge from 'deepmerge'
 
-// const requireOption = path => {
-//   try {
-//     return require(path)
-//   } catch (e) {
-//     console.log(e)
-//     return undefined
-//   }
-// }
-
 // Get directories of a directory
 const getDirectories = source =>
   fs
@@ -153,7 +144,6 @@ const loadGlobalSettings = async root => {
         : (await import(path.join(root, 'settings.development.mjs'))).default
   } catch (e) {}
 
-  console.log(sharedSetting, byEnironmentSetting)
   return deepmerge(sharedSetting || {}, byEnironmentSetting || {})
 }
 
@@ -170,7 +160,6 @@ const loadGlobalI18NMessages = async (duositeRoot, _lang) => {
 
   let i18nMessagesSite, i18nMessagesDefault
 
-  console.log(`${duositeRoot}/src/lang/messages/${lang}`)
   try {
     i18nMessagesSite = (
       await import(`${duositeRoot}/src/lang/messages/${lang}.mjs`)
@@ -327,7 +316,6 @@ const segmentsToRoute = segments => {
  */
 
 const buildFileRoutingTable = (root, ext, target = 'fastify') => {
-
   const dirTree = recursiveReadDirSync(root).filter(([filename, filetype]) => {
     if (filetype === 'd') return false
     return filename.endsWith(ext)
@@ -436,9 +424,6 @@ const buildApiRouteUrlVariableTable = (routes, target = 'fastify') => {
         segs.push(segName)
       })
 
-      // console.log('$$$$$$$$$$$$$$', routeType, segments, _variables, segs)
-      // const variables = _variables.filter(segName => !!segName)
-
       const url = segs.join('/')
       return [[url, _variables, filename, routeType]]
     } else if (routeType === 'catchAll') {
@@ -471,9 +456,6 @@ const buildApiRouteUrlVariableTable = (routes, target = 'fastify') => {
           segs.push(':' + segName)
         } else segs.push(segName)
       })
-
-      // console.log('$$$$$$$$$$$$$$', routeType, segments, _variables, segs)
-      // const variables = _variables.filter(segName => !!segName)
 
       const url = segs.join('/')
       return [[url, _variables, filename, routeType]]

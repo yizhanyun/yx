@@ -4,6 +4,4 @@ const getServerProps = async ctx => {
   }
 }
 
-module.exports = {
-  getServerProps,
-}
+export { getServerProps }

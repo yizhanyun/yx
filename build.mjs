@@ -1,6 +1,4 @@
-const path = require('path')
-
-const bootServer = require('./bootServer')
+import bootServer from './bootServer.mjs'
 
 const target = process.argv[2] === 'all' ? '*' : process.argv[2]
 

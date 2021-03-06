@@ -5,8 +5,8 @@
   "repository": "https://github.com/yizhanyun/duosite.git",
   "scripts": {
     "dev": "node dev.mjs",
-    "build": "node build.js",
-    "prod": "NODE_ENV=production node prod.js",
+    "build": "node build.mjs",
+    "prod": "NODE_ENV=production node prod.mjs",
     "duosite": "duosite",
     "test": "jest",
     "lint": "yarn eslint ./*.js src/**/*.js ./sites/**/*.js ./*.mjs src/**/*.mjs ./sites/**/*.mjs"

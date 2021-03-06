@@ -1,7 +1,5 @@
 import path from 'path'
 
-// const path = require('path')
-
 import nodemon from 'nodemon'
 
 import { readFile } from 'fs/promises'
@@ -17,7 +15,6 @@ const globalSettings = await loadGlobalSettings(root)
 const i18nm = await loadGlobalI18NMessages(root, globalSettings.lang)
 
 try {
-  // nodemonConfig = require(`${root}/nodemon.json`)
   nodemonConfig = JSON.parse(
     await readFile(new URL(`${root}/nodemon.json`, import.meta.url))
   )

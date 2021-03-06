@@ -53,7 +53,6 @@ const bootServer = async opts => {
 
   // const load plugin
 
-
   const subsitePlugin = await buildSubsitePlugin(build, buildTarget)
 
   const {
@@ -72,10 +71,11 @@ const bootServer = async opts => {
 
   let buildGlobalServices
   try {
-    buildGlobalServices = (await import(`${root}/src/globalServices.mjs`)).default
+    buildGlobalServices = (await import(`${root}/src/globalServices.mjs`))
+      .default
   } catch {}
 
-  const globalServices = await buildGlobalServices
+  const globalServices = (await buildGlobalServices)
     ? buildGlobalServices(settings, root)
     : {}
 
@@ -120,7 +120,7 @@ const bootServer = async opts => {
   })
 
   enhance &&
-    await enhance(duositeFastify, settings, {
+    (await enhance(duositeFastify, settings, {
       global: {
         root,
         settings: globalSettings,
@@ -128,12 +128,12 @@ const bootServer = async opts => {
         i18nMessages: i18nm,
         lang,
       },
-    })
+    }))
 
   if (build) {
     let defaultBuildGlobal
     try {
-      defaultBuildGlobal = (await import('./src/buildGlobal.mjs')).default
+      defaultBuildGlobal = await import('./src/buildGlobal.mjs')
     } catch (e) {
       console.log(e)
     }
@@ -141,7 +141,7 @@ const bootServer = async opts => {
     let customBuildGlobal
 
     try {
-      customBuildGlobal = (await import(path.join(root, 'src/buildGlobal.mjs'))).default
+      customBuildGlobal = await import(path.join(root, 'src/buildGlobal.mjs'))
     } catch (e) {
       console.log(e)
     }
@@ -150,19 +150,19 @@ const bootServer = async opts => {
       (customBuildGlobal && customBuildGlobal.prebuild) ||
       (defaultBuildGlobal && defaultBuildGlobal.prebuild)
 
-    prebuild && await prebuild(root, settings, globalServices)
+    prebuild && (await prebuild(root, settings, globalServices))
 
     const _build =
       (customBuildGlobal && customBuildGlobal.build) ||
       (defaultBuildGlobal && defaultBuildGlobal.build)
 
-    _build && await _build(root, settings, globalServices)
+    _build && (await _build(root, settings, globalServices))
 
     const postbuild =
       (customBuildGlobal && customBuildGlobal.postbuild) ||
       (defaultBuildGlobal && defaultBuildGlobal.postbuild)
 
-    postbuild && await postbuild(root, settings, globalServices)
+    postbuild && (await postbuild(root, settings, globalServices))
   }
 
   // boot subsite servers

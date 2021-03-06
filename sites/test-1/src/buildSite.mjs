@@ -1,17 +1,17 @@
-const rimraf = require('rimraf')
-const path = require('path')
-const fs = require('fs-extra')
+import rimraf from 'rimraf'
+import path from 'path'
+import fs from 'fs-extra'
 
-const prebuild = (root, _duosite) => {
+const prebuild = async (root, _duosite) => {
   // console.log('%%% site prebuild ', root, _duosite)
 }
 
-const build = (root, _duosite) => {
+const build = async (root, _duosite) => {
   console.log('Clearing .produciton folder')
   rimraf.sync(path.join(root, '.production'))
   fs.mkdirpSync(path.join(root, '.production'))
 
-  const filesForCopy = ['settings.js', 'settings.production.js']
+  const filesForCopy = ['settings.mjs', 'settings.production.mjs']
 
   filesForCopy.forEach(file => {
     const target = path.join(root, '.production', file)
@@ -31,12 +31,8 @@ const build = (root, _duosite) => {
   })
 }
 
-const postbuild = (root, _duosite) => {
+const postbuild = async (root, _duosite) => {
   // console.log('%%% site postbuild ', root, _duosite)
 }
 
-module.exports = {
-  prebuild,
-  postbuild,
-  build,
-}
+export { prebuild, postbuild, build }

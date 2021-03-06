@@ -12,12 +12,10 @@ import {
   buildFileRoutingTable,
   buildApiRoutingTable,
   buildApiRouteUrlVariableTable,
-
   buildFileRouteUrlVariableTable,
 } from '../utils.mjs'
 
 const siteRootName = 'sites'
-
 
 const isProduction = process.env.NODE_ENV === 'production'
 
@@ -43,17 +41,17 @@ const buildSubsitePlugin = async (buildSite, target) => {
     let sharedSetting, byEnironmentSetting
     try {
       sharedSetting = (await import(`${siteRoot}/settings.mjs`)).default
-     byEnironmentSetting =
-      process.env.NODE_ENV === 'production'
-        ? (await import(`./${siteRoot}/settings.production.mjs`)).default || {}
-      : (await import(`./${siteRoot}/settings.development.mjs`)).default || {}
+      byEnironmentSetting =
+        process.env.NODE_ENV === 'production'
+          ? (await import(`./${siteRoot}/settings.production.mjs`)).default ||
+            {}
+          : (await import(`./${siteRoot}/settings.development.mjs`)).default ||
+            {}
     } catch (e) {
       console.log(e)
     }
 
     const settings = deepmerge(sharedSetting || {}, byEnironmentSetting || {})
-
-
 
     const {
       staticRoot = 'static', // Root for statics that are serverved as is.
@@ -64,11 +62,10 @@ const buildSubsitePlugin = async (buildSite, target) => {
     // Build global services
 
     let buildSiteServices
-    
+
     try {
-      buildSiteServices  =  (await import(`${siteRoot}/src/siteServices`)).default
-    } catch (e) {
-    }
+      buildSiteServices = (await import(`${siteRoot}/src/siteServices`)).default
+    } catch (e) {}
 
     const siteServices = buildSiteServices
       ? buildSiteServices(globalSettings, settings, root)
@@ -78,16 +75,11 @@ const buildSubsitePlugin = async (buildSite, target) => {
 
     let enhance
     try {
-      ehance    = (await import(`${siteRoot}/src/enhancer.mjs`)).default
-    } catch (e) {
-
-    }
+      ehance = (await import(`${siteRoot}/src/enhancer.mjs`)).default
+    } catch (e) {}
     // build site engine
 
-
     const { name, ext, options = {} } = viewEngine
-
-    site === 'test-1' && console.log('%%%%%%%%%%%%%%%%%%%%%% viewEngine ', viewEngine, site )      
 
     let engine
 
@@ -97,24 +89,37 @@ const buildSubsitePlugin = async (buildSite, target) => {
       try {
         buildEngine = (await import(`${siteRoot}/plugins/engines.mjs`)).default
       } catch (e) {
-          console.log(e)
+        console.log(e)
       }
 
       if (buildEngine) {
         // use local provided engines
 
-        engine = await buildEngine(siteRoot, name, ext, options, lang, i18nMessages)
+        engine = await buildEngine(
+          siteRoot,
+          name,
+          ext,
+          options,
+          lang,
+          i18nMessages
+        )
       } else {
         // use global engines
         let buildEngine
         try {
-          buildEngine   = (await import('./engines.mjs')).default
+          buildEngine = (await import('./engines.mjs')).default
         } catch (e) {
           console.log(e)
         }
         if (buildEngine) {
-          console.log('%%%%%%%%%%%%%%%%%%%%%% buildEngine ', buildEngine )      
-          engine = await buildEngine(siteRoot, name, ext, options, lang, i18nMessages)
+          engine = await buildEngine(
+            siteRoot,
+            name,
+            ext,
+            options,
+            lang,
+            i18nMessages
+          )
         }
       }
     }
@@ -194,19 +199,17 @@ const buildSubsitePlugin = async (buildSite, target) => {
     if (buildSite && (target === '*' || target === site)) {
       let defaultBuildSite
       try {
-        defaultBuildSite = (await import('./src/buildSite.mjs')).default
+        defaultBuildSite = await import('../buildSite.mjs')
       } catch (e) {
         console.log(e)
       }
 
       let customBuildSite
 
-      const segs = siteRoot.split('/')
-      segs.pop()
-
-      const devSiteRoot = segs.join('/')
       try {
-        customBuildSite = (await import(path.join(devSiteRoot, 'src', 'buildSite.mjs'))).default
+        customBuildSite = await import(
+          path.join(siteRoot, 'src', 'buildSite.mjs')
+        )
       } catch (e) {
         console.log(e)
       }
@@ -215,19 +218,19 @@ const buildSubsitePlugin = async (buildSite, target) => {
         (customBuildSite && customBuildSite.prebuild) ||
         (defaultBuildSite && defaultBuildSite.prebuild)
 
-      prebuild && await prebuild(devSiteRoot, duositeConfig)
+      prebuild && (await prebuild(siteRoot, duositeConfig))
 
       const _build =
         (customBuildSite && customBuildSite.build) ||
         (defaultBuildSite && defaultBuildSite.build)
 
-      _build && await _build(devSiteRoot, duositeConfig)
+      _build && (await _build(siteRoot, duositeConfig))
 
       const postbuild =
         (customBuildSite && customBuildSite.postbuild) ||
         (defaultBuildSite && defaultBuildSite.postbuild)
 
-      postbuild && await postbuild(devSiteRoot, duositeConfig)
+      postbuild && (await postbuild(siteRoot, duositeConfig))
     }
 
     done()

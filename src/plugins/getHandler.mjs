@@ -10,7 +10,6 @@ const genericGetHandler = async function (request, reply) {
     site: { root: siteRoot, engine, settings = {} },
   } = _duosite
 
-  console.log('####################', _duosite)
   const { viewEngine = {} } = settings
 
   const { ext } = viewEngine
@@ -28,7 +27,7 @@ const genericGetHandler = async function (request, reply) {
       let booted
       let bootJs
       try {
-        bootJs = (await import(path.join(siteRoot, file + '.boot.mjs'))).default
+        bootJs = await import(path.join(siteRoot, file + '.boot.mjs'))
       } catch (e) {
         console.log(e)
       }
@@ -54,7 +53,6 @@ const genericGetHandler = async function (request, reply) {
 const buildFileRouteHanlderNew = table => {
   const [, , filename] = table
 
-  console.log('...', table, filename)
   const file = path.join('pages', filename)
 
   const handler = async (request, reply) => {
@@ -71,7 +69,7 @@ const buildFileRouteHanlderNew = table => {
     let booted
     let bootJs
     try {
-      bootJs = (await import(path.join(siteRoot, file + '.boot.mjs'))).default
+      bootJs = await import(path.join(siteRoot, file + '.boot.mjs'))
     } catch (e) {
       // console.log(e)
     }
@@ -141,8 +139,4 @@ const buildFileRouter = table => {
   }
 }
 
-export {
-  genericGetRoute,
-  buildFileRouter,
-  buildApiRouter,
-}
+export { genericGetRoute, buildFileRouter, buildApiRouter }

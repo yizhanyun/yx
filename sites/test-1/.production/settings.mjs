@@ -1,5 +1,5 @@
 // shared settings
-module.exports = {
+export default {
   viewEngine: {
     name: 'liquid',
     ext: '.liquid', // template extension

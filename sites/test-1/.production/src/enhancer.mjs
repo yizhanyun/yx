@@ -8,4 +8,4 @@ const enhance = (fastify, _duosite) => {
   })
 }
 
-module.exports = enhance
+export default enhance
