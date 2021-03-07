@@ -3,25 +3,39 @@
 
 # 多站 duosite
 
-Duosite (duo: 多, many in Chinese, site: 站 in Chinese) is a web server that aims to host and run many sub sites, each with its own sub setting, folder structure and template / view engine, and file system based routing (in progress)  as Nextjs.
+Duosite (duo: 多, many in Chinese, site: 站 in Chinese) is a web server that aims to host and run many sub sites, each with its own sub setting, folder structure and template / view engine, file system based routing, static site generation but also supports advanced nodejs server side programming.
 
-Duosite is built on top of the excellent [fastify](https://github.com/fastify/fastify) webserver.
+Duosite is built on top of the excellent [fastify](https://github.com/fastify/fastify) webserver. Duosite borrowed many ideas from [Nextjs](https://github.com/vercel/next.js). I'd like to thank both teams for their greate work and contribution to open source software.
 
-## Why duosite?
+## Core Duosite features
 
-The reason to develop duosite is simple: I need a web server that allows me to experiment html / css / js, with each site and setup indepent of each other.
+### Pages of both static HTML and view templates
 
-The same goal can be achieved by checkouting out different branches with a different setup. The problem is that then each branch would not be visible to eachother at the same time.
+Like Next.js, Duosite renders and serves pages from `<site>/pages` folder. Unlike Next.js, Duosite supports static HTML files and also renders template engine files, for [liquidjs](https://github.com/harttle/liquidjs).
 
-Using `yarn` workspace can achieve it to but each subsite needs to maintian a separate server setup and ports. It's inconvinient as well.
+### Filebased routing
 
-Say I would like to expriment a subsite with ejs template engine and another one with marko engine. I don't want to swith branches or servers with different port, which is hard to memorize.
+Duosite supports Nextjs style file based routing, in the format of `/<segments>/[route1]/[route2]/[[...captureAll]].[template-ext]`.
 
-The two should coexist in harmony. And I can visit `site-ejs.localhost` and `site-marko.localhost` at the same time. That's the starting idea of duosite.
+It also supports three dat feteching methods for template renderring, and static html generation, `getStaticProps`, `getServerProps` and `getStaticPaths`.
 
-Duosite should also be a host of template projects for experimenting various frameworks or libraries.
+### Companion boot.mjs to unify data loading
 
-Duosite should have commands to create new projects from template projects.
+Duosite has one unique design, a companion `boot.mjs` for loading data for template renderring.
+
+One common task is to load initial data for template renderring. To support file based routing, when renderring template under pages, duosite would look up a companion js file, `<template-file-name>.boot.mjs`, which should export one or all of three async functions: `getStaticProps`, `getServerProps`, `getStaticPaths`
+
+### Server enhancement
+
+Drawing on `fastify`'s plugin based design, Duosite allows deep customization and enhancement of built-in server. It allows developers to provide global service builder and site service builder to added shared services, allow global enhancer and site enhancer to enrich web server and add any routing rules and handlers to build-in server.
+
+### Subsites and indepent engines
+
+Duosite supports subsites and allow each subsite to have its own template engines and renderrers. You can hve one site of `ejs` engine and another of `liquidjs` engine for experiments, benchmarking, testing and production.
+
+### Compile to generate full static site or mixed static and dynamic site
+
+Like Nextjs, duosite expose a `yarn duosite build <site-name` command, which will scan page folder to decide if a template file should and could be renderred to static html file or files, or should be dynamicly renddered and served.
 
 ## Usage
 
@@ -533,24 +547,37 @@ MIT
 # duosite
 Duosite (duo: 多)， 多站，是一个可以支持独立多子站点的web服务器。每个子站点有自己的独立设置、目录、模板(template) / View引擎，同时也支持基于文件的路由（类似于nextjs）（该特性还在开发中）
 
-Duosite基于[fastify](https://github.com/fastify/fastify) web服务器开发。
+Duosite基于[fastify](https://github.com/fastify/fastify) web服务器开发。多站 duosite也从[Nextjs](https://github.com/vercel/next.js)借鉴了大量的设计理念。这里我要对两个团队对开源软件届的贡献表示感谢。
 
-## 为什么开发Duosite，多站
+## 多站Duosite核心特征
 
-理由很简单：我需要一个方便实验不同的html / css / js技术和框架的web服务器。
+### 同时支持静态HTML与模板引擎页面
 
-这个目标可以通过git不同配置的不同分支实现，但是这个方案的不便之处是不同配置服务共存，不能进行比较。
+和Next.js一样, Duosite从 `<site>/pages` 目录渲染和发送页面. 和 Next.js 不同, 多站Duosite支持静态 HTML 文件，也支持渲染模板引擎文件，例如 [liquidjs](https://github.com/harttle/liquidjs).
 
-使用`yarn` workspace也可以实现这个目标，但是每个子站点需要配置一套服务器和端口，也很不方便。
+### 基于文件的路由
 
-比如说我想实验使用`ejs`的模板引擎和`marko`的模板引擎，我不想不停的切换git 分支，或者切换localhost端口。
+Duosite支持 Nextjs风格的基于文件的路由，格式为 `/<segments>/[route1]/[route2]/[[...captureAll]].[template-ext]`.
 
-这两个实验服务器应该可以和谐共存。我可以同时使用比如`site-ejs.localhost` 和 `site-marko.localhost` 。
+Duosite也支持3种获取数据、渲染模板文件、生成静态页面的方法, `getStaticProps`, `getServerProps` and `getStaticPaths`.
 
-多站也应该包含针对不同框架或库的项目模板，并提供命令行工具从模板项目创建新项目。
+### 使用伴侣boot.mjs文件统一数据加载
 
-这就是duosite多站的最初想法。
+Duosite有一个独一无二的设计，使用伴侣 `boot.mjs` 文件来加载数，渲染模板。
 
+模板渲染的一个共同任务是加载初始数据来渲染模板。为支持基于文件的路由，在`pages`目录下渲染模板时， duosite首先会查找是否有 `<template-file-name>.boot.mjs`名的伴侣文件, 该文件应该发布三个异步函数: `getStaticProps`, `getServerProps`, `getStaticPaths`中的一个或多个。
+
+### 强化服务器
+
+利用 `fastify`的 plugin设计， Duosite 支持对标准服务器的深度定制和强化， 允许开发者提供全局和站点服务构建器，以及全集和站点增强器，来强化服务器，增加任何路由规则和处理程序。
+
+### 子站点与独立引擎
+
+Duosite支持子站点，允许每个子站点有独立的模板引擎和渲染器。例如允许一个站点使用 `ejs` 引擎，另外一个使用 `liquidjs` 引擎。
+
+### 编译生成融合静态站点和动态站点的生产版本
+
+借鉴Nextjs，Duosite支持编译命令, `yarn duosite build <site-name>`。编译器将会根据文件路由规则、模板引擎的伴侣文件发布的获取数据的方法，自动判断是否生成静态文件、或需要动态渲染。
 
 ## 用法
 
