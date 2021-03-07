@@ -12,7 +12,7 @@ const buildStaticTemplate = async (routeTable, root, site, _duosite) => {
   const [, , file] = routeTable
 
   const {
-    site: { root: siteRoot, engine, settings = {} },
+    site: { root: siteRoot, engine },
     global,
   } = _duosite
 

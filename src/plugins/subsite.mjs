@@ -80,7 +80,7 @@ const buildSubsitePlugin = async (buildSite, target) => {
 
     let enhance
     try {
-      ehance = (await import(`${siteRoot}/src/enhancer.mjs`)).default
+      enhance = (await import(`${siteRoot}/src/enhancer.mjs`)).default
     } catch (e) {}
     // build site engine
 

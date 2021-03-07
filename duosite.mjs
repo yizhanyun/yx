@@ -1,20 +1,24 @@
 #!/usr/bin/env node
 
-const chalk = require('chalk')
+import chalk from 'chalk'
 
-const isSubdomainValid = require('is-subdomain-valid')
+import isSubdomainValid from 'is-subdomain-valid'
 
-const fs = require('fs-extra')
+import fs from 'fs-extra'
 
-const path = require('path')
+import path from 'path'
 
-const childProcess = require('child_process')
-
-const {
+import {
   getDirectories,
   loadGlobalSettings,
   loadGlobalI18NMessages,
-} = require('./src/utils')
+} from './src/utils.mjs'
+
+import bootServer from './bootServer.mjs'
+
+import { fileURLToPath } from 'url'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const DUOSITE_ROOT = process.cwd()
 
@@ -32,7 +36,7 @@ if (
   cmd !== 'build'
 ) {
   console.warn(chalk.yellow(i18nm.duositeUsage))
-  return -1
+  process.exit(-1)
 } else {
   const cwd = __dirname
 
@@ -41,32 +45,33 @@ if (
       site.startsWith('template-')
     )
     console.log(chalk.green(`\nFound ${sites.length} templates`))
-    sites.map(site => {
+    sites.forEach(site => {
       console.log(chalk.green(`  ${site}`))
     })
   } else if (cmd === 'build') {
-    const target = process.argv[3] || '*'
-  }
-  // set cwd to duosite folder
-  // set duosite project root to user's project root
-  else if (cmd === 'dev') {
-    const bootServer = require('./bootServer')
+    const target = process.argv[3]
+
+    bootServer({ build: true, env: 'production', buildTarget: target })
+  } else if (cmd === 'dev') {
+    // set cwd to duosite folder
+    // set duosite project root to user's project root
+
     bootServer({ root: DUOSITE_ROOT })
   } else if (cmd === 'new') {
     const fromTemplate = process.argv[3]
     const toSite = process.argv[4]
     if (!fromTemplate || !toSite) {
       console.log(chalk.yellow(i18nm.duositeNewUsage))
-      return -1
+      process.exit(-1)
     }
 
     if (!fromTemplate.startsWith('template-')) {
       console.log(chalk.yellow(i18nm.duositeWrongTemplateName))
-      return -1
+      process.exit(-1)
     }
 
     const subsites = fs
-      .readdirSync(`${__dirname}/sites`, { withFileTypes: true })
+      .readdirSync(path.join(__dirname, 'sites'), { withFileTypes: true })
       .filter(dirent => dirent.isDirectory())
       .map(dirent => dirent.name)
 
@@ -74,28 +79,22 @@ if (
 
     if (!exist) {
       console.log(chalk.yellow(i18nm.duositeTemplateNotFound))
-      return -1
+      process.exit(-1)
     }
 
     if (!isSubdomainValid(toSite)) {
       console.log(chalk.yellow(i18nm.duositeSubdomainError))
-      return -1
+      process.exit(-1)
     }
 
     if (subsites.find(name => name === toSite)) {
       console.log(chalk.yellow(i18nm.duositeNewSiteExists))
-      return -1
+      process.exit(-1)
     }
-    fs.mkdirpSync(`${DUOSITE_ROOT}/sites/${toSite}`)
-
-    const cp = fs.copySync(
-      `${__dirname}/sites/${fromTemplate}`,
-      `${DUOSITE_ROOT}/sites/${toSite}`
-    )
+    fs.mkdirpSync(path.join(DUOSITE_ROOT, 'sites', toSite))
 
     console.log(chalk.blue(i18nm.createNewSiteDone(toSite)))
   } else {
-    const bootServer = require('./bootServer')
     bootServer({ root: DUOSITE_ROOT, env: 'production' })
 
     // console.log(chalk.yellow(i18nm.productionNotReady))

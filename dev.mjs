@@ -22,7 +22,7 @@ try {
   console.log(i18nm.useCustomNodemonJson)
 } catch (e) {
   nodemonConfig = JSON.parse(
-    await readFile(new URL(`./nodemon.json`, import.meta.url))
+    await readFile(new URL('./nodemon.json', import.meta.url))
   )
 
   console.log(i18nm.useDefaultNodemonJson)

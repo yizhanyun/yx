@@ -1,5 +1,10 @@
 {
   "extends": "standard",
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "ecmaVersion": 2021,
+    "sourceType": "module"
+  },
   "rules": {
     "comma-dangle": [
       "error",
@@ -7,6 +12,7 @@
         "arrays": "always-multiline",
         "objects": "always-multiline",
         "exports": "always-multiline",
+        "imports": "always-multiline",
         "functions": "never"
       }
     ]

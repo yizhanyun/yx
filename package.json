@@ -9,7 +9,7 @@
     "prod": "NODE_ENV=production node prod.mjs",
     "duosite": "duosite",
     "test": "jest",
-    "lint": "yarn eslint ./*.js src/**/*.js ./sites/**/*.js ./*.mjs src/**/*.mjs ./sites/**/*.mjs"
+    "lint": "yarn eslint ./*.mjs src/**/*.js ./sites/**/*.js ./*.mjs src/**/*.mjs ./sites/**/*.mjs"
   },
   "dependencies": {
     "@gquittet/graceful-server": "^2.3.1",
@@ -26,6 +26,7 @@
     "duosite": "./duosite.js"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.13.8",
     "eslint": "^7.21.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",

@@ -4,14 +4,17 @@ import path from 'path'
 
 import chalk from 'chalk'
 
-import { removeSuffix } from '../utils.mjs'
-
 const buildGeneratedFileName = (table, params) => {
   const segments = table.map(([segName, type]) => {
-    if (type === 'static') return segName
-    if (type === 'catch') return params[segName]
-    if (type === 'catchAll' || type === 'optionalCatchAll')
+    if (type === 'static') {
+      return segName
+    }
+    if (type === 'catch') {
+      return params[segName]
+    }
+    if (type === 'catchAll' || type === 'optionalCatchAll') {
       return params[segName] || params['*']
+    }
     throw new Error(`Catch variable ${segName}not provided`)
   })
 
@@ -22,7 +25,7 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
   const [, table, file] = routeTable
 
   const {
-    site: { root: siteRoot, engine, settings = {} },
+    site: { root: siteRoot, engine },
     global,
   } = _duosite
 
