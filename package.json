@@ -23,7 +23,7 @@
     "rimraf": "^3.0.2"
   },
   "bin": {
-    "duosite": "./duosite.js"
+    "duosite": "./duosite.mjs"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.8",
