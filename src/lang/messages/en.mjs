@@ -21,4 +21,9 @@ export default {
   duositeNewSiteExists: '\n!!Error: New site already exists',
   createNewSiteDone: site => `Create new site ${site} done`,
   productionNotReady: '!Warning: Production build is not released yet',
+  startBuildingSite: site => `Start building site ${site}`,
+  cleanPreviousBuild: 'Clean previous build',
+  copySettings: 'Copy settings',
+  copyFolder: folder => `Copy ${folder}`,
+  writeBuildFile: file => `Write build output ${file}`,
 }

@@ -1,7 +1,13 @@
 const getServerProps = async ctx => {
   return {
-    text: 'Hello from index.liquid.boot.js ',
+    text: 'Server Hello from index.liquid.boot.js ',
   }
 }
 
-export { getServerProps }
+const getStaticProps = async ctx => {
+  return {
+    text: 'Static Hello from  index.liquid.boot.js ',
+  }
+}
+
+export { getServerProps, getStaticProps }

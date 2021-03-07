@@ -255,7 +255,7 @@ const parseRouteSegment = segment => {
   }
 
   {
-    const staticRgex = /(^[A-Za-z_]\w*)/g
+    const staticRgex = /(^\w*)/g
     const result = staticRgex.exec(segment)
     if (result) return [segment, 'static']
     // catch all
@@ -276,7 +276,7 @@ const parseRouteSegment = segment => {
 const segmentsToRoute = segments => {
   const parsedSegments = segments.map(segment => parseRouteSegment(segment))
 
-  let hasCatchBeforeLast = false
+  // let hasCatchBeforeLast = false
   let hasStaticAfterCatch = false
   let hasCatchAllBeforeLast = false
   let lastSegmentType
@@ -286,26 +286,43 @@ const segmentsToRoute = segments => {
   parsedSegments.forEach((parsed, index) => {
     // before last item
     const [, segmentType] = parsed
-    if (hasCatchBeforeLast && segmentType === 'static')
-      hasStaticAfterCatch = true
+    // if (hasCatchBeforeLast && segmentType === 'static')
+    //   hasStaticAfterCatch = true
 
     hasError = hasError || segmentType === 'error'
 
     if (index < length - 1) {
-      if (segmentType === 'catch') hasCatchBeforeLast = true
+      // if (segmentType === 'catch') hasCatchBeforeLast = true
       if (segmentType === 'catchAll' || segmentType === 'optionalCatchAll')
-        hasCatchAllBeforeLst = true
+        hasCatchAllBeforeLast = true
     } else {
       lastSegmentType = segmentType
     }
   })
 
   const routeType =
-    hasError || hasStaticAfterCatch || hasCatchAllBeforeLast
-      ? 'error'
-      : lastSegmentType
+    hasError || hasCatchAllBeforeLast ? 'error' : lastSegmentType
 
   return [routeType, parsedSegments]
+}
+
+const buildFilesRoutingTable = (root, ext) => {
+  const filesTable = recursiveReadDirSync(root).filter(
+    ([filename, filetype]) => {
+      if (filetype === 'd') return false
+      return (
+        (filename.endsWith(ext) || filename.endsWith('.html')) &&
+        !filename.endsWith('.boot.mjs')
+      )
+    }
+  )
+
+  const routes = filesTable.map(([filename, filetype]) => {
+    const segments = filename.split('/').filter(s => !!s)
+    return [...segmentsToRoute(segments), filename]
+  })
+
+  return routes
 }
 
 /** Build file routing
@@ -315,20 +332,12 @@ const segmentsToRoute = segments => {
  * @return {[[string, string]]} - array of [router string, filepath]
  */
 
-const buildFileRoutingTable = (root, ext, target = 'fastify') => {
-  const dirTree = recursiveReadDirSync(root).filter(([filename, filetype]) => {
-    if (filetype === 'd') return false
-    return filename.endsWith(ext)
-  })
+const buildCatchRoutingTable = routes => {
+  const catchRoutes = routes.filter(
+    ([routeType]) => routeType !== 'error' && routeType !== 'static'
+  )
 
-  const routes = dirTree
-    .map(([filename, filetype]) => {
-      const segments = filename.split('/').filter(s => !!s)
-      return [...segmentsToRoute(segments), filename]
-    })
-    .filter(([routeType]) => routeType !== 'error' && routeType !== 'static')
-
-  return routes
+  return catchRoutes
 }
 
 const buildApiRoutingTable = (root, ext, target = 'fastify') => {
@@ -527,10 +536,12 @@ export {
   loadGlobalI18NMessages,
   recursiveReadDirSync,
   removeSuffix,
-  buildFileRoutingTable,
+  buildCatchRoutingTable,
   buildApiRoutingTable,
   segmentsToRoute,
   parseRouteSegment,
   buildFileRouteUrlVariableTable,
   buildApiRouteUrlVariableTable,
+  buildFilesRoutingTable,
+  lastItem,
 }

@@ -1,5 +1,7 @@
 // Basic get handler
 import path from 'path'
+import fs from 'fs-extra'
+import chalk from 'chalk'
 
 import { resolveUrlToFile, removeSuffix } from '../utils.mjs'
 
@@ -38,7 +40,8 @@ const genericGetHandler = async function (request, reply) {
 
       const output = await engine.renderFile(file, {
         ...booted,
-        _ctx: { request, reply },
+        params: request.params,
+        _ctx: { request, reply, _duosite },
       })
       reply.headers({ 'Content-Type': 'text/html' })
       reply.send(output)
@@ -60,37 +63,73 @@ const buildFileRouteHanlderNew = table => {
 
     // render template
 
-    const { _duosite } = request
+    const { _duosite, url } = request
 
     const {
-      site: { root: siteRoot, engine },
+      global: { i18nMessages: i18nm },
+      site: { root: siteRoot, name: siteName, engine },
     } = _duosite
 
-    let booted
-    let bootJs
-    try {
-      bootJs = await import(path.join(siteRoot, file + '.boot.mjs'))
-    } catch (e) {
-      // console.log(e)
-    }
+    const {
+      site: { settings = {} },
+    } = _duosite
 
-    if (bootJs && bootJs.getServerProps) {
-      booted = await bootJs.getServerProps({
-        _ctx: { request, reply },
+    const { viewEngine = {} } = settings
+
+    const subsiteUrl = url.replace(siteName + '/', '')
+    const r = await resolveUrlToFile(siteRoot, subsiteUrl, viewEngine)
+
+    if (r && r[1] === '.html') {
+      reply.sendFile(r[0], siteRoot)
+      return reply
+    } else {
+      let booted
+      let bootJs
+
+      try {
+        bootJs = await import(path.join(siteRoot, file + '.boot.mjs'))
+      } catch (e) {
+        console.log(e)
+      }
+
+      if (bootJs && bootJs.getServerProps) {
+        booted = await bootJs.getServerProps({
+          _ctx: { request, reply },
+          params,
+          query: request.query,
+        })
+      } else if (bootJs && bootJs.getStaticProps) {
+        booted = await bootJs.getStaticProps({
+          _ctx: { request, reply },
+          params,
+          query: request.query,
+        })
+      }
+      const output = await engine.renderFile(file, {
+        ...booted,
         params,
         query: request.query,
+        _ctx: { request, reply, _duosite },
       })
-    }
 
-    const output = await engine.renderFile(file, {
-      ...booted,
-      params,
-      query: request.query,
-      _ctx: { request, reply },
-    })
-    reply.headers({ 'Content-Type': 'text/html' })
-    reply.send(output)
-    return reply
+      if (bootJs && bootJs.getStaticProps) {
+        try {
+          const outputHtmlPath = path.join(
+            siteRoot,
+            'pages',
+            subsiteUrl + '.html'
+          )
+          await fs.outputFile(outputHtmlPath, output)
+          console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+        } catch (e) {
+          console.log(e)
+        }
+      }
+
+      reply.headers({ 'Content-Type': 'text/html' })
+      reply.send(output)
+      return reply
+    }
   }
   return handler
 }

@@ -44,7 +44,6 @@ nodemon
   })
   .on('quit', function () {
     console.log(i18nm.nodemonQuit)
-    nodemon = null
   })
   .on('restart', function (files) {
     console.log(i18nm.nodemonRestart, files)

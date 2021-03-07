@@ -9,7 +9,8 @@ import {
 } from './getHandler.mjs'
 
 import {
-  buildFileRoutingTable,
+  buildFilesRoutingTable,
+  buildCatchRoutingTable,
   buildApiRoutingTable,
   buildApiRouteUrlVariableTable,
   buildFileRouteUrlVariableTable,
@@ -27,6 +28,9 @@ const buildSubsitePlugin = async (buildSite, target) => {
   const subsite = async function (fastify, opts, done) {
     const { _duosite, prefix: site } = opts
 
+    // do nothing if building but not self
+    if (buildSite && target !== '*' && target !== site) return
+
     const { global } = _duosite
 
     const { root, settings: globalSettings, i18nMessages, lang } = global
@@ -35,8 +39,9 @@ const buildSubsitePlugin = async (buildSite, target) => {
       root,
       siteRootName,
       site,
-      isProduction ? '.production' : ''
+      isProduction && !buildSite ? '.production' : ''
     )
+
     // load subsite settings
     let sharedSetting, byEnironmentSetting
     try {
@@ -84,18 +89,19 @@ const buildSubsitePlugin = async (buildSite, target) => {
     let engine
 
     if (name && ext) {
-      let buildEngine
+      let buildTemplateEngine
 
       try {
-        buildEngine = (await import(`${siteRoot}/plugins/engines.mjs`)).default
+        buildTemplateEngine = (await import(`${siteRoot}/plugins/engines.mjs`))
+          .default
       } catch (e) {
         console.log(e)
       }
 
-      if (buildEngine) {
+      if (buildTemplateEngine) {
         // use local provided engines
 
-        engine = await buildEngine(
+        engine = await buildTemplateEngine(
           siteRoot,
           name,
           ext,
@@ -105,14 +111,14 @@ const buildSubsitePlugin = async (buildSite, target) => {
         )
       } else {
         // use global engines
-        let buildEngine
+        let buildTemplateEngine
         try {
-          buildEngine = (await import('./engines.mjs')).default
+          buildTemplateEngine = (await import('./engines.mjs')).default
         } catch (e) {
           console.log(e)
         }
-        if (buildEngine) {
-          engine = await buildEngine(
+        if (buildTemplateEngine) {
+          engine = await buildTemplateEngine(
             siteRoot,
             name,
             ext,
@@ -148,6 +154,7 @@ const buildSubsitePlugin = async (buildSite, target) => {
       site: {
         root: siteRoot,
         settings,
+        name: site,
         engine,
         services: siteServices,
       },
@@ -159,14 +166,18 @@ const buildSubsitePlugin = async (buildSite, target) => {
 
     fastify.route(genericGetRoute)
 
+    let fileRoutingTable
+    let catchRoutingTable
     try {
-      const fileRoutingTable = buildFileRoutingTable(
+      fileRoutingTable = buildFilesRoutingTable(
         path.join(siteRoot, 'pages'),
         ext
       )
 
+      catchRoutingTable = buildCatchRoutingTable(fileRoutingTable)
+
       const fileRoutingUrlVariableTable = buildFileRouteUrlVariableTable(
-        fileRoutingTable
+        catchRoutingTable
       )
 
       fileRoutingUrlVariableTable.forEach(tables => {
@@ -200,6 +211,10 @@ const buildSubsitePlugin = async (buildSite, target) => {
       let defaultBuildSite
       try {
         defaultBuildSite = await import('../buildSite.mjs')
+        console.log(
+          'defaultBuiltSite %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n',
+          defaultBuildSite
+        )
       } catch (e) {
         console.log(e)
       }
@@ -213,24 +228,25 @@ const buildSubsitePlugin = async (buildSite, target) => {
       } catch (e) {
         console.log(e)
       }
-
       const prebuild =
         (customBuildSite && customBuildSite.prebuild) ||
         (defaultBuildSite && defaultBuildSite.prebuild)
 
-      prebuild && (await prebuild(siteRoot, duositeConfig))
+      prebuild &&
+        (await prebuild(siteRoot, site, duositeConfig, fileRoutingTable))
 
       const _build =
         (customBuildSite && customBuildSite.build) ||
         (defaultBuildSite && defaultBuildSite.build)
 
-      _build && (await _build(siteRoot, duositeConfig))
+      _build && (await _build(siteRoot, site, duositeConfig, fileRoutingTable))
 
       const postbuild =
         (customBuildSite && customBuildSite.postbuild) ||
         (defaultBuildSite && defaultBuildSite.postbuild)
 
-      postbuild && (await postbuild(siteRoot, duositeConfig))
+      postbuild &&
+        (await postbuild(siteRoot, site, duositeConfig, fileRoutingTable))
     }
 
     done()
