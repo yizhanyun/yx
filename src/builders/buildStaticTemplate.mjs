@@ -7,8 +7,6 @@ import chalk from 'chalk'
 import { removeSuffix } from '../utils.mjs'
 
 const buildStaticTemplate = async (routeTable, root, site, _duosite) => {
-  console.log('building static template...', routeTable, root, site, _duosite)
-
   const [, , file] = routeTable
 
   const {
@@ -18,12 +16,13 @@ const buildStaticTemplate = async (routeTable, root, site, _duosite) => {
 
   const i18nm = global.i18nMessages
 
+  console.log(i18nm.buildStaticTemplate(file))
   let booted
   let bootJs
   try {
     bootJs = await import(path.join(siteRoot, 'pages', file + '.boot.mjs'))
   } catch (e) {
-    console.log(e)
+    // console.log(e)
   }
 
   if (bootJs && bootJs.getStaticProps) {

@@ -31,7 +31,7 @@ const genericGetHandler = async function (request, reply) {
       try {
         bootJs = await import(path.join(siteRoot, file + '.boot.mjs'))
       } catch (e) {
-        console.log(e)
+        // console.log(e)
       }
 
       if (bootJs && bootJs.getServerProps) {
@@ -89,7 +89,7 @@ const buildFileRouteHanlderNew = table => {
       try {
         bootJs = await import(path.join(siteRoot, file + '.boot.mjs'))
       } catch (e) {
-        console.log(e)
+        // console.log(e)
       }
 
       if (bootJs && bootJs.getServerProps) {

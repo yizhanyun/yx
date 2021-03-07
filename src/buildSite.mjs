@@ -44,7 +44,7 @@ const build = async (root, site, _duosite, fileRoutingTable) => {
       try {
         fs.copySync(source, target)
       } catch (e) {
-        console.log(e)
+        // console.log(e)
       }
     }
   })
@@ -53,7 +53,7 @@ const build = async (root, site, _duosite, fileRoutingTable) => {
     const [type, segments, file] = table
     if (type === 'static') {
       if (file.endsWith('.html')) {
-        console.log('built html')
+        console.log(chalk.blue(i18nm.buildHtml(file)))
         await buildHtml(table, root, site, _duosite)
       } else if (viewEngine.ext && file.endsWith(viewEngine.ext)) {
         await buildStaticTemplate(table, root, site, _duosite)

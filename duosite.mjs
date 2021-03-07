@@ -96,7 +96,5 @@ if (
     console.log(chalk.blue(i18nm.createNewSiteDone(toSite)))
   } else {
     bootServer({ root: DUOSITE_ROOT, env: 'production' })
-
-    // console.log(chalk.yellow(i18nm.productionNotReady))
   }
 }

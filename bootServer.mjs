@@ -40,19 +40,6 @@ const bootServer = async opts => {
 
   const sites = getDirectories(path.join(root, siteRootName))
 
-  if (
-    build &&
-    buildTarget !== '*' &&
-    !sites.find(site => site === buildTarget)
-  ) {
-    console.log('site not found')
-    return
-  }
-
-  // const load plugin
-
-  const subsitePlugin = await buildSubsitePlugin(build, buildTarget)
-
   const {
     defaultSite = 'www',
     lang = 'en',
@@ -64,6 +51,24 @@ const bootServer = async opts => {
 
   // i18n for messages
   const i18nm = await loadGlobalI18NMessages(root, lang)
+
+  if (build && !buildTarget) {
+    console.log(chalk.red(i18nm.siteNotProvided))
+    return
+  }
+
+  if (
+    build &&
+    buildTarget !== '*' &&
+    !sites.find(site => site === buildTarget)
+  ) {
+    console.log(chalk.red(i18nm.siteNotFound))
+    return
+  }
+
+  // const load plugin
+
+  const subsitePlugin = await buildSubsitePlugin(build, buildTarget)
 
   // Build global services
 
@@ -99,12 +104,10 @@ const bootServer = async opts => {
   const gracefulServer = GracefulServer(duositeFastify.server)
 
   gracefulServer.on(GracefulServer.READY, () => {
-    console.log(i18nm.serverReady)
-    console.log('Fastify started')
     if (build) {
       console.log('Finished building. Shutting down...')
       duositeFastify && duositeFastify.close()
-    }
+    } else console.log(i18nm.serverReady)
   })
 
   gracefulServer.on(GracefulServer.SHUTTING_DOWN, () => {
@@ -133,7 +136,7 @@ const bootServer = async opts => {
     try {
       defaultBuildGlobal = await import('./src/buildGlobal.mjs')
     } catch (e) {
-      console.log(e)
+      // console.log(e)
     }
 
     let customBuildGlobal
@@ -141,7 +144,7 @@ const bootServer = async opts => {
     try {
       customBuildGlobal = await import(path.join(root, 'src/buildGlobal.mjs'))
     } catch (e) {
-      console.log(e)
+      // console.log(e)
     }
 
     const prebuild =
@@ -191,7 +194,7 @@ const bootServer = async opts => {
       onStarted(duositeFastify)
     }
     gracefulServer.setReady()
-    console.log(chalk.green(i18nm.startMessage(port)))
+    if (!build) console.log(chalk.green(i18nm.startMessage(port)))
   })
 }
 

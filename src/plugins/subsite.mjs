@@ -53,7 +53,7 @@ const buildSubsitePlugin = async (buildSite, target) => {
           : (await import(`./${siteRoot}/settings.development.mjs`)).default ||
             {}
     } catch (e) {
-      console.log(e)
+      // console.log(e)
     }
 
     const settings = deepmerge(sharedSetting || {}, byEnironmentSetting || {})
@@ -95,7 +95,7 @@ const buildSubsitePlugin = async (buildSite, target) => {
         buildTemplateEngine = (await import(`${siteRoot}/plugins/engines.mjs`))
           .default
       } catch (e) {
-        console.log(e)
+        // console.log(e)
       }
 
       if (buildTemplateEngine) {
@@ -115,7 +115,7 @@ const buildSubsitePlugin = async (buildSite, target) => {
         try {
           buildTemplateEngine = (await import('./engines.mjs')).default
         } catch (e) {
-          console.log(e)
+          // console.log(e)
         }
         if (buildTemplateEngine) {
           engine = await buildTemplateEngine(
@@ -202,7 +202,7 @@ const buildSubsitePlugin = async (buildSite, target) => {
         })
       })
     } catch (e) {
-      console.log(e)
+      // console.log(e)
     }
 
     enhance && enhance(fastify, duositeConfig)
@@ -211,12 +211,8 @@ const buildSubsitePlugin = async (buildSite, target) => {
       let defaultBuildSite
       try {
         defaultBuildSite = await import('../buildSite.mjs')
-        console.log(
-          'defaultBuiltSite %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n',
-          defaultBuildSite
-        )
       } catch (e) {
-        console.log(e)
+        // console.log(e)
       }
 
       let customBuildSite
@@ -226,7 +222,7 @@ const buildSubsitePlugin = async (buildSite, target) => {
           path.join(siteRoot, 'src', 'buildSite.mjs')
         )
       } catch (e) {
-        console.log(e)
+        // console.log(e)
       }
       const prebuild =
         (customBuildSite && customBuildSite.prebuild) ||

@@ -36,7 +36,7 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
   try {
     bootJs = await import(path.join(siteRoot, 'pages', file + '.boot.mjs'))
   } catch (e) {
-    console.log(e)
+    // console.log(e)
   }
 
   let paths, fallback
