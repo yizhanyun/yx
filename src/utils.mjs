@@ -124,7 +124,7 @@ const resolveUrlToFile = async (siteRoot, url, viewEngine) => {
       }
     }
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     return undefined
   }
 }

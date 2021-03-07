@@ -76,7 +76,8 @@ const buildFileRouteHanlderNew = table => {
 
     const { viewEngine = {} } = settings
 
-    const subsiteUrl = url.replace(siteName + '/', '')
+    const subsiteUrl = request._subsiteUrl
+    /* const subsiteUrl = url.replace(siteName + '/', '') */
     const r = await resolveUrlToFile(siteRoot, subsiteUrl, viewEngine)
 
     if (r && r[1] === '.html') {
