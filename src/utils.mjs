@@ -276,8 +276,6 @@ const parseRouteSegment = segment => {
 const segmentsToRoute = segments => {
   const parsedSegments = segments.map(segment => parseRouteSegment(segment))
 
-  // let hasCatchBeforeLast = false
-  let hasStaticAfterCatch = false
   let hasCatchAllBeforeLast = false
   let lastSegmentType
   let hasError = false

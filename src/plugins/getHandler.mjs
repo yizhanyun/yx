@@ -72,11 +72,11 @@ const buildFileRouteHanlderNew = table => {
 
     const {
       site: { settings = {} },
+      url: subsiteUrl,
     } = _duosite
 
     const { viewEngine = {} } = settings
 
-    const subsiteUrl = request._subsiteUrl
     /* const subsiteUrl = url.replace(siteName + '/', '') */
     const r = await resolveUrlToFile(siteRoot, subsiteUrl, viewEngine)
 

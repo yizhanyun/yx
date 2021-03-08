@@ -151,9 +151,6 @@ const buildSubsitePlugin = async (buildSite, target) => {
     }
 
     fastify.decorateRequest('_duosite', null)
-    fastify.decorateRequest('_subsiteUrl', '')
-
-    // enhance request with _duosite
 
     const duositeConfig = {
       ..._duosite,
@@ -165,9 +162,14 @@ const buildSubsitePlugin = async (buildSite, target) => {
         services: siteServices,
       },
     }
+
+    // enhance request with _duosite
+
     fastify.addHook('preHandler', (request, reply, done) => {
-      request._duosite = duositeConfig
-      request._subsiteUrl = request.url.replace('/' + site, '')
+      request._duosite = {
+        ...duositeConfig,
+        url: request.url.replace('/' + site, ''),
+      }
       done()
     })
 

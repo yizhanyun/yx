@@ -502,13 +502,25 @@ When a request hit, the URL will be resovled to a handler. The handler needs to 
 
 ### `_duosite` object
 
-`request._duosite` has following shape:
+Duosit's boot process builds up `_duosite` object, which contains all settings, services and engines built up by duosite. It is also passed down as `request._duosite` for routers to use.
 
 ```
 {
-  settings: {...}  // merged subsite settings
-  engine: {...} // instantiated engine instance
-  ... // TBD along development
+  url: string // subsite url. availabel only in subsite's routes
+  global: {
+    root: string // project root
+    settings : Object //global settings
+    services: Object // services built up by serviceBuilder
+    i18nMessages: Object// messages used for alerts
+    lang: string //language
+  },
+  site: {
+    root: string // site root
+    settings: Object // subsite settings
+    name: string // subsite name
+    engine: Object // subsite template engine
+    services: Object // services built by site's service enhancer
+  }
 }
 
 ```
