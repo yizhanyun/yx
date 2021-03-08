@@ -3,6 +3,10 @@
 import { Liquid } from 'liquidjs'
 
 const build = async _duosite => {
+  console.log('=====================================')
+  console.log('Demo: build site custom view engine')
+  console.log('======================================')
+
   try {
     const {
       global: { i18nMessages: i18n },

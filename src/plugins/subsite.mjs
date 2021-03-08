@@ -69,11 +69,14 @@ const buildSubsitePlugin = async (buildSite, target) => {
     let buildSiteServices
 
     try {
-      buildSiteServices = (await import(`${siteRoot}/src/siteServices`)).default
-    } catch (e) {}
+      buildSiteServices = (await import(`${siteRoot}/src/siteServices.mjs`))
+        .default
+    } catch (e) {
+      // console.log(e)
+    }
 
     const siteServices = buildSiteServices
-      ? buildSiteServices(globalSettings, settings, root)
+      ? await buildSiteServices(_duosite, settings, site, root)
       : {}
 
     // build site  enhancer
@@ -92,7 +95,7 @@ const buildSubsitePlugin = async (buildSite, target) => {
       let buildTemplateEngine
 
       try {
-        buildTemplateEngine = (await import(`${siteRoot}/plugins/engines.mjs`))
+        buildTemplateEngine = (await import(`${siteRoot}/src/engines.mjs`))
           .default
       } catch (e) {
         // console.log(e)
@@ -101,14 +104,15 @@ const buildSubsitePlugin = async (buildSite, target) => {
       if (buildTemplateEngine) {
         // use local provided engines
 
-        engine = await buildTemplateEngine(
-          siteRoot,
-          name,
-          ext,
-          options,
-          lang,
-          i18nMessages
-        )
+        engine = await buildTemplateEngine({
+          ..._duosite,
+          site: {
+            root: siteRoot,
+            settings,
+            name: site,
+            services: siteServices,
+          },
+        })
       } else {
         // use global engines
         let buildTemplateEngine
@@ -118,14 +122,15 @@ const buildSubsitePlugin = async (buildSite, target) => {
           // console.log(e)
         }
         if (buildTemplateEngine) {
-          engine = await buildTemplateEngine(
-            siteRoot,
-            name,
-            ext,
-            options,
-            lang,
-            i18nMessages
-          )
+          engine = await buildTemplateEngine({
+            ..._duosite,
+            site: {
+              root: siteRoot,
+              settings,
+              name: site,
+              services: siteServices,
+            },
+          })
         }
       }
     }
@@ -207,7 +212,7 @@ const buildSubsitePlugin = async (buildSite, target) => {
       // console.log(e)
     }
 
-    enhance && enhance(fastify, duositeConfig)
+    enhance && (await enhance(fastify, duositeConfig))
 
     if (buildSite && (target === '*' || target === site)) {
       let defaultBuildSite

@@ -7,12 +7,12 @@
   "watch": [
     "sites/",
     "src/",
-    "server.js",
-    "dev.js",
-    "bootServer.js",
-    "settings.js",
-    "settings.development.js",
-    "setting.production.js"
+    "server.mjs",
+    "dev.mjs",
+    "bootServer.mjs",
+    "settings.mjs",
+    "settings.development.mjs",
+    "setting.production.mjs"
   ],
-  "ext": "js, css, boot.js, html"
+  "ext": "mjs, css, boot.mjs, html"
 }

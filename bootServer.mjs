@@ -76,10 +76,10 @@ const bootServer = async opts => {
   try {
     buildGlobalServices = (await import(`${root}/src/globalServices.mjs`))
       .default
-  } catch {}
+  } catch (e) {}
 
-  const globalServices = (await buildGlobalServices)
-    ? buildGlobalServices(settings, root)
+  const globalServices = buildGlobalServices
+    ? await buildGlobalServices(settings, root)
     : {}
 
   // get global enhancer
