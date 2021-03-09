@@ -4,6 +4,8 @@ import fs from 'fs-extra'
 import chalk from 'chalk'
 
 import { resolveUrlToFile, removeSuffix } from '../utils.mjs'
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
 
 const genericGetHandler = async function (request, reply) {
   const { _duosite } = request
@@ -18,6 +20,7 @@ const genericGetHandler = async function (request, reply) {
 
   const url = request.params['*']
   const r = await resolveUrlToFile(siteRoot, url, viewEngine)
+
   if (!r) {
     reply.statusCode = 404
     reply.send()
@@ -38,14 +41,30 @@ const genericGetHandler = async function (request, reply) {
         booted = await bootJs.getServerProps({ request, reply })
       }
 
-      const output = await engine.renderFile(file, {
-        ...booted,
-        params: request.params,
-        _ctx: { request, reply, _duosite },
-      })
-      reply.headers({ 'Content-Type': 'text/html' })
-      reply.send(output)
-      return reply
+      if (ext === '.marko') {
+        // marko: use @marko-fastify
+        console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%% renderring marko')
+        reply.headers({ 'Content-Type': 'text/html' })
+        engine.renderFile(
+          file,
+          {
+            ...booted,
+            params: request.params,
+            _ctx: { request, reply, _duosite },
+          },
+          reply
+        )
+        return reply
+      } else {
+        const output = await engine.renderFile(file, {
+          ...booted,
+          params: request.params,
+          _ctx: { request, reply, _duosite },
+        })
+        reply.headers({ 'Content-Type': 'text/html' })
+        reply.send(output)
+        return reply
+      }
     } else {
       reply.sendFile(file, siteRoot)
       return reply
