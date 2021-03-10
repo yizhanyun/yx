@@ -53,23 +53,46 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
       const outputFileName = buildGeneratedFileName(table, params)
       booted = await bootJs.getStaticProps({ _duosite, params })
 
-      const output = await engine.renderFile(path.join('pages', file), {
-        ...booted,
-        params,
-        _ctx: { _duosite },
-      })
+      console.log('-------------', booted)
 
-      try {
-        const outputHtmlPath = path.join(
-          siteRoot,
-          '.production',
-          'pages',
-          outputFileName + '.html'
-        )
-        await fs.outputFile(outputHtmlPath, output)
-        console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
-      } catch (e) {
-        console.log(e)
+      if (engine.renderToFile) {
+        try {
+          const outputHtmlPath = path.join(
+            siteRoot,
+            '.production',
+            'pages',
+            outputFileName + '.html'
+          )
+          await engine.renderToFile(
+            path.join('pages', file),
+            {
+              ...booted,
+              _ctx: { _duosite },
+            },
+            outputHtmlPath
+          )
+          console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+        } catch (e) {
+          console.log(e)
+        }
+      } else {
+        const output = await engine.renderFile(path.join('pages', file), {
+          ...booted,
+          _ctx: { _duosite },
+        })
+
+        try {
+          const outputHtmlPath = path.join(
+            siteRoot,
+            '.production',
+            'pages',
+            outputFileName + '.html'
+          )
+          await fs.outputFile(outputHtmlPath, output)
+          console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+        } catch (e) {
+          console.log(e)
+        }
       }
     }
   }

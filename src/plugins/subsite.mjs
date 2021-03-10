@@ -170,7 +170,10 @@ const buildSubsitePlugin = async (buildSite, target) => {
     fastify.addHook('preHandler', (request, reply, done) => {
       request._duosite = {
         ...duositeConfig,
-        url: request.url.replace('/' + site, ''),
+        url:
+          request.url[0] === '/'
+            ? request.url.replace('/' + site, '')
+            : request.url.replace(site, ''),
       }
       done()
     })

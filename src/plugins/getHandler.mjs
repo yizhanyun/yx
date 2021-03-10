@@ -20,6 +20,7 @@ const genericGetHandler = async function (request, reply) {
 
   const url = request.params['*']
   const r = await resolveUrlToFile(siteRoot, url, viewEngine)
+  console.log('%%%%%%%%%%%%%%%%%%%%%%%', r, siteRoot, url)
 
   if (!r) {
     reply.statusCode = 404
@@ -43,17 +44,13 @@ const genericGetHandler = async function (request, reply) {
 
       if (ext === '.marko') {
         // marko: use @marko-fastify
-        console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%% renderring marko')
         reply.headers({ 'Content-Type': 'text/html' })
-        engine.renderFile(
-          file,
-          {
-            ...booted,
-            params: request.params,
-            _ctx: { request, reply, _duosite },
-          },
-          reply
-        )
+        const htmlStream = engine.streamFile(file, {
+          ...booted,
+          params: request.params,
+          _ctx: { request, reply, _duosite },
+        })
+        reply.send(htmlStream)
         return reply
       } else {
         const output = await engine.renderFile(file, {
@@ -125,30 +122,93 @@ const buildFileRouteHanlderNew = table => {
           query: request.query,
         })
       }
-      const output = await engine.renderFile(file, {
-        ...booted,
-        params,
-        query: request.query,
-        _ctx: { request, reply, _duosite },
-      })
 
-      if (bootJs && bootJs.getStaticProps) {
-        try {
-          const outputHtmlPath = path.join(
-            siteRoot,
-            'pages',
-            subsiteUrl + '.html'
-          )
-          await fs.outputFile(outputHtmlPath, output)
-          console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
-        } catch (e) {
-          console.log(e)
+      if (viewEngine.ext === '.marko') {
+        // marko: use @marko-fastify
+        reply.headers({ 'Content-Type': 'text/html' })
+        const htmlStream = engine.streamFile(file, {
+          ...booted,
+          params: request.params,
+          _ctx: { request, reply, _duosite },
+        })
+
+        reply.send(htmlStream)
+        if (bootJs && bootJs.getStaticProps) {
+          if (engine.renderToFile) {
+            try {
+              const outputHtmlPath = path.join(
+                siteRoot,
+                'pages',
+                subsiteUrl + '.html'
+              )
+              await engine.renderToFile(
+                file,
+                {
+                  ...booted,
+                  _ctx: { _duosite },
+                },
+                outputHtmlPath
+              )
+              console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+            } catch (e) {
+              console.log(e)
+            }
+          } else {
+            const output = await engine.renderFile(file, {
+              ...booted,
+              _ctx: { _duosite },
+            })
+
+            try {
+              const outputHtmlPath = path.join(
+                siteRoot,
+                'pages',
+                subsiteUrl + '.html'
+              )
+              await fs.outputFile(outputHtmlPath, output)
+              console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+            } catch (e) {
+              console.log(e)
+            }
+          }
         }
+        return reply
+      } else {
+        const output = await engine.renderFile(file, {
+          ...booted,
+          params: request.params,
+          _ctx: { request, reply, _duosite },
+        })
+        reply.headers({ 'Content-Type': 'text/html' })
+        reply.send(output)
+
+        if (bootJs && bootJs.getStaticProps) {
+          try {
+            const outputHtmlPath = path.join(
+              siteRoot,
+              'pages',
+              subsiteUrl + '.html'
+            )
+            await fs.outputFile(outputHtmlPath, output)
+            console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+          } catch (e) {
+            console.log(e)
+          }
+        }
+
+        return reply
       }
 
-      reply.headers({ 'Content-Type': 'text/html' })
-      reply.send(output)
-      return reply
+      // const output = await engine.renderFile(file, {
+      //   ...booted,
+      //   params,
+      //   query: request.query,
+      //   _ctx: { request, reply, _duosite },
+      // })
+
+      // reply.headers({ 'Content-Type': 'text/html' })
+      // reply.send(output)
+      // return reply
     }
   }
   return handler

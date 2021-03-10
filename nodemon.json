@@ -14,5 +14,5 @@
     "settings.development.mjs",
     "setting.production.mjs"
   ],
-  "ext": "mjs, css, boot.mjs, html"
+  "ext": "mjs,boot.mjs, html"
 }
