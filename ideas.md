@@ -1,5 +1,17 @@
 # Pages content
 
+## Render engine
+
+- renderToStringSync, renderToStringAsync
+- renderToStream
+- renderToFileAsync, renderToFileAsync
+
+Priorities:
+
+renderToStream > renderToStringAsync > renderToStringSync
+
+renderToFileAsync / renderToFileSync => comple to static
+
 ## Support /abc/[def]/gh/[[...ids]].ext route
 
 ## types

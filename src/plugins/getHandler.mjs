@@ -126,15 +126,34 @@ const buildFileRouteHanlderNew = table => {
       if (viewEngine.ext === '.marko') {
         // marko: use @marko-fastify
         reply.headers({ 'Content-Type': 'text/html' })
-        const htmlStream = engine.streamFile(file, {
-          ...booted,
-          params: request.params,
-          _ctx: { request, reply, _duosite },
-        })
+        if (engine.renderToStream) {
+          const htmlStream = engine.renderToStream(file, {
+            ...booted,
+            params: request.params,
+            _ctx: { request, reply, _duosite },
+          })
 
-        reply.send(htmlStream)
+          reply.send(htmlStream)
+        } else if (engine.renderToStringAsync) {
+          const htmlString = await engine.renderToStringAsync(file, {
+            ...booted,
+            params: request.params,
+            _ctx: { request, reply, _duosite },
+          })
+          reply.send(htmlString)
+        } else if (engine.renderToString) {
+          const htmlString = engine.renderToStringAsync(file, {
+            ...booted,
+            params: request.params,
+            _ctx: { request, reply, _duosite },
+          })
+          reply.send(htmlString)
+        } else {
+          throw new Error('View engine fails')
+        }
+
         if (bootJs && bootJs.getStaticProps) {
-          if (engine.renderToFile) {
+          if (engine.renderToFileAsync) {
             try {
               const outputHtmlPath = path.join(
                 siteRoot,
@@ -142,6 +161,25 @@ const buildFileRouteHanlderNew = table => {
                 subsiteUrl + '.html'
               )
               await engine.renderToFile(
+                file,
+                {
+                  ...booted,
+                  _ctx: { _duosite },
+                },
+                outputHtmlPath
+              )
+              console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+            } catch (e) {
+              console.log(e)
+            }
+          } else if (engine.renderToFile) {
+            try {
+              const outputHtmlPath = path.join(
+                siteRoot,
+                'pages',
+                subsiteUrl + '.html'
+              )
+              engine.renderToFile(
                 file,
                 {
                   ...booted,

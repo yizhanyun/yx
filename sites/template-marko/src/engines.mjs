@@ -34,16 +34,16 @@ const build = async _duosite => {
 
     switch (ext) {
       case '.marko': {
-        const renderFile = async (file, options, res) => {
+        const renderToStringAsync = async (file, options, res) => {
           const template = require(path.join(root, file))
           console.log(JSON.stringify(template, null, 2))
           return template.default.renderToString(options, res)
         }
-        const streamFile = (file, options) => {
+        const renderToStream = (file, options) => {
           const template = require(path.join(root, file))
           return template.default.stream(options)
         }
-        const renderToFile = async (file, options, outFile) => {
+        const renderToFileAsync = async (file, options, outFile) => {
           const [outParent] = breakFullpath(outFile)
 
           if (!fs.existsSync(outParent))
@@ -53,7 +53,7 @@ const build = async _duosite => {
           await template.default.render(options, out)
         }
 
-        return { renderFile, streamFile, renderToFile }
+        return { renderToStringAsync, renderToStream, renderToFileAsync }
       }
       default:
         throw new Error(i18n.engineNotSupported)
