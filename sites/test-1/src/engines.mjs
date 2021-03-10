@@ -20,7 +20,11 @@ const build = async _duosite => {
 
     switch (ext) {
       case '.liquid': {
-        return new Liquid({ ...options, root })
+        const liquid = new Liquid({ ...options, root })
+        const renderToStringAsync = async (file, options) => {
+          return liquid.renderFile(file, options)
+        }
+        return { renderToStringAsync }
       }
       default:
         throw new Error(i18n.engineNotSupported)
