@@ -61,12 +61,13 @@ const fileExist = async (path, ext) => {
 const resolveUrlToFile = async (siteRoot, url, viewEngine) => {
   const { ext: viewEngineExt } = viewEngine || {}
 
+  console.log('=====> url', url)
   try {
     if (url.endsWith('/')) {
       // resolve /abc/ to /abc/index.html or /abc/index.ext
 
-      const rpath = path.join('pages', url, 'index.html')
-      const htmlPath = path.join(siteRoot, rpath) // check html
+      const rpath = path.join(url, 'index.html')
+      const htmlPath = path.join(siteRoot, 'pages', rpath) // check html
 
       try {
         // resolve /abc/ to /abc/index.html
@@ -78,9 +79,9 @@ const resolveUrlToFile = async (siteRoot, url, viewEngine) => {
         else {
           // resolve /abc/ to /abc/index.ext
 
-          const rpath = path.join('pages', url, 'index' + viewEngineExt)
+          const rpath = path.join(url, 'index' + viewEngineExt)
 
-          const viewPath = path.join(siteRoot, rpath)
+          const viewPath = path.join(siteRoot, 'pages', rpath)
           await fsp.stat(viewPath)
           return [rpath, viewEngineExt]
         }
@@ -90,31 +91,36 @@ const resolveUrlToFile = async (siteRoot, url, viewEngine) => {
       const lastSegment = segments[segments.length - 1]
 
       const ext = suffix(lastSegment)
-      if (ext && url.endsWith('.boot.js')) {
+      if (ext && url.endsWith('.boot.mjs')) {
         // special file
         return undefined
       } else if (ext) {
         // resolve /abc/def.suffix to actual file /abc/def.suffix
-        const rpath = path.join('pages', url)
-        await fileExist(path.join(siteRoot, 'pages', url), ext)
-        return [rpath, ext]
+        const rpath = path.join(url)
+        const r = await fileExist(path.join(siteRoot, 'pages', url), ext)
+        if (r) return [rpath, ext]
+        else return undefined
       } else {
-        const rpath = path.join('pages', url + '.html')
+        const rpath = path.join(url + '.html')
 
         const r = await fileExist(
           // resolve /abc/def to /abc/def/index.html
 
-          path.join(siteRoot, rpath),
+          path.join(siteRoot, 'pages', rpath),
           '.html'
         )
+        console.log('-------- resolved', r, rpath)
         if (r) return [rpath, '.html']
         else {
           if (viewEngineExt) {
             // resolve /abc/def to /abc/def/index.ext
 
-            const rpath = path.join('pages', url + viewEngineExt)
+            const rpath = path.join(url + viewEngineExt)
 
-            const r = await fileExist(path.join(siteRoot, rpath), viewEngineExt)
+            const r = await fileExist(
+              path.join(siteRoot, 'pages', rpath),
+              viewEngineExt
+            )
 
             if (r) return [rpath, viewEngineExt]
             // resolve /abc/def to /abc/def/

@@ -27,8 +27,9 @@ const genericGetHandler = async function (request, reply) {
     reply.send()
     return reply
   } else {
-    const [file, resovledExt] = r
+    const [_file, resovledExt] = r
 
+    const file = path.join('pages', _file)
     if (ext === resovledExt) {
       let booted
       let bootJs
@@ -176,8 +177,9 @@ const buildFileRouteHanlder = table => {
     /* const subsiteUrl = url.replace(siteName + '/', '') */
     const r = await resolveUrlToFile(siteRoot, subsiteUrl, viewEngine)
 
+    console.log('============== r', r)
     if (r && r[1] === '.html') {
-      reply.sendFile(r[0], siteRoot)
+      reply.sendFile(path.join('pages', r[0]), siteRoot)
       return reply
     } else {
       let booted
