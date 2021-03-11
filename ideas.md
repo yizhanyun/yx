@@ -1,4 +1,44 @@
-# Pages content
+# Ideas to work on
+
+## Modes
+
+- dev
+- prod
+- build
+
+## Paths
+
+projectRoot - root of everything
+siteRoot - site's root
+serveRoot - root to serve contents, dev: siteRoot, prod: siteRoot/.production
+buildRoot - build target root, dev / prod: siteRoot/.production
+
+## runTemplate
+
+- universal renderr and server
+
+params: {
+    mode: build, serve, serveAndBuild
+    request: request,
+    reply: reply,
+    catchType: static / catch / catchAll
+    file: resolved filepath
+    url:
+    _duosite
+}
+
+dev mode:
+
+dynamic serve all
+
+buildMode:
+- static: getStaticProps -> build html;
+- catch: getStaticProps -> build html with params
+- catchAll: getStaticPaths -> staticProps -> build html with params
+
+serveAndBuild
+- catch/ catchAll: getStaticProps -> render to reply -> renderToFile
+
 
 ## Pages file resolve rules:
 
