@@ -55,43 +55,62 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
 
       console.log('-------------', booted)
 
-      if (engine.renderToFile) {
-        try {
-          const outputHtmlPath = path.join(
-            siteRoot,
-            '.production',
-            'pages',
-            outputFileName + '.html'
-          )
-          await engine.renderToFile(
-            path.join('pages', file),
-            {
-              ...booted,
-              _ctx: { _duosite },
-            },
-            outputHtmlPath
-          )
-          console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
-        } catch (e) {
-          console.log(e)
-        }
-      } else {
-        const output = await engine.renderFile(path.join('pages', file), {
-          ...booted,
-          _ctx: { _duosite },
-        })
+      if (bootJs && bootJs.getStaticProps) {
+        if (engine.renderToFileAsync) {
+          try {
+            const outputHtmlPath = path.join(
+              siteRoot,
+              'pages',
+              outputFileName + '.html'
+            )
+            await engine.renderToFileAsync(
+              file,
+              {
+                ...booted,
+                _ctx: { _duosite },
+              },
+              outputHtmlPath
+            )
+            console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+          } catch (e) {
+            console.log(e)
+          }
+        } else if (engine.renderToFile) {
+          try {
+            const outputHtmlPath = path.join(
+              siteRoot,
+              'pages',
+              outputFileName + '.html'
+            )
+            engine.renderToFile(
+              file,
+              {
+                ...booted,
+                _ctx: { _duosite },
+              },
+              outputHtmlPath
+            )
+            console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+          } catch (e) {
+            console.log(e)
+          }
+        } else {
+          const output = await engine.renderFile(file, {
+            ...booted,
+            _ctx: { _duosite },
+          })
 
-        try {
-          const outputHtmlPath = path.join(
-            siteRoot,
-            '.production',
-            'pages',
-            outputFileName + '.html'
-          )
-          await fs.outputFile(outputHtmlPath, output)
-          console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
-        } catch (e) {
-          console.log(e)
+          try {
+            const outputHtmlPath = path.join(
+              siteRoot,
+              'pages',
+              outputFileName + '.html'
+            )
+            await fs.outputFile(outputHtmlPath, output)
+            console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+          } catch (e) {
+            console.log(e)
+          }
         }
       }
     }

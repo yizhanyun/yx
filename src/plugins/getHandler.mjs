@@ -42,117 +42,106 @@ const genericGetHandler = async function (request, reply) {
         booted = await bootJs.getServerProps({ request, reply })
       }
 
-      if (viewEngine.ext === '.marko' || viewEngine.ext === '.liquid') {
-        // marko: use @marko-fastify
-        console.log('%%%%%%%%%%%%%%%%%%%%%% renderring', viewEngine.ext, engine)
+      // marko: use @marko-fastify
+      console.log('%%%%%%%%%%%%%%%%%%%%%% renderring', viewEngine.ext, engine)
 
-        reply.headers({ 'Content-Type': 'text/html' })
-        if (engine.renderToStream) {
-          const htmlStream = engine.renderToStream(file, {
-            ...booted,
-            params: request.params,
-            _ctx: { request, reply, _duosite },
-          })
-
-          reply.send(htmlStream)
-        } else if (engine.renderToStringAsync) {
-          const htmlString = await engine.renderToStringAsync(file, {
-            ...booted,
-            params: request.params,
-            _ctx: { request, reply, _duosite },
-          })
-          reply.send(htmlString)
-        } else if (engine.renderToString) {
-          const htmlString = engine.renderToStringAsync(file, {
-            ...booted,
-            params: request.params,
-            _ctx: { request, reply, _duosite },
-          })
-          reply.send(htmlString)
-        } else {
-          throw new Error('View engine fails')
-        }
-
-        if (bootJs && bootJs.getStaticProps) {
-          if (engine.renderToFileAsync) {
-            try {
-              const outputHtmlPath = path.join(
-                siteRoot,
-                'pages',
-                subsiteUrl + '.html'
-              )
-              await engine.renderToFile(
-                file,
-                {
-                  ...booted,
-                  _ctx: { _duosite },
-                },
-                outputHtmlPath
-              )
-              console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
-            } catch (e) {
-              console.log(e)
-            }
-          } else if (engine.renderToFile) {
-            try {
-              const outputHtmlPath = path.join(
-                siteRoot,
-                'pages',
-                subsiteUrl + '.html'
-              )
-              engine.renderToFile(
-                file,
-                {
-                  ...booted,
-                  _ctx: { _duosite },
-                },
-                outputHtmlPath
-              )
-              console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
-            } catch (e) {
-              console.log(e)
-            }
-          } else {
-            const output = await engine.renderFile(file, {
-              ...booted,
-              _ctx: { _duosite },
-            })
-
-            try {
-              const outputHtmlPath = path.join(
-                siteRoot,
-                'pages',
-                subsiteUrl + '.html'
-              )
-              await fs.outputFile(outputHtmlPath, output)
-              console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
-            } catch (e) {
-              console.log(e)
-            }
-          }
-        }
-        return reply
-
-        // if (ext === '.marko') {
-        //   // marko: use @marko-fastify
-        //   reply.headers({ 'Content-Type': 'text/html' })
-        //   const htmlStream = engine.streamFile(file, {
-        //     ...booted,
-        //     params: request.params,
-        //     _ctx: { request, reply, _duosite },
-        //   })
-        //   reply.send(htmlStream)
-        //   return reply
-      } else {
-        const output = await engine.renderFile(file, {
+      reply.headers({ 'Content-Type': 'text/html' })
+      if (engine.renderToStream) {
+        const htmlStream = engine.renderToStream(file, {
           ...booted,
           params: request.params,
           _ctx: { request, reply, _duosite },
         })
-        reply.headers({ 'Content-Type': 'text/html' })
-        reply.send(output)
-        return reply
+
+        reply.send(htmlStream)
+      } else if (engine.renderToStringAsync) {
+        const htmlString = await engine.renderToStringAsync(file, {
+          ...booted,
+          params: request.params,
+          _ctx: { request, reply, _duosite },
+        })
+        reply.send(htmlString)
+      } else if (engine.renderToString) {
+        const htmlString = engine.renderToStringAsync(file, {
+          ...booted,
+          params: request.params,
+          _ctx: { request, reply, _duosite },
+        })
+        reply.send(htmlString)
+      } else {
+        throw new Error('View engine fails')
       }
+
+      if (bootJs && bootJs.getStaticProps) {
+        if (engine.renderToFileAsync) {
+          try {
+            const outputHtmlPath = path.join(
+              siteRoot,
+              'pages',
+              subsiteUrl + '.html'
+            )
+            await engine.renderToFileAsync(
+              file,
+              {
+                ...booted,
+                _ctx: { _duosite },
+              },
+              outputHtmlPath
+            )
+            console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+          } catch (e) {
+            console.log(e)
+          }
+        } else if (engine.renderToFile) {
+          try {
+            const outputHtmlPath = path.join(
+              siteRoot,
+              'pages',
+              subsiteUrl + '.html'
+            )
+            engine.renderToFile(
+              file,
+              {
+                ...booted,
+                _ctx: { _duosite },
+              },
+              outputHtmlPath
+            )
+            console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+          } catch (e) {
+            console.log(e)
+          }
+        } else {
+          const output = await engine.renderFile(file, {
+            ...booted,
+            _ctx: { _duosite },
+          })
+
+          try {
+            const outputHtmlPath = path.join(
+              siteRoot,
+              'pages',
+              subsiteUrl + '.html'
+            )
+            await fs.outputFile(outputHtmlPath, output)
+            console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+          } catch (e) {
+            console.log(e)
+          }
+        }
+      }
+      return reply
+
+      // if (ext === '.marko') {
+      //   // marko: use @marko-fastify
+      //   reply.headers({ 'Content-Type': 'text/html' })
+      //   const htmlStream = engine.streamFile(file, {
+      //     ...booted,
+      //     params: request.params,
+      //     _ctx: { request, reply, _duosite },
+      //   })
+      //   reply.send(htmlStream)
+      //   return reply
     } else {
       reply.sendFile(file, siteRoot)
       return reply
@@ -160,7 +149,7 @@ const genericGetHandler = async function (request, reply) {
   }
 }
 
-const buildFileRouteHanlderNew = table => {
+const buildFileRouteHanlder = table => {
   const [, , filename] = table
 
   const file = path.join('pages', filename)
@@ -214,106 +203,78 @@ const buildFileRouteHanlderNew = table => {
         })
       }
 
-      if (viewEngine.ext === '.marko' || viewEngine.ext === '.liquid') {
-        // marko: use @marko-fastify
-        console.log('%%%%%%%%%%%%%%%%%%%%%% renderring', viewEngine.ext)
-
-        reply.headers({ 'Content-Type': 'text/html' })
-        if (engine.renderToStream) {
-          const htmlStream = engine.renderToStream(file, {
-            ...booted,
-            params: request.params,
-            _ctx: { request, reply, _duosite },
-          })
-
-          reply.send(htmlStream)
-        } else if (engine.renderToStringAsync) {
-          const htmlString = await engine.renderToStringAsync(file, {
-            ...booted,
-            params: request.params,
-            _ctx: { request, reply, _duosite },
-          })
-          reply.send(htmlString)
-        } else if (engine.renderToString) {
-          const htmlString = engine.renderToStringAsync(file, {
-            ...booted,
-            params: request.params,
-            _ctx: { request, reply, _duosite },
-          })
-          reply.send(htmlString)
-        } else {
-          throw new Error('View engine fails')
-        }
-
-        if (bootJs && bootJs.getStaticProps) {
-          if (engine.renderToFileAsync) {
-            try {
-              const outputHtmlPath = path.join(
-                siteRoot,
-                'pages',
-                subsiteUrl + '.html'
-              )
-              await engine.renderToFile(
-                file,
-                {
-                  ...booted,
-                  _ctx: { _duosite },
-                },
-                outputHtmlPath
-              )
-              console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
-            } catch (e) {
-              console.log(e)
-            }
-          } else if (engine.renderToFile) {
-            try {
-              const outputHtmlPath = path.join(
-                siteRoot,
-                'pages',
-                subsiteUrl + '.html'
-              )
-              engine.renderToFile(
-                file,
-                {
-                  ...booted,
-                  _ctx: { _duosite },
-                },
-                outputHtmlPath
-              )
-              console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
-            } catch (e) {
-              console.log(e)
-            }
-          } else {
-            const output = await engine.renderFile(file, {
-              ...booted,
-              _ctx: { _duosite },
-            })
-
-            try {
-              const outputHtmlPath = path.join(
-                siteRoot,
-                'pages',
-                subsiteUrl + '.html'
-              )
-              await fs.outputFile(outputHtmlPath, output)
-              console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
-            } catch (e) {
-              console.log(e)
-            }
-          }
-        }
-        return reply
-      } else {
-        const output = await engine.renderFile(file, {
+      reply.headers({ 'Content-Type': 'text/html' })
+      if (engine.renderToStream) {
+        const htmlStream = engine.renderToStream(file, {
           ...booted,
           params: request.params,
           _ctx: { request, reply, _duosite },
         })
-        reply.headers({ 'Content-Type': 'text/html' })
-        reply.send(output)
 
-        if (bootJs && bootJs.getStaticProps) {
+        reply.send(htmlStream)
+      } else if (engine.renderToStringAsync) {
+        const htmlString = await engine.renderToStringAsync(file, {
+          ...booted,
+          params: request.params,
+          _ctx: { request, reply, _duosite },
+        })
+        reply.send(htmlString)
+      } else if (engine.renderToString) {
+        const htmlString = engine.renderToStringAsync(file, {
+          ...booted,
+          params: request.params,
+          _ctx: { request, reply, _duosite },
+        })
+        reply.send(htmlString)
+      } else {
+        throw new Error('View engine fails')
+      }
+
+      if (bootJs && bootJs.getStaticProps) {
+        if (engine.renderToFileAsync) {
+          try {
+            const outputHtmlPath = path.join(
+              siteRoot,
+              'pages',
+              subsiteUrl + '.html'
+            )
+            await engine.renderToFileAsync(
+              file,
+              {
+                ...booted,
+                _ctx: { _duosite },
+              },
+              outputHtmlPath
+            )
+            console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+          } catch (e) {
+            console.log(e)
+          }
+        } else if (engine.renderToFile) {
+          try {
+            const outputHtmlPath = path.join(
+              siteRoot,
+              'pages',
+              subsiteUrl + '.html'
+            )
+            engine.renderToFile(
+              file,
+              {
+                ...booted,
+                _ctx: { _duosite },
+              },
+              outputHtmlPath
+            )
+            console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+          } catch (e) {
+            console.log(e)
+          }
+        } else {
+          const output = await engine.renderFile(file, {
+            ...booted,
+            _ctx: { _duosite },
+          })
+
           try {
             const outputHtmlPath = path.join(
               siteRoot,
@@ -326,20 +287,8 @@ const buildFileRouteHanlderNew = table => {
             console.log(e)
           }
         }
-
-        return reply
       }
-
-      // const output = await engine.renderFile(file, {
-      //   ...booted,
-      //   params,
-      //   query: request.query,
-      //   _ctx: { request, reply, _duosite },
-      // })
-
-      // reply.headers({ 'Content-Type': 'text/html' })
-      // reply.send(output)
-      // return reply
+      return reply
     }
   }
   return handler
@@ -385,7 +334,7 @@ const buildFileRouter = table => {
   return {
     method: ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'OPTIONS'],
     url: '/' + url,
-    handler: buildFileRouteHanlderNew(table),
+    handler: buildFileRouteHanlder(table),
   }
 }
 

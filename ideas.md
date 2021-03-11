@@ -1,5 +1,11 @@
 # Pages content
 
+## Pages file resolve rules:
+
+pages: relate to path: pages
+api: related to path: api
+assets: realted to path: public
+
 ## Render engine
 
 - renderToStringSync, renderToStringAsync
