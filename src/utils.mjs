@@ -524,12 +524,22 @@ const buildApiRouteUrlVariableTable = (routes, target = 'fastify') => {
   })
 }
 
-/** Build file routing
- * @param {string} root - root for router files
- * @param {string} ext - extension of template file
- * @param {string} target - target routing framework, default and only support fastify now
- * @return {[[string, string]]} - array of [router string, filepath]
- */
+const buildGeneratedFileName = (table, params) => {
+  const segments = table.map(([segName, type]) => {
+    if (type === 'static') {
+      return segName
+    }
+    if (type === 'catch') {
+      return params[segName]
+    }
+    if (type === 'catchAll' || type === 'optionalCatchAll') {
+      return params[segName] || params['*']
+    }
+    throw new Error(`Catch variable ${segName}not provided`)
+  })
+
+  return path.join(...segments)
+}
 
 export {
   getDirectories,
@@ -548,4 +558,5 @@ export {
   buildApiRouteUrlVariableTable,
   buildFilesRoutingTable,
   lastItem,
+  buildGeneratedFileName,
 }
