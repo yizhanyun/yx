@@ -1,6 +1,7 @@
 import path from 'path'
 
 import nodemon from 'nodemon'
+import chalk from 'chalk'
 
 import { readFile } from 'fs/promises'
 
@@ -19,13 +20,13 @@ try {
     await readFile(new URL(`${root}/nodemon.json`, import.meta.url))
   )
 
-  console.log(i18nm.useCustomNodemonJson)
+  console.log(chalk.blue(i18nm.info), i18nm.useCustomNodemonJson)
 } catch (e) {
   nodemonConfig = JSON.parse(
     await readFile(new URL('./nodemon.json', import.meta.url))
   )
 
-  console.log(i18nm.useDefaultNodemonJson)
+  console.log(chalk.blue(i18nm.info), i18nm.useDefaultNodemonJson)
 }
 
 const { watch } = nodemonConfig
@@ -40,11 +41,11 @@ nodemon({
 
 nodemon
   .on('start', function () {
-    console.log(i18nm.nodemonStarted)
+    console.log(chalk.blue(i18nm.info), i18nm.nodemonStarted)
   })
   .on('quit', function () {
-    console.log(i18nm.nodemonQuit)
+    console.log(chalk.blue(i18nm.info), i18nm.nodemonQuit)
   })
   .on('restart', function (files) {
-    console.log(i18nm.nodemonRestart, files)
+    console.log(chalk.blue(i18nm.info), i18nm.nodemonRestart, files)
   })

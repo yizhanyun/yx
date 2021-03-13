@@ -31,14 +31,14 @@ const genericGetHandler = async function (request, reply) {
     reply.send()
     return reply
   } else {
-    const [_file, resovledExt] = r
+    const [file, resovledExt] = r
 
     // render rile
-    const file = path.join('pages', _file)
+    // const file = path.join('pages', _file)
 
     // server static
     if (resovledExt !== ext) {
-      reply.sendFile(file, siteRoot)
+      reply.sendFile(path.join('pages', file), siteRoot)
       return reply
     }
 
@@ -48,6 +48,7 @@ const genericGetHandler = async function (request, reply) {
       _duosite,
       request,
       reply,
+      whichOnes: ['static'],
     })
 
     const booted = serverProps || staticProps
@@ -66,9 +67,9 @@ const genericGetHandler = async function (request, reply) {
 }
 
 const buildFileRouteHanlder = table => {
-  const [, , filename] = table
+  const [, , file] = table
 
-  const file = path.join('pages', filename)
+  // const file = path.join('pages', filename)
 
   const handler = async (request, reply) => {
     const params = request.params

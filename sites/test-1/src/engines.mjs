@@ -13,10 +13,6 @@ const breakFullpath = fullpath => {
 }
 
 const build = async _duosite => {
-  console.log('=====================================')
-  console.log('Demo: build site custom view engine')
-  console.log('======================================')
-
   try {
     const {
       global: { i18nMessages: i18n },
@@ -30,13 +26,11 @@ const build = async _duosite => {
 
     switch (ext) {
       case '.liquid': {
-
         const liquid = new Liquid({ ...options, root })
         const renderToStringAsync = async (file, options) => {
           return liquid.renderFile(file, options)
         }
         const renderToFileAsync = async (file, options, outFile) => {
-
           const [outParent] = breakFullpath(outFile)
 
           if (!fs.existsSync(outParent))
@@ -45,7 +39,6 @@ const build = async _duosite => {
           const s = await liquid.renderFile(file, options)
 
           await fs.writeFileSync(outFile, s)
-
         }
         return { renderToStringAsync, renderToFileAsync }
       }
@@ -53,7 +46,7 @@ const build = async _duosite => {
         throw new Error(i18n.engineNotSupported)
     }
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     return undefined
   }
 }

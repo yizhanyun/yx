@@ -14,7 +14,7 @@ import {
   loadGlobalI18NMessages,
 } from './src/utils.mjs'
 
-import bootServer from './bootServer.mjs'
+import bootServer from './src/bootServer.mjs'
 
 import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
@@ -22,9 +22,9 @@ const __dirname = path.dirname(__filename)
 
 const DUOSITE_ROOT = process.cwd()
 
-const settings = loadGlobalSettings(DUOSITE_ROOT)
+const settings = await loadGlobalSettings(DUOSITE_ROOT)
 
-const i18nm = loadGlobalI18NMessages(__dirname, settings.lang)
+const i18nm = await loadGlobalI18NMessages(__dirname, settings.lang)
 
 const cmd = process.argv[2]
 
@@ -44,9 +44,9 @@ if (
     const sites = getDirectories(path.join(cwd, 'sites')).filter(site =>
       site.startsWith('template-')
     )
-    console.log(chalk.green(`\nFound ${sites.length} templates`))
+    console.log(chalk.blue(i18nm.info), i18nm.foundHowManySites(sites.length))
     sites.forEach(site => {
-      console.log(chalk.green(`  ${site}`))
+      console.log(`  ${site}`)
     })
   } else if (cmd === 'build') {
     const target = process.argv[3]
@@ -61,12 +61,12 @@ if (
     const fromTemplate = process.argv[3]
     const toSite = process.argv[4]
     if (!fromTemplate || !toSite) {
-      console.log(chalk.yellow(i18nm.duositeNewUsage))
+      console.log(chalk.yellow(i18nm.warning), i18nm.duositeNewUsage)
       process.exit(-1)
     }
 
     if (!fromTemplate.startsWith('template-')) {
-      console.log(chalk.yellow(i18nm.duositeWrongTemplateName))
+      console.log(chalk.yellow(i18nm.warning), i18nm.duositeWrongTemplateName)
       process.exit(-1)
     }
 
@@ -78,22 +78,22 @@ if (
     const exist = subsites.find(name => name === fromTemplate)
 
     if (!exist) {
-      console.log(chalk.yellow(i18nm.duositeTemplateNotFound))
+      console.log(chalk.yellow(i18nm.warning), i18nm.duositeTemplateNotFound)
       process.exit(-1)
     }
 
     if (!isSubdomainValid(toSite)) {
-      console.log(chalk.yellow(i18nm.duositeSubdomainError))
+      console.log(chalk.yellow(i18nm.warning), i18nm.duositeSubdomainError)
       process.exit(-1)
     }
 
     if (subsites.find(name => name === toSite)) {
-      console.log(chalk.yellow(i18nm.duositeNewSiteExists))
+      console.log(chalk.yellow(i18nm.warning), i18nm.duositeNewSiteExists)
       process.exit(-1)
     }
     fs.mkdirpSync(path.join(DUOSITE_ROOT, 'sites', toSite))
 
-    console.log(chalk.blue(i18nm.createNewSiteDone(toSite)))
+    console.log(chalk.blue(i18nm.info), i18nm.createNewSiteDone(toSite))
   } else {
     bootServer({ root: DUOSITE_ROOT, env: 'production' })
   }

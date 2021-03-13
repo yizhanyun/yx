@@ -17,10 +17,6 @@ const breakFullpath = fullpath => {
 }
 
 const build = async _duosite => {
-  console.log('=====================================')
-  console.log('Demo: build site custom view engine')
-  console.log('======================================')
-
   try {
     const {
       global: { i18nMessages: i18n },
@@ -35,12 +31,12 @@ const build = async _duosite => {
     switch (ext) {
       case '.marko': {
         const renderToStringAsync = async (file, options, res) => {
-          const template = require(path.join(root, 'pages', file))
-          console.log(JSON.stringify(template, null, 2))
+          const template = require(path.join(root, file))
+
           return template.default.renderToString(options, res)
         }
         const renderToStream = (file, options) => {
-          const template = require(path.join(root, 'pages', file))
+          const template = require(path.join(root, file))
           return template.default.stream(options)
         }
         const renderToFileAsync = async (file, options, outFile) => {
@@ -49,7 +45,7 @@ const build = async _duosite => {
           if (!fs.existsSync(outParent))
             fs.mkdirSync(outParent, { recursive: true })
           const out = fs.createWriteStream(outFile, { encoding: 'utf8' })
-          const template = require(path.join(root, 'pages', file))
+          const template = require(path.join(root, file))
           await template.default.render(options, out)
         }
 
@@ -59,7 +55,7 @@ const build = async _duosite => {
         throw new Error(i18n.engineNotSupported)
     }
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     return undefined
   }
 }

@@ -18,7 +18,7 @@ const build = async (root, _duosite) => {
     try {
       fs.copySync(path.join(root, file), target)
     } catch (e) {
-      console.log(e)
+      // console.log(e)
     }
   })
 

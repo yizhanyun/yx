@@ -4,7 +4,7 @@ import path from 'path'
 /**
  * Boot a template's static props with params
  * @param {Object} options - param options
- * @param {string} file - template file
+ * @param {string} file - template file, root is 'pages'
  * @param {Object} params - params
  * @param {string []} whichOnes - array of ['static', 'server', 'paths']
  * @param {Object} _duosite - duosite object
@@ -109,16 +109,17 @@ const bootTemplateStaticPaths = async options => {
  */
 
 const serveTemplate = async options => {
-  const { params, _duosite, booted, request, reply, file } = options
+  const { params, _duosite, booted, request, reply, file: _file } = options
+  const file = path.join('pages', _file)
   const {
     site: { root: siteRoot, engine },
     global,
   } = _duosite
 
-
   const i18nm = global.i18nMessages
 
   reply.headers({ 'Content-Type': 'text/html' })
+
   if (engine.renderToStream) {
     const htmlStream = engine.renderToStream(file, {
       ...booted,
@@ -174,16 +175,16 @@ const buildToFile = async options => {
         outputFileName + '.html'
       )
       await engine.renderToFileAsync(
-        path.join('pages',file),
+        path.join('pages', file),
         {
           ...booted,
           _ctx: { _duosite },
         },
         outputHtmlPath
       )
-      console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+      console.log(chalk.blue(i18nm.info), i18nm.writeBuildFile(outputHtmlPath))
     } catch (e) {
-      console.log(e)
+      // console.log(e)
     }
   } else if (engine.renderToFile) {
     try {
@@ -195,16 +196,16 @@ const buildToFile = async options => {
         outputFileName + '.html'
       )
       engine.renderToFile(
-        path.join('pages',file),
+        path.join('pages', file),
         {
           ...booted,
           _ctx: { _duosite },
         },
         outputHtmlPath
       )
-      console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+      console.log(chalk.blue(i18nm.info), i18nm.writeBuildFile(outputHtmlPath))
     } catch (e) {
-      console.log(e)
+      // console.log(e)
     }
   }
 }

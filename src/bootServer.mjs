@@ -2,6 +2,7 @@ import GracefulServer from '@gquittet/graceful-server'
 
 import path from 'path'
 import fastify from 'fastify'
+import chalk from 'chalk'
 
 import {
   getDirectories,
@@ -11,8 +12,6 @@ import {
 } from './utils.mjs'
 
 import buildSubsitePlugin from './plugins/subsite.mjs'
-
-import chalk from 'chalk'
 
 const siteRootName = 'sites'
 
@@ -55,7 +54,7 @@ const bootServer = async opts => {
   const i18nm = await loadGlobalI18NMessages(root, lang)
 
   if (build && !buildTarget) {
-    console.log(chalk.red(i18nm.siteNotProvided))
+    console.log(chalk.red(i18nm.error), i18nm.siteNotProvided)
     return
   }
 
@@ -64,7 +63,7 @@ const bootServer = async opts => {
     buildTarget !== '*' &&
     !sites.find(site => site === buildTarget)
   ) {
-    console.log(chalk.red(i18nm.siteNotFound))
+    console.log(chalk.red(i18nm.error), i18nm.siteNotFound)
     return
   }
 
@@ -107,18 +106,20 @@ const bootServer = async opts => {
 
   gracefulServer.on(GracefulServer.READY, () => {
     if (build) {
-      console.log('Finished building. Shutting down...')
+      console.log(chalk.blue(i18nm.info), i18nm.finishedBuilding)
       duositeFastify && duositeFastify.close()
-    } else console.log(i18nm.serverReady)
+    }
+    // else console.log(chalk.blue(i18nm.info),i18nm.serverReady)
   })
 
   gracefulServer.on(GracefulServer.SHUTTING_DOWN, () => {
-    console.log(i18nm.serverShuttingDown)
+    console.log(chalk.blue(i18nm.info), i18nm.serverShuttingDown)
     duositeFastify && duositeFastify.close()
   })
 
   gracefulServer.on(GracefulServer.SHUTDOWN, error => {
-    if (error) console.log(i18nm.serverDownFor, error.message)
+    if (error)
+      console.log(chalk.blue(i18nm.info), i18nm.serverDownFor, error.message)
     duositeFastify && duositeFastify.close()
   })
 
@@ -197,7 +198,7 @@ const bootServer = async opts => {
       onStarted(duositeFastify)
     }
     gracefulServer.setReady()
-    if (!build) console.log(chalk.green(i18nm.startMessage(port)))
+    if (!build) console.log(chalk.blue(i18nm.info), i18nm.startMessage(port))
   })
 }
 

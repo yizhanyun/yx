@@ -23,8 +23,6 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
     whichOnes: ['paths'],
   })
 
-
-
   if (staticPaths) {
     for (const staticPath of staticPaths) {
       const { params } = staticPath
@@ -36,8 +34,6 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
         whichOnes: ['static'],
       })
 
-
-
       if (booted) {
         if (engine.renderToFileAsync) {
           try {
@@ -48,16 +44,19 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
               outputFileName + '.html'
             )
             await engine.renderToFileAsync(
-              path.join('pages',file),
+              path.join('pages', file),
               {
                 ...booted,
                 _ctx: { _duosite },
               },
               outputHtmlPath
             )
-            console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+            console.log(
+              chalk.blue(i18nm.info),
+              i18nm.writeBuildFile(outputHtmlPath)
+            )
           } catch (e) {
-            console.log(e)
+            // console.log(e)
           }
         } else if (engine.renderToFile) {
           try {
@@ -68,16 +67,19 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
               outputFileName + '.html'
             )
             engine.renderToFile(
-              path.join('pages',file),
+              path.join('pages', file),
               {
                 ...booted,
                 _ctx: { _duosite },
               },
               outputHtmlPath
             )
-            console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+            console.log(
+              chalk.blue(i18nm.info),
+              i18nm.writeBuildFile(outputHtmlPath)
+            )
           } catch (e) {
-            console.log(e)
+            // console.log(e)
           }
         } else {
           const output = await engine.renderFile(path.join('pages', file), {
@@ -93,98 +95,17 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
               outputFileName + '.html'
             )
             await fs.outputFile(outputHtmlPath, output)
-            console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+            console.log(
+              chalk.blue(i18nm.info),
+              i18nm.writeBuildFile(outputHtmlPath)
+            )
           } catch (e) {
-            console.log(e)
+            // console.log(e)
           }
         }
       }
     }
   }
-  // let booted
-  // let bootJs
-  // try {
-  //   bootJs = await import(path.join(siteRoot, 'pages', file + '.boot.mjs'))
-  // } catch (e) {
-  //   // console.log(e)
-  // }
-
-  // let paths, fallback
-
-  // if (bootJs && !bootJs.getServerProps && bootJs.getStaticPaths) {
-  //   const pathsGot = (await bootJs.getStaticPaths({ _duosite })) || {}
-  //   paths = pathsGot.paths
-  //   fallback = pathsGot.fallback
-  // }
-
-  // if (paths && bootJs.getStaticProps) {
-  //   for (const staticPath of paths) {
-  //     const { params } = staticPath
-  //     const outputFileName = buildGeneratedFileName(table, params)
-  //     booted = await bootJs.getStaticProps({ _duosite, params })
-
-  //     console.log('-------------', booted)
-
-  //     if (bootJs && bootJs.getStaticProps) {
-  //       if (engine.renderToFileAsync) {
-  //         try {
-  //           const outputHtmlPath = path.join(
-  //             siteRoot,
-  //             'pages',
-  //             outputFileName + '.html'
-  //           )
-  //           await engine.renderToFileAsync(
-  //             file,
-  //             {
-  //               ...booted,
-  //               _ctx: { _duosite },
-  //             },
-  //             outputHtmlPath
-  //           )
-  //           console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
-  //         } catch (e) {
-  //           console.log(e)
-  //         }
-  //       } else if (engine.renderToFile) {
-  //         try {
-  //           const outputHtmlPath = path.join(
-  //             siteRoot,
-  //             'pages',
-  //             outputFileName + '.html'
-  //           )
-  //           engine.renderToFile(
-  //             file,
-  //             {
-  //               ...booted,
-  //               _ctx: { _duosite },
-  //             },
-  //             outputHtmlPath
-  //           )
-  //           console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
-  //         } catch (e) {
-  //           console.log(e)
-  //         }
-  //       } else {
-  //         const output = await engine.renderFile(file, {
-  //           ...booted,
-  //           _ctx: { _duosite },
-  //         })
-
-  //         try {
-  //           const outputHtmlPath = path.join(
-  //             siteRoot,
-  //             'pages',
-  //             outputFileName + '.html'
-  //           )
-  //           await fs.outputFile(outputHtmlPath, output)
-  //           console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
-  //         } catch (e) {
-  //           console.log(e)
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
 
   let bootJs
   try {

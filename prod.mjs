@@ -1,4 +1,4 @@
-import bootServer from './bootServer.mjs'
+import bootServer from './src/bootServer.mjs'
 
 if (process.env.NODE_ENV !== 'production') {
   throw new Error('Must set NODE_ENV to production')

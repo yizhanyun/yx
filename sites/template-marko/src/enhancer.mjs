@@ -14,7 +14,6 @@ const enhance = async (fastify, _duosite) => {
 
   const outputDir = path.join(root, 'public', 'bundle')
 
-  console.log('%%%%%% Registerring fastify marko', _duosite, outputDir)
   fastify.addHook('preHandler', (request, reply, done) => {
     try {
       lasso.configure({
@@ -28,7 +27,7 @@ const enhance = async (fastify, _duosite) => {
         fingerprintsEnabled: isProduction, // Only add fingerprints to URLs in production
       })
     } catch (e) {
-      console.log(e)
+      // console.log(e)
     }
     done()
   })

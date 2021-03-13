@@ -15,12 +15,12 @@ const build = async (root, site, _duosite, fileRoutingTable) => {
   const { settings: siteSettings = {} } = siteConfig
   const { viewEngine = {} } = siteSettings
 
-  console.log(chalk.blue(i18nm.startBuildingSite(site)))
-  console.log(chalk.blue(i18nm.cleanPreviousBuild))
+  console.log(chalk.blue(i18nm.info), i18nm.startBuildingSite(site))
+  console.log(chalk.blue(i18nm.info), i18nm.cleanPreviousBuild)
   rimraf.sync(path.join(root, '.production'))
   fs.mkdirpSync(path.join(root, '.production'))
 
-  console.log(chalk.blue(i18nm.copySettings))
+  console.log(chalk.blue(i18nm.info), i18nm.copySettings)
   const filesForCopy = ['settings.mjs', 'settings.production.mjs']
 
   filesForCopy.forEach(file => {
@@ -38,7 +38,7 @@ const build = async (root, site, _duosite, fileRoutingTable) => {
 
     const target = path.join(root, '.production', _folder)
     fs.mkdirpSync(target)
-    console.log(chalk.blue(i18nm.copyFolder(_folder)))
+    console.log(chalk.blue(i18nm.info), i18nm.copyFolder(_folder))
     const source = path.join(root, _folder)
     if (fs.pathExistsSync(source)) {
       try {
@@ -53,7 +53,7 @@ const build = async (root, site, _duosite, fileRoutingTable) => {
     const [type, segments, file] = table
     if (type === 'static') {
       if (file.endsWith('.html')) {
-        console.log(chalk.blue(i18nm.buildHtml(file)))
+        console.log(chalk.blue(i18nm.info), i18nm.buildHtml(file))
         await buildHtml(table, root, site, _duosite)
       } else if (viewEngine.ext && file.endsWith(viewEngine.ext)) {
         await buildStaticTemplate(table, root, site, _duosite)

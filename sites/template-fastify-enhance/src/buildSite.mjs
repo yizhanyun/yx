@@ -20,7 +20,7 @@ const prebuild = async (siteRoot, site, duositeConfig, fileRoutingTable) => {
       fingerprintsEnabled: isProduction, // Only add fingerprints to URLs in production
     })
   } catch (e) {
-    console.log(e)
+    // console.log(e)
   }
 }
 export { prebuild }

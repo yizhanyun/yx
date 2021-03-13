@@ -108,7 +108,7 @@ const resolveUrlToFile = async (siteRoot, url, viewEngine) => {
           path.join(siteRoot, 'pages', rpath),
           '.html'
         )
-        console.log('-------- resolved', r, rpath)
+
         if (r) return [rpath, '.html']
         else {
           if (viewEngineExt) {
@@ -159,7 +159,11 @@ const loadGlobalSettings = async root => {
  */
 
 const loadGlobalI18NMessages = async (duositeRoot, _lang) => {
-  if (!_lang) console.log('Local not defined in settings. Use English.')
+  if (!_lang)
+    console.log(
+      chalk.yellow(i18nm.warning),
+      'Local not defined in settings. Use English.'
+    )
 
   const lang = _lang || 'en'
 
@@ -174,6 +178,7 @@ const loadGlobalI18NMessages = async (duositeRoot, _lang) => {
 
   if (!i18nMessagesSite && !i18nMessagesDefault) {
     console.log(
+      chalk.yellow(i18nm.warning),
       `Language dictionary for ${lang} not found. Use English as fallback`
     )
 
