@@ -8,9 +8,9 @@ import {
   getSubsite,
   loadGlobalSettings,
   loadGlobalI18NMessages,
-} from './src/utils.mjs'
+} from './utils.mjs'
 
-import buildSubsitePlugin from './src/plugins/subsite.mjs'
+import buildSubsitePlugin from './plugins/subsite.mjs'
 
 import chalk from 'chalk'
 

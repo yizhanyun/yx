@@ -377,13 +377,15 @@ This section logs important designs, ideas, reationale and choices along the dev
 
 ```
 <duosite project root>
- |- server.js : code to start server
- |- bootServer.js : code to boot server
- |- dev.js : code to start server for development
+ |- prod.js : code to start production server
+ |- build.js : code to start building processproduction server
+ |- dev.js : code to start development server
+ |- duosite.js : code for duosite bin
  |- settings.js : shared settings accross environment
  |- settings.development.js: settings for development only
  |- settings.production.js` : settings for production
  |- src : server source code  folder
+    |- bootServer.js : code to boot server
     |- utils.js : utils used by server
     |- lang : i18n dictionary
         |- messages : folder for message dictionaries

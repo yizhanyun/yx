@@ -35,7 +35,7 @@ const watchWithRoot = watch.map(p => path.join(root, p))
 nodemon({
   ...nodemonConfig,
   watch: watchWithRoot,
-  script: './server.mjs',
+  script: './src/runDev.mjs',
 })
 
 nodemon
