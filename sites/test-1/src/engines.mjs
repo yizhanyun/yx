@@ -41,12 +41,11 @@ const build = async _duosite => {
 
           if (!fs.existsSync(outParent))
             fs.mkdirSync(outParent, { recursive: true })
-          const out = fs.createWriteStream(outFile, { encoding: 'utf8' })
+
           const s = await liquid.renderFile(file, options)
-          out.once('open', function () {
-            out.write(s)
-            out.close()
-          })
+
+          await fs.writeFileSync(outFile, s)
+
         }
         return { renderToStringAsync, renderToFileAsync }
       }
