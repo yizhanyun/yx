@@ -4,6 +4,7 @@ import path from 'path'
 import fsp from 'fs/promises'
 
 import deepmerge from 'deepmerge'
+import chalk from 'chalk'
 
 // Get directories of a directory
 const getDirectories = source =>
@@ -161,7 +162,7 @@ const loadGlobalSettings = async root => {
 const loadGlobalI18NMessages = async (duositeRoot, _lang) => {
   if (!_lang)
     console.log(
-      chalk.yellow(i18nm.warning),
+      chalk.yellow('■ warning'),
       'Local not defined in settings. Use English.'
     )
 
@@ -178,7 +179,7 @@ const loadGlobalI18NMessages = async (duositeRoot, _lang) => {
 
   if (!i18nMessagesSite && !i18nMessagesDefault) {
     console.log(
-      chalk.yellow(i18nm.warning),
+      chalk.yellow('■ warning'),
       `Language dictionary for ${lang} not found. Use English as fallback`
     )
 

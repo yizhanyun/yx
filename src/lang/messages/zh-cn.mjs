@@ -33,6 +33,8 @@ export default {
   writeBuildFile: file => `将编译结果写到${file}`,
   foundHowManySites: number => `找到${number}个模板`,
   finishedBuilding: '编译结束,关闭中...',
+  buildServerSideRender: file => `编译服务器端渲染文件 ${file}`,
+  buildStaticRender: file => `编译静态渲染文件 ${file}`,
   info: '■ 信息',
   error: '■ 错误',
   warning: '■ 警告',

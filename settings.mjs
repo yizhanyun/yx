@@ -1,7 +1,7 @@
 // shared settings
 const settings = {
   defaultSite: 'www',
-  // lang: 'zh-cn',
+  lang: 'zh-cn',
   port: 5000,
   fastify: {},
   sharedSettings: {

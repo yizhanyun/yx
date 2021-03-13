@@ -33,6 +33,8 @@ export default {
   writeBuildFile: file => `Write build output ${file}`,
   foundHowManySites: number => `Found ${number} sites`,
   finishedBuilding: 'Finished building, shutting down...',
+  buildServerSideRender: file => `Build server site renderred ${file}`,
+  buildStaticRender: file => `Build static renderred ${file}`,
   info: '■ info',
   error: '■ error',
   warning: '■ warning',

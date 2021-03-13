@@ -41,17 +41,17 @@ const genericGetHandler = async function (request, reply) {
       reply.sendFile(path.join('pages', file), siteRoot)
       return reply
     }
-
     const { serverProps, staticProps } = await bootTemplateProps({
       file,
       params: request.params,
       _duosite,
       request,
       reply,
-      whichOnes: ['static'],
+      whichOnes: [['server', 'static']],
     })
 
     const booted = serverProps || staticProps
+    console.log('%%%%%%%%%%%%%%%%', booted)
 
     serveTemplate({
       params: request.params,

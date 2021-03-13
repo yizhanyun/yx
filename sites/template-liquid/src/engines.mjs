@@ -1,8 +1,16 @@
 // Build engines
 
 import { Liquid } from 'liquidjs'
+// Break full path to path and filename
+import path from 'path'
 import fs from 'fs'
-import { breakFullpath } from '../utils.mjs'
+
+const breakFullpath = fullpath => {
+  const segs = fullpath.split(path.sep)
+
+  const fileName = segs.pop()
+  return [segs.join(path.sep), fileName]
+}
 
 const build = async _duosite => {
   try {

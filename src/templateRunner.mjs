@@ -15,7 +15,6 @@ import path from 'path'
 const bootTemplateProps = async options => {
   const { file, params, _duosite, request, reply, whichOnes } = options
 
-  let bootJs
   const {
     site: { root: siteRoot, engine },
     global,
@@ -24,6 +23,7 @@ const bootTemplateProps = async options => {
   const i18nm = global.i18nMessages
 
   const bootJsPath = path.join(siteRoot, 'pages', file + '.boot.mjs')
+  let bootJs
   try {
     bootJs = await import(bootJsPath)
   } catch (e) {
@@ -31,10 +31,35 @@ const bootTemplateProps = async options => {
   }
   // if (bootJs && bootJs.getServerProps && bootJs.getStaticProps)
   //   throw new Error('Cannot have both getServerProps and getStaticProps')
-  // console.log('---------', params)
+
   const booted = {}
 
   for (const type of whichOnes || []) {
+    if (Array.isArray(type)) {
+      // load by priorities
+
+      for (const _type of type) {
+        if (_type === 'server' && bootJs && bootJs.getServerProps) {
+          booted.serverProps = await bootJs.getServerProps({
+            _duosite,
+            params,
+            request,
+            reply,
+          })
+          break
+        }
+
+        if (_type === 'static' && bootJs && bootJs.getStaticProps) {
+          booted.staticProps = await bootJs.getStaticProps({
+            _duosite,
+            params,
+            request,
+            reply,
+          })
+          break
+        }
+      }
+    }
     if (type === 'static' && bootJs && bootJs.getStaticProps) {
       booted.staticProps = await bootJs.getStaticProps({
         _duosite,
@@ -58,6 +83,7 @@ const bootTemplateProps = async options => {
       booted.fallback = pathsGot.fallback
     }
   }
+
   return booted
 }
 
@@ -174,6 +200,7 @@ const buildToFile = async options => {
         'pages',
         outputFileName + '.html'
       )
+      console.log(chalk.blue(i18nm.info), i18nm.buildStaticRender(file))
       await engine.renderToFileAsync(
         path.join('pages', file),
         {
@@ -195,6 +222,8 @@ const buildToFile = async options => {
         'pages',
         outputFileName + '.html'
       )
+      console.log(chalk.blue(i18nm.info), i18nm.buildStaticRender(file))
+
       engine.renderToFile(
         path.join('pages', file),
         {

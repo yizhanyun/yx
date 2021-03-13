@@ -43,6 +43,8 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
               'pages',
               outputFileName + '.html'
             )
+            console.log(chalk.blue(i18nm.info), i18nm.buildStaticRender(file))
+
             await engine.renderToFileAsync(
               path.join('pages', file),
               {
@@ -66,6 +68,7 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
               'pages',
               outputFileName + '.html'
             )
+            console.log(chalk.blue(i18nm.info), i18nm.buildStaticRender(file))
             engine.renderToFile(
               path.join('pages', file),
               {
@@ -88,6 +91,7 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
           })
 
           try {
+            console.log(chalk.blue(i18nm.info), i18nm.buildStaticRender(file))
             const outputHtmlPath = path.join(
               siteRoot,
               '.production',
@@ -118,6 +122,7 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
     const filesForCopy = [file, file + '.boot.mjs']
 
     filesForCopy.forEach(file => {
+      console.log(chalk.blue(i18nm.info), i18nm.buildServerSideRender(file))
       const target = path.join(siteRoot, '.production', 'pages', file)
       try {
         fs.copySync(path.join(siteRoot, 'pages', file), target)

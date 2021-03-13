@@ -25,18 +25,39 @@ const buildStaticTemplate = async (routeTable, root, site, _duosite) => {
 
   console.log(chalk.blue(i18nm.info), i18nm.buildStaticTemplate(file))
 
-  const { staticProps } = await bootTemplateProps({
-    file,
-    _duosite,
-    whichOnes: ['static'],
-  })
+  const bootJsPath = path.join(siteRoot, 'pages', file + '.boot.mjs')
+  let bootJs
+  try {
+    bootJs = await import(bootJsPath)
+  } catch (e) {
+    console.log(e)
+  }
+  if (!bootJs || bootJs.getServerProps) {
+    const filesForCopy = [file, file + '.boot.mjs']
 
-  await buildToFile({
-    outputFileName: removeSuffix(file),
-    file,
-    _duosite,
-    booted: staticProps,
-  })
+    filesForCopy.forEach(file => {
+      const target = path.join(root, '.production', 'pages', file)
+      console.log(chalk.blue(i18nm.info), i18nm.buildServerSideRender(file))
+      try {
+        fs.copySync(path.join(root, 'pages', file), target)
+      } catch (e) {
+        // console.log(e)
+      }
+    })
+  } else {
+    const { staticProps } = await bootTemplateProps({
+      file,
+      _duosite,
+      whichOnes: ['static'],
+    })
+
+    await buildToFile({
+      outputFileName: removeSuffix(file),
+      file,
+      _duosite,
+      booted: staticProps,
+    })
+  }
 }
 
 export default buildStaticTemplate
