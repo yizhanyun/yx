@@ -1,6 +1,16 @@
 // Build engines
 
 import { Liquid } from 'liquidjs'
+// Break full path to path and filename
+import path from 'path'
+import fs from 'fs'
+
+const breakFullpath = fullpath => {
+  const segs = fullpath.split(path.sep)
+
+  const fileName = segs.pop()
+  return [segs.join(path.sep), fileName]
+}
 
 const build = async _duosite => {
   console.log('=====================================')
@@ -24,7 +34,18 @@ const build = async _duosite => {
         const renderToStringAsync = async (file, options) => {
           return liquid.renderFile(file, options)
         }
-        return { renderToStringAsync }
+        const renderToFileAsync = async (file, options, outFile) => {
+          const [outParent] = breakFullpath(outFile)
+
+          if (!fs.existsSync(outParent))
+            fs.mkdirSync(outParent, { recursive: true })
+          const out = fs.createWriteStream(outFile, { encoding: 'utf8' })
+          out.once('open', function () {
+            stream.write(liquid.renderFile(file, options))
+            stream.close()
+          })
+        }
+        return { renderToStringAsync, renderToFileAsync }
       }
       default:
         throw new Error(i18n.engineNotSupported)

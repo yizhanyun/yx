@@ -5,6 +5,7 @@ import path from 'path'
 import chalk from 'chalk'
 
 import { buildGeneratedFileName } from '../utils.mjs'
+import { bootTemplateProps } from '../templateRunner.mjs'
 
 const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
   const [, table, file] = routeTable
@@ -16,35 +17,30 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
 
   const i18nm = global.i18nMessages
 
-  let booted
-  let bootJs
-  try {
-    bootJs = await import(path.join(siteRoot, 'pages', file + '.boot.mjs'))
-  } catch (e) {
-    // console.log(e)
-  }
+  const { staticPaths, fallback } = bootTemplateProps({
+    file,
+    _duosite,
+    whichOnes: ['paths'],
+  })
 
-  let paths, fallback
-
-  if (bootJs && !bootJs.getServerProps && bootJs.getStaticPaths) {
-    const pathsGot = (await bootJs.getStaticPaths({ _duosite })) || {}
-    paths = pathsGot.paths
-    fallback = pathsGot.fallback
-  }
-
-  if (paths && bootJs.getStaticProps) {
-    for (const staticPath of paths) {
+  if (staticPaths) {
+    for (const staticPath of staticPaths) {
       const { params } = staticPath
       const outputFileName = buildGeneratedFileName(table, params)
-      booted = await bootJs.getStaticProps({ _duosite, params })
+      const { staticProps: booted } = await bootTemplateProps({
+        _duosite,
+        params,
+        whichOnes: ['static'],
+      })
 
       console.log('-------------', booted)
 
-      if (bootJs && bootJs.getStaticProps) {
+      if (booted) {
         if (engine.renderToFileAsync) {
           try {
             const outputHtmlPath = path.join(
               siteRoot,
+              '.production',
               'pages',
               outputFileName + '.html'
             )
@@ -64,6 +60,7 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
           try {
             const outputHtmlPath = path.join(
               siteRoot,
+              '.production',
               'pages',
               outputFileName + '.html'
             )
@@ -88,6 +85,7 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
           try {
             const outputHtmlPath = path.join(
               siteRoot,
+              '.production',
               'pages',
               outputFileName + '.html'
             )
@@ -100,6 +98,98 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
       }
     }
   }
+  // let booted
+  // let bootJs
+  // try {
+  //   bootJs = await import(path.join(siteRoot, 'pages', file + '.boot.mjs'))
+  // } catch (e) {
+  //   // console.log(e)
+  // }
+
+  // let paths, fallback
+
+  // if (bootJs && !bootJs.getServerProps && bootJs.getStaticPaths) {
+  //   const pathsGot = (await bootJs.getStaticPaths({ _duosite })) || {}
+  //   paths = pathsGot.paths
+  //   fallback = pathsGot.fallback
+  // }
+
+  // if (paths && bootJs.getStaticProps) {
+  //   for (const staticPath of paths) {
+  //     const { params } = staticPath
+  //     const outputFileName = buildGeneratedFileName(table, params)
+  //     booted = await bootJs.getStaticProps({ _duosite, params })
+
+  //     console.log('-------------', booted)
+
+  //     if (bootJs && bootJs.getStaticProps) {
+  //       if (engine.renderToFileAsync) {
+  //         try {
+  //           const outputHtmlPath = path.join(
+  //             siteRoot,
+  //             'pages',
+  //             outputFileName + '.html'
+  //           )
+  //           await engine.renderToFileAsync(
+  //             file,
+  //             {
+  //               ...booted,
+  //               _ctx: { _duosite },
+  //             },
+  //             outputHtmlPath
+  //           )
+  //           console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+  //         } catch (e) {
+  //           console.log(e)
+  //         }
+  //       } else if (engine.renderToFile) {
+  //         try {
+  //           const outputHtmlPath = path.join(
+  //             siteRoot,
+  //             'pages',
+  //             outputFileName + '.html'
+  //           )
+  //           engine.renderToFile(
+  //             file,
+  //             {
+  //               ...booted,
+  //               _ctx: { _duosite },
+  //             },
+  //             outputHtmlPath
+  //           )
+  //           console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+  //         } catch (e) {
+  //           console.log(e)
+  //         }
+  //       } else {
+  //         const output = await engine.renderFile(file, {
+  //           ...booted,
+  //           _ctx: { _duosite },
+  //         })
+
+  //         try {
+  //           const outputHtmlPath = path.join(
+  //             siteRoot,
+  //             'pages',
+  //             outputFileName + '.html'
+  //           )
+  //           await fs.outputFile(outputHtmlPath, output)
+  //           console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
+  //         } catch (e) {
+  //           console.log(e)
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+
+  let bootJs
+  try {
+    bootJs = await import(path.join(siteRoot, 'pages', file + '.boot.mjs'))
+  } catch (e) {
+    // console.log(e)
+  }
+
   if (!bootJs || bootJs.getServerProps || fallback) {
     const filesForCopy = [file, file + '.boot.mjs']
 

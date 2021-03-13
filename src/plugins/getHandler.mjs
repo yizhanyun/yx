@@ -102,6 +102,7 @@ const buildFileRouteHanlder = table => {
         _duosite,
         request,
         reply,
+        whichOnes: ['static', 'server'],
       })
 
       const booted = serverProps || staticProps

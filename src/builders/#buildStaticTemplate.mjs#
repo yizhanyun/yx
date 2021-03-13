@@ -25,13 +25,12 @@ const buildStaticTemplate = async (routeTable, root, site, _duosite) => {
 
   console.log(i18nm.buildStaticTemplate(file))
 
-  const { staticProps } = await bootTemplateProps({
+  const { staticProps } = bootTemplateProps({
     file,
     _duosite,
     whichOnes: ['static'],
   })
 
-  console.log('=================== staticProps', staticProps)
   if (staticProps) {
     buildToFile({
       outputFileName: removeSuffix(file),
@@ -39,62 +38,6 @@ const buildStaticTemplate = async (routeTable, root, site, _duosite) => {
       _duosite,
       booted: staticProps,
     })
-    // if (engine.renderToFileAsync) {
-    //   try {
-    //     const outputHtmlPath = path.join(
-    //       siteRoot,
-    //       'pages',
-    //       removeSuffix(file) + '.html'
-    //     )
-    //     await engine.renderToFileAsync(
-    //       file,
-    //       {
-    //         ...booted,
-    //         _ctx: { _duosite },
-    //       },
-    //       outputHtmlPath
-    //     )
-    //     console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
-    //   } catch (e) {
-    //     console.log(e)
-    //   }
-    // } else if (engine.renderToFile) {
-    //   try {
-    //     const outputHtmlPath = path.join(
-    //       siteRoot,
-    //       'pages',
-    //       removeSuffix(file) + '.html'
-    //     )
-    //     engine.renderToFile(
-    //       file,
-    //       {
-    //         ...booted,
-    //         _ctx: { _duosite },
-    //       },
-    //       outputHtmlPath
-    //     )
-    //     console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
-    //   } catch (e) {
-    //     console.log(e)
-    //   }
-    // } else {
-    //   const output = await engine.renderFile(file, {
-    //     ...booted,
-    //     _ctx: { _duosite },
-    //   })
-
-    //   try {
-    //     const outputHtmlPath = path.join(
-    //       siteRoot,
-    //       'pages',
-    //       removeSuffix(file) + '.html'
-    //     )
-    //     await fs.outputFile(outputHtmlPath, output)
-    //     console.log(chalk.green(i18nm.writeBuildFile(outputHtmlPath)))
-    //   } catch (e) {
-    //     console.log(e)
-    //   }
-    // }
   }
   // if (engine.renderToFile) {
   //   try {

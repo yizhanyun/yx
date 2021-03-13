@@ -541,6 +541,14 @@ const buildGeneratedFileName = (table, params) => {
   return path.join(...segments)
 }
 
+// Break full path to path and filename
+const breakFullpath = fullpath => {
+  const segs = fullpath.split(path.sep)
+
+  const fileName = segs.pop()
+  return [segs.join(path.sep), fileName]
+}
+
 export {
   getDirectories,
   getSubsite,
@@ -559,4 +567,5 @@ export {
   buildFilesRoutingTable,
   lastItem,
   buildGeneratedFileName,
+  breakFullpath,
 }

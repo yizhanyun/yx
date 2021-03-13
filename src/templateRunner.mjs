@@ -6,15 +6,16 @@ import path from 'path'
  * @param {Object} options - param options
  * @param {string} file - template file
  * @param {Object} params - params
+ * @param {string []} whichOnes - array of ['static', 'server', 'paths']
  * @param {Object} _duosite - duosite object
  * @param {Object} request - request object
  * @param {Object} reply - reply object -
  */
 
 const bootTemplateProps = async options => {
-  const { file, params, _duosite, request, reply } = options
+  const { file, params, _duosite, request, reply, whichOnes } = options
 
-  let bootJs, serverProps, staticProps
+  let bootJs
   const {
     site: { root: siteRoot, engine },
     global,
@@ -22,7 +23,7 @@ const bootTemplateProps = async options => {
 
   const i18nm = global.i18nMessages
 
-  const bootJsPath = path.join(siteRoot, file + '.boot.mjs')
+  const bootJsPath = path.join(siteRoot, 'pages', file + '.boot.mjs')
   try {
     bootJs = await import(bootJsPath)
   } catch (e) {
@@ -30,36 +31,38 @@ const bootTemplateProps = async options => {
   }
   // if (bootJs && bootJs.getServerProps && bootJs.getStaticProps)
   //   throw new Error('Cannot have both getServerProps and getStaticProps')
-  console.log('---------', params)
-  if (bootJs && bootJs.getServerProps) {
-    serverProps = await bootJs.getServerProps({
-      _duosite,
-      params,
-      request,
-      reply,
-    })
-  } else if (bootJs && bootJs.getStaticProps) {
-    staticProps = await bootJs.getStaticProps({
-      _duosite,
-      params,
-      request,
-      reply,
-    })
-  }
+  // console.log('---------', params)
+  const booted = {}
 
-  console.log(
-    '%%%%%%%%',
-    bootJsPath,
-    bootJs,
-    siteRoot,
-    file,
-    serverProps,
-    staticProps
-  )
-  return {
-    serverProps,
-    staticProps,
+  console.log('======== booting', whichOnes, bootJs)
+
+  for (const type of whichOnes || []) {
+    console.log('======== booting', type)
+    if (type === 'static' && bootJs && bootJs.getStaticProps) {
+      booted.staticProps = await bootJs.getStaticProps({
+        _duosite,
+        params,
+        request,
+        reply,
+      })
+    }
+    if (type === 'server' && bootJs && bootJs.serverProps) {
+      booted.serverProps = await bootJs.getServerProps({
+        _duosite,
+        params,
+        request,
+        reply,
+      })
+    }
+
+    if (type === 'paths' && bootJs && bootJs.serverProps) {
+      const pathsGot = (await bootJs.getStaticPaths({ _duosite })) || {}
+      booted.staticPaths = pathsGot.paths
+      booted.fallback = pathsGot.fallback
+    }
   }
+  console.log('======== booting', booted)
+  return booted
 }
 
 /**
@@ -171,6 +174,7 @@ const buildToFile = async options => {
     try {
       const outputHtmlPath = path.join(
         siteRoot,
+        '.production',
         'pages',
         outputFileName + '.html'
       )
@@ -190,6 +194,8 @@ const buildToFile = async options => {
     try {
       const outputHtmlPath = path.join(
         siteRoot,
+        '.production',
+
         'pages',
         outputFileName + '.html'
       )
