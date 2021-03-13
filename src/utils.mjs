@@ -61,7 +61,6 @@ const fileExist = async (path, ext) => {
 const resolveUrlToFile = async (siteRoot, url, viewEngine) => {
   const { ext: viewEngineExt } = viewEngine || {}
 
-  console.log('=====> url', url)
   try {
     if (url.endsWith('/')) {
       // resolve /abc/ to /abc/index.html or /abc/index.ext

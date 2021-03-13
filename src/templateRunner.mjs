@@ -34,10 +34,7 @@ const bootTemplateProps = async options => {
   // console.log('---------', params)
   const booted = {}
 
-  console.log('======== booting', whichOnes, bootJs)
-
   for (const type of whichOnes || []) {
-    console.log('======== booting', type)
     if (type === 'static' && bootJs && bootJs.getStaticProps) {
       booted.staticProps = await bootJs.getStaticProps({
         _duosite,
@@ -55,13 +52,12 @@ const bootTemplateProps = async options => {
       })
     }
 
-    if (type === 'paths' && bootJs && bootJs.serverProps) {
+    if (type === 'paths' && bootJs && bootJs.getStaticPaths) {
       const pathsGot = (await bootJs.getStaticPaths({ _duosite })) || {}
       booted.staticPaths = pathsGot.paths
       booted.fallback = pathsGot.fallback
     }
   }
-  console.log('======== booting', booted)
   return booted
 }
 
@@ -119,7 +115,6 @@ const serveTemplate = async options => {
     global,
   } = _duosite
 
-  console.log('%%%%%%%%%%%%%%%% booted', booted)
 
   const i18nm = global.i18nMessages
 
@@ -179,7 +174,7 @@ const buildToFile = async options => {
         outputFileName + '.html'
       )
       await engine.renderToFileAsync(
-        file,
+        path.join('pages',file),
         {
           ...booted,
           _ctx: { _duosite },
@@ -200,7 +195,7 @@ const buildToFile = async options => {
         outputFileName + '.html'
       )
       engine.renderToFile(
-        file,
+        path.join('pages',file),
         {
           ...booted,
           _ctx: { _duosite },

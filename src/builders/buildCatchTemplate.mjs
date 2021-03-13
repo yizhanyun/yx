@@ -17,23 +17,26 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
 
   const i18nm = global.i18nMessages
 
-  const { staticPaths, fallback } = bootTemplateProps({
+  const { staticPaths, fallback } = await bootTemplateProps({
     file,
     _duosite,
     whichOnes: ['paths'],
   })
+
+
 
   if (staticPaths) {
     for (const staticPath of staticPaths) {
       const { params } = staticPath
       const outputFileName = buildGeneratedFileName(table, params)
       const { staticProps: booted } = await bootTemplateProps({
+        file,
         _duosite,
         params,
         whichOnes: ['static'],
       })
 
-      console.log('-------------', booted)
+
 
       if (booted) {
         if (engine.renderToFileAsync) {
@@ -45,7 +48,7 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
               outputFileName + '.html'
             )
             await engine.renderToFileAsync(
-              file,
+              path.join('pages',file),
               {
                 ...booted,
                 _ctx: { _duosite },
@@ -65,7 +68,7 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
               outputFileName + '.html'
             )
             engine.renderToFile(
-              file,
+              path.join('pages',file),
               {
                 ...booted,
                 _ctx: { _duosite },
@@ -77,7 +80,7 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
             console.log(e)
           }
         } else {
-          const output = await engine.renderFile(file, {
+          const output = await engine.renderFile(path.join('pages', file), {
             ...booted,
             _ctx: { _duosite },
           })

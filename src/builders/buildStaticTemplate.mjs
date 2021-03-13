@@ -31,7 +31,7 @@ const buildStaticTemplate = async (routeTable, root, site, _duosite) => {
     whichOnes: ['static'],
   })
 
-  console.log('=================== staticProps', staticProps)
+
   if (staticProps) {
     buildToFile({
       outputFileName: removeSuffix(file),

@@ -159,6 +159,7 @@ const buildSubsitePlugin = async (buildSite, target) => {
       site: {
         root: siteRoot,
         settings,
+        prodRoot: path.join('.production', siteRoot),
         name: site,
         engine,
         services: siteServices,

@@ -4,7 +4,7 @@ import path from 'path'
 const isProduction = process.env.NODE_ENV === 'production'
 
 const prebuild = async (siteRoot, site, _duosite, fileRoutingTable) => {
-  console.log('%%%%%%%%%%%%%%%%%%%%%%%%%', 'prebuild marko')
+
   const {
     site: { root, name },
   } = _duosite

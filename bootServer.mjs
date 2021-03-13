@@ -30,6 +30,8 @@ const bootServer = async opts => {
 
   const root = _root || process.env.DUOSITE_ROOT || process.cwd()
 
+  const mode = build ? 'build' : isProduction ? 'prod' : 'dev'
+
   const settings = await loadGlobalSettings(root)
 
   // const
@@ -172,6 +174,7 @@ const bootServer = async opts => {
     duositeFastify.register(subsitePlugin, {
       prefix: site,
       _duosite: {
+        mode,
         global: {
           root,
           settings: globalSettings,

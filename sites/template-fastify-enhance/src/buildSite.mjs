@@ -3,7 +3,6 @@ import lasso from 'lasso'
 const isProduction = process.env.NODE_ENV === 'production'
 
 const prebuild = async (siteRoot, site, duositeConfig, fileRoutingTable) => {
-  console.log('%%%%%%%%%%%%%%%%%%%%%%%%%', 'prebuild marko')
   const {
     site: { root, name },
   } = _duosite
