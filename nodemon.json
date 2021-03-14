@@ -1,11 +1,19 @@
 {
-  "ignore": [".git", ".cache", ".yarn", "node_modules/**/node_modules"],
+  "ignore": [
+    ".git",
+    ".cache",
+    ".yarn",
+    "node_modules/**/node_modules",
+    "**/.production/**"
+  ],
   "verbose": true,
   "env": {
     "NODE_ENV": "development"
   },
   "watch": [
-    "sites/",
+    "sites/*/pages/",
+    "sites/*/src/",
+    "sites/*/components/",
     "src/",
     "server.mjs",
     "dev.mjs",
@@ -14,5 +22,5 @@
     "settings.development.mjs",
     "setting.production.mjs"
   ],
-  "ext": "mjs,boot.mjs, html"
+  "ext": "mjs,boot.mjs, html, marko"
 }

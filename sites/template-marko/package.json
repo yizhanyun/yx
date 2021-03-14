@@ -1,0 +1,16 @@
+{
+  "name": "template-marko",
+  "version": "0.0.1",
+  "description": "Marko template",
+  "main": "index.js",
+  "author": "fqye",
+  "license": "MIT",
+  "dependencies": {
+    "@lasso/marko-taglib": "^2.0.3",
+    "@marko/fastify": "^1.0.2",
+    "lasso": "^3.4.1",
+    "lasso-marko": "^3.0.1",
+    "liquidjs": "^9.23.2",
+    "marko": "^5.3.0"
+  }
+}

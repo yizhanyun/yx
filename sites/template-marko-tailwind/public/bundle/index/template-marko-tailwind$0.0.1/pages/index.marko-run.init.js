@@ -1,0 +1,1 @@
+$_mod.run("/template-marko-tailwind$0.0.1/pages/index.marko.init");

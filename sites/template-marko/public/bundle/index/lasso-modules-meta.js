@@ -1,4 +1,4 @@
-$_mod.installed("duosite$0.1.3", "marko", "5.3.0");
+$_mod.installed("template-marko$0.0.1", "marko", "5.3.0");
 $_mod.remap("/marko$5.3.0/src/runtime/components/util", "/marko$5.3.0/src/runtime/components/util-browser");
 $_mod.remap("/marko$5.3.0/src/runtime/components/registry", "/marko$5.3.0/src/runtime/components/registry-browser");
 $_mod.installed("marko$5.3.0", "complain", "1.6.0");

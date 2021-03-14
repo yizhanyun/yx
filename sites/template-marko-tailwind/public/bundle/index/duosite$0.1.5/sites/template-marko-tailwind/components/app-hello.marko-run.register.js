@@ -1,0 +1,1 @@
+$_mod.run("/duosite$0.1.5/sites/template-marko-tailwind/components/app-hello.marko.register");

@@ -1,0 +1,1 @@
+$_mod.run("/template-marko$0.0.1/components/app-hello.marko.register");

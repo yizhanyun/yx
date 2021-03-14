@@ -30,7 +30,7 @@ const buildStaticTemplate = async (routeTable, root, site, _duosite) => {
   try {
     bootJs = await import(bootJsPath)
   } catch (e) {
-    console.log(e)
+    // console.log(e)
   }
   if (!bootJs || bootJs.getServerProps) {
     const filesForCopy = [file, file + '.boot.mjs']
