@@ -93,8 +93,6 @@ if (
     }
     fs.mkdirpSync(path.join(DUOSITE_ROOT, 'sites', toSite))
 
-    const filesForCopy = ['settings.mjs', 'settings.production.mjs']
-
     const target = path.join(DUOSITE_ROOT, 'sites', toSite)
     try {
       fs.copySync(path.join(cwd, 'sites', fromTemplate), target)

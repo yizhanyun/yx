@@ -33,7 +33,7 @@ const buildSubsitePlugin = async (buildSite, target) => {
 
     const { global } = _duosite
 
-    const { root, settings: globalSettings, i18nMessages, lang } = global
+    const { root } = global
 
     const siteRoot = path.join(
       root,
@@ -89,7 +89,7 @@ const buildSubsitePlugin = async (buildSite, target) => {
     }
     // build site engine
 
-    const { name, ext, options = {} } = viewEngine
+    const { name, ext } = viewEngine
 
     let engine
 

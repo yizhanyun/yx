@@ -1,13 +1,10 @@
 // Basic get handler
 import path from 'path'
-import fs from 'fs-extra'
-import chalk from 'chalk'
 
 import { resolveUrlToFile, removeSuffix } from '../utils.mjs'
 
 import {
   bootTemplateProps,
-  bootTemplateStaticPaths,
   serveTemplate,
   buildToFile,
 } from '../templateRunner.mjs'
@@ -16,7 +13,7 @@ const genericGetHandler = async function (request, reply) {
   const { _duosite } = request
 
   const {
-    site: { root: siteRoot, engine, settings = {} },
+    site: { root: siteRoot, settings = {} },
   } = _duosite
 
   const { viewEngine = {} } = settings
@@ -71,15 +68,13 @@ const buildFileRouteHanlder = table => {
   // const file = path.join('pages', filename)
 
   const handler = async (request, reply) => {
-    const params = request.params
-
     // render template
 
-    const { _duosite, url } = request
+    const { _duosite } = request
 
     const {
-      global: { i18nMessages: i18nm },
-      site: { root: siteRoot, name: siteName, engine },
+      // global: { i18nMessages: i18nm },
+      site: { root: siteRoot },
     } = _duosite
 
     const {

@@ -25,8 +25,9 @@ const build = async _duosite => {
         const renderToFileAsync = async (file, options, outFile) => {
           const [outParent] = breakFullpath(outFile)
 
-          if (!fs.existsSync(outParent))
+          if (!fs.existsSync(outParent)) {
             fs.mkdirSync(outParent, { recursive: true })
+          }
 
           const s = await liquid.renderFile(file, options)
 

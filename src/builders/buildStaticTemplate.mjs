@@ -6,18 +6,13 @@ import chalk from 'chalk'
 
 import { removeSuffix } from '../utils.mjs'
 
-import {
-  bootTemplateProps,
-  bootTemplateStaticPaths,
-  serveTemplate,
-  buildToFile,
-} from '../templateRunner.mjs'
+import { bootTemplateProps, buildToFile } from '../templateRunner.mjs'
 
 const buildStaticTemplate = async (routeTable, root, site, _duosite) => {
   const [, , file] = routeTable
 
   const {
-    site: { root: siteRoot, engine },
+    site: { root: siteRoot },
     global,
   } = _duosite
 
