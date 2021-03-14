@@ -93,7 +93,7 @@ const bootServer = async opts => {
 
   const duositeFastify = fastify({
     logger: {
-      level: isProduction ? 'error' : 'trace',
+      level: isProduction ? 'error' : 'info',
     },
     ...settings.fastify,
     rewriteUrl: function (req) {

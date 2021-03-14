@@ -174,8 +174,15 @@ const loadGlobalI18NMessages = async (duositeRoot, _lang) => {
     i18nMessagesSite = (
       await import(`${duositeRoot}/src/lang/messages/${lang}.mjs`)
     ).default
+  } catch (e) {
+    // console.log(e)
+  }
+
+  try {
     i18nMessagesDefault = (await import(`./lang/messages/${lang}.mjs`)).default
-  } catch (e) {}
+  } catch (e) {
+    // console.log(e)
+  }
 
   if (!i18nMessagesSite && !i18nMessagesDefault) {
     console.log(

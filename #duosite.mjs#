@@ -55,7 +55,7 @@ if (
   } else if (cmd === 'dev') {
     // set cwd to duosite folder
     // set duosite project root to user's project root
-
+fut
     bootServer({ root: DUOSITE_ROOT })
   } else if (cmd === 'new') {
     const fromTemplate = process.argv[3]
