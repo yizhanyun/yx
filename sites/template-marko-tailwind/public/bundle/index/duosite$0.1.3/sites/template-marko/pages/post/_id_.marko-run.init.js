@@ -1,0 +1,1 @@
+$_mod.run("/duosite$0.1.3/sites/template-marko/pages/post/[id].marko.init");

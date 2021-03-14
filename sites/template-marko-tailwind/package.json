@@ -1,0 +1,22 @@
+{
+  "name": "template-marko-tailwind",
+  "version": "0.0.1",
+  "description": "Marko and tailwind template",
+  "main": "index.js",
+  "author": "lanyusan",
+  "license": "MIT",
+  "scripts": {
+    "tailwind-dev": "yarn postcss ./src/css/**/*.css --dir ./public/bundle/css/",
+    "tailwind-watch": "yarn postcss ./src/css/**/*.css --dir ./public/bundle/css/ --watch",
+    "tailwind-prod": "NODE_ENV=production yarn postcss ./src/css/**/*.css --dir ./.production/public/bundle/css/",
+    "build": "yarn tailwind-prod"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.2.4",
+    "postcss": "^8.2.6",
+    "postcss-cli": "^8.3.1",
+    "postcss-import": "^14.0.0",
+    "tailwind": "^4.0.0",
+    "tailwindcss": "^2.0.3"
+  }
+}

@@ -51,7 +51,6 @@ const genericGetHandler = async function (request, reply) {
     })
 
     const booted = serverProps || staticProps
-    console.log('%%%%%%%%%%%%%%%%', booted)
 
     serveTemplate({
       params: request.params,
