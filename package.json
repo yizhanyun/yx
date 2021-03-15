@@ -16,6 +16,7 @@
     "@lasso/marko-taglib": "^2.0.3",
     "@marko/fastify": "^1.0.2",
     "chalk": "^4.1.0",
+    "chokidar": "^3.5.1",
     "deepmerge": "^4.2.2",
     "fastify": "^3.12.0",
     "fastify-static": "^4.0.1",
