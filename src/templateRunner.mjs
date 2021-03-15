@@ -25,7 +25,7 @@ const bootTemplateProps = async options => {
   const bootJsPath = path.join(siteRoot, 'pages', file + '.boot.mjs')
   let bootJs
   try {
-    bootJs = await import(bootJsPath)
+    bootJs = await import(pathToFileURL(bootJsPath))
   } catch (e) {
     // console.log(e)
   }
@@ -108,7 +108,7 @@ const bootTemplateStaticPaths = async options => {
   const i18nm = global.i18nMessages
 
   try {
-    bootJs = await import(path.join(siteRoot, 'pages', file + '.boot.mjs'))
+    bootJs = await import(pathToFileURL(path.join(siteRoot, 'pages', file + '.boot.mjs')))
   } catch (e) {
     // console.log(e)
   }

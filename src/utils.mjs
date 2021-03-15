@@ -6,6 +6,8 @@ import fsp from 'fs/promises'
 import deepmerge from 'deepmerge'
 import chalk from 'chalk'
 
+import { pathToFileURL} from 'url'
+
 // Get directories of a directory
 const getDirectories = source =>
   fs
@@ -143,12 +145,14 @@ const resolveUrlToFile = async (siteRoot, url, viewEngine) => {
 const loadGlobalSettings = async root => {
   let sharedSetting, byEnironmentSetting
   try {
-    sharedSetting = (await import(path.join(root, 'settings.mjs'))).default
+    sharedSetting = (await import(pathToFileURL(path.join(root, 'settings.mjs')))).default
     byEnironmentSetting =
       process.env.NODE_ENV === 'production'
-        ? (await import(path.join(root, 'settings.production.mjs'))).default
-        : (await import(path.join(root, 'settings.development.mjs'))).default
-  } catch (e) {}
+        ? (await import(pathToFileURL(path.join(root, 'settings.production.mjs')))).default
+        : (await import(pathToFileURL(path.join(root, 'settings.development.mjs')))).default
+  } catch (e) {
+    //console.log(e)
+  }
 
   return deepmerge(sharedSetting || {}, byEnironmentSetting || {})
 }
@@ -172,7 +176,7 @@ const loadGlobalI18NMessages = async (duositeRoot, _lang) => {
 
   try {
     i18nMessagesSite = (
-      await import(`${duositeRoot}/src/lang/messages/${lang}.mjs`)
+      await import(pathToFileURL(path.join(duositeRoot,'src', 'lang','message',`${lang}.mjs`)))
     ).default
   } catch (e) {
     // console.log(e)
@@ -195,9 +199,9 @@ const loadGlobalI18NMessages = async (duositeRoot, _lang) => {
     try {
       _i18nMessagesSite =
         i18nMessagesSite ||
-        (await import(`${duositeRoot}/src/lang/messages/en`)).default
+        (await import(pathToFileURL(path.join(duositeRoot, 'src', 'lang', 'messages', 'en.mjs')))).default
       _i18nMessagesDefault =
-        i18nMessagesDefault || (await import(`./lang/messages/en`)).default
+        i18nMessagesDefault || (await import('./lang/messages/en.mjs')).default
     } catch (e) {}
 
     return deepmerge(_i18nMessagesSite || {}, _i18nMessagesDefault || {})

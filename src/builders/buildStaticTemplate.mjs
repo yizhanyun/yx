@@ -23,7 +23,7 @@ const buildStaticTemplate = async (routeTable, root, site, _duosite) => {
   const bootJsPath = path.join(siteRoot, 'pages', file + '.boot.mjs')
   let bootJs
   try {
-    bootJs = await import(bootJsPath)
+    bootJs = await import(pathToFileURL(bootJsPath))
   } catch (e) {
     // console.log(e)
   }

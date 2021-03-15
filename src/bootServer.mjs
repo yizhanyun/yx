@@ -79,7 +79,7 @@ const bootServer = async opts => {
 
   let buildGlobalServices
   try {
-    buildGlobalServices = (await import(`${root}/src/globalServices.mjs`))
+    buildGlobalServices = (await import(pathToFileURL(path.join(root, 'src', 'lang', 'globalServices.mjs'))))
       .default
   } catch (e) {}
 
@@ -91,7 +91,7 @@ const bootServer = async opts => {
   let enhance
 
   try {
-    enhance = (await import(`${root}/src/enhancer.mjs`)).default
+    enhance = (await import(pathToFileURL(path.join(root, 'src', 'enhancer.mjs')))).default
   } catch (e) {}
   // Get subsite list
 
@@ -149,7 +149,7 @@ const bootServer = async opts => {
     let customBuildGlobal
 
     try {
-      customBuildGlobal = await import(path.join(root, 'src/buildGlobal.mjs'))
+      customBuildGlobal = await import(pathToFileURL(path.join(root, 'src', 'buildGlobal.mjs')))
     } catch (e) {
       // console.log(e)
     }
