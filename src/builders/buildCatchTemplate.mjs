@@ -125,7 +125,7 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
       console.log(chalk.blue(i18nm.info), i18nm.buildServerSideRender(file))
       const target = path.join(siteRoot, '.production', 'pages', file)
       try {
-        fs.copySync(pathToFileURL(path.join(siteRoot, 'pages', file), target))
+        fs.copySync(path.join(siteRoot, 'pages', file), target)
       } catch (e) {
         // console.log(e)
       }
