@@ -1,4 +1,3 @@
-import deepmerge from 'deepmerge'
 import fastifyStatic from 'fastify-static'
 import path from 'path'
 import { pathToFileURL } from 'url'
@@ -27,7 +26,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 
 const buildSubsitePlugin = async (buildSite, target) => {
   const subsite = async function (fastify, opts, done) {
-    const { _duosite, prefix: site } = opts
+    const { _duosite, prefix: site, siteSettings: settings } = opts
 
     // do nothing if building but not self
     if (buildSite && target !== '*' && target !== site) return
@@ -42,35 +41,6 @@ const buildSubsitePlugin = async (buildSite, target) => {
       site,
       isProduction && !buildSite ? '.production' : ''
     )
-
-    // load subsite settings
-    let sharedSetting, byEnironmentSetting
-    try {
-      sharedSetting = (
-        await import(pathToFileURL(path.join(siteRoot, 'settings.mjs')))
-      ).default
-    } catch (e) {
-      // console.log(e)
-    }
-
-    try {
-      byEnironmentSetting =
-        process.env.NODE_ENV === 'production'
-          ? (
-              await import(
-                pathToFileURL(path.join(siteRoot, 'settings.production.mjs'))
-              )
-            ).default || {}
-          : (
-              await import(
-                pathToFileURL(path.join(siteRoot, 'settings.development.mjs'))
-              )
-            ).default || {}
-    } catch (e) {
-      // console.log(e)
-    }
-
-    const settings = deepmerge(sharedSetting || {}, byEnironmentSetting || {})
 
     if (watcher) {
       const { watch = [] } = settings || {}

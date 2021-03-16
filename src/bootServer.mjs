@@ -1,11 +1,12 @@
 import GracefulServer from '@gquittet/graceful-server'
-
+import deepmerge from 'deepmerge'
 import path from 'path'
 import fastify from 'fastify'
 import chalk from 'chalk'
 import chokidar from 'chokidar'
 import { createRequire } from 'module'
 import { pathToFileURL } from 'url'
+import fastifyProxy from 'fastify-http-proxy'
 
 const require = createRequire(import.meta.url)
 
@@ -109,10 +110,10 @@ const bootServer = async opts => {
       level: isProduction ? 'error' : 'info',
     },
     ...settings.fastify,
-    rewriteUrl: function (req) {
-      const subsite = getSubsite(req.headers.host, defaultSite)
-      return subsite + req.url
-    },
+    // rewriteUrl: function (req) {
+    //   const subsite = getSubsite(req.headers.host, defaultSite)
+    //   return subsite + req.url
+    // },
   })
 
   const gracefulServer = GracefulServer(duositeFastify.server)
@@ -235,20 +236,69 @@ const bootServer = async opts => {
   }
 
   for (const site of sites) {
-    duositeFastify.register(subsitePlugin, {
-      prefix: site,
-      _duosite: {
-        mode,
-        watcher,
-        global: {
-          root,
-          settings: globalSettings,
-          services: globalServices,
-          i18nMessages: i18nm,
-          lang,
+    const siteRoot = path.join(
+      root,
+      siteRootName,
+      site,
+      isProduction && !buildSite ? '.production' : ''
+    )
+
+    // load subsite settings
+    let sharedSetting, byEnironmentSetting
+    try {
+      sharedSetting = (
+        await import(pathToFileURL(path.join(siteRoot, 'settings.mjs')))
+      ).default
+    } catch (e) {
+      // console.log(e)
+    }
+
+    try {
+      byEnironmentSetting =
+        process.env.NODE_ENV === 'production'
+          ? (
+              await import(
+                pathToFileURL(path.join(siteRoot, 'settings.production.mjs'))
+              )
+            ).default || {}
+          : (
+              await import(
+                pathToFileURL(path.join(siteRoot, 'settings.development.mjs'))
+              )
+            ).default || {}
+    } catch (e) {
+      // console.log(e)
+    }
+
+    const settings = deepmerge(sharedSetting || {}, byEnironmentSetting || {})
+
+    const { viewEngine = {} } = settings || {}
+
+    const { proxyed, upstream } = viewEngine
+    if (proxyed) {
+      duositeFastify.register(fastifyProxy, {
+        upstream,
+        // prefix: site, // optional
+        http2: false, // optional
+      })
+      console.log(viewEngine)
+    } else {
+      duositeFastify.register(subsitePlugin, {
+        prefix: site,
+        siteSettings: settings,
+        _duosite: {
+          mode,
+          watcher,
+          global: {
+            root,
+            settings: globalSettings,
+            services: globalServices,
+            i18nMessages: i18nm,
+            lang,
+          },
         },
-      },
-    })
+      })
+    }
   }
 
   // Run the server!
