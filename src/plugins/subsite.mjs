@@ -1,6 +1,7 @@
 import deepmerge from 'deepmerge'
 import fastifyStatic from 'fastify-static'
 import path from 'path'
+import { pathToFileURL } from 'url'
 
 import {
   genericGetRoute,
@@ -45,13 +46,26 @@ const buildSubsitePlugin = async (buildSite, target) => {
     // load subsite settings
     let sharedSetting, byEnironmentSetting
     try {
-      sharedSetting = (await import(pathToFileURL(path.join(siteRoot,'settings.mjs')))).default
+      sharedSetting = (
+        await import(pathToFileURL(path.join(siteRoot, 'settings.mjs')))
+      ).default
+    } catch (e) {
+      // console.log(e)
+    }
+
+    try {
       byEnironmentSetting =
         process.env.NODE_ENV === 'production'
-          ? (await import(`./${siteRoot}/settings.production.mjs`)).default ||
-            {}
-          : (await import(`./${siteRoot}/settings.development.mjs`)).default ||
-            {}
+          ? (
+              await import(
+                pathToFileURL(path.join(siteRoot, 'settings.production.mjs'))
+              )
+            ).default || {}
+          : (
+              await import(
+                pathToFileURL(path.join(siteRoot, 'settings.development.mjs'))
+              )
+            ).default || {}
     } catch (e) {
       // console.log(e)
     }
@@ -77,8 +91,11 @@ const buildSubsitePlugin = async (buildSite, target) => {
     let buildSiteServices
 
     try {
-      buildSiteServices = (await import(pathToFileURL(path.join(siteRoot, 'src' ,'siteServices.mjs'))))
-        .default
+      buildSiteServices = (
+        await import(
+          pathToFileURL(path.join(siteRoot, 'src', 'siteServices.mjs'))
+        )
+      ).default
     } catch (e) {
       // console.log(e)
     }
@@ -91,7 +108,9 @@ const buildSubsitePlugin = async (buildSite, target) => {
 
     let enhance
     try {
-      enhance = (await import(pathToFileURL(path.join(siteRoot, 'src', 'enhancer.mjs')))).default
+      enhance = (
+        await import(pathToFileURL(path.join(siteRoot, 'src', 'enhancer.mjs')))
+      ).default
     } catch (e) {
       // console.log(e)
     }
@@ -105,8 +124,9 @@ const buildSubsitePlugin = async (buildSite, target) => {
       let buildTemplateEngine
 
       try {
-        buildTemplateEngine = (await import(pathToFileURL(path.join(siteRoot, 'src', 'engines.mjs'))))
-          .default
+        buildTemplateEngine = (
+          await import(pathToFileURL(path.join(siteRoot, 'src', 'engines.mjs')))
+        ).default
       } catch (e) {
         // console.log(e)
       }

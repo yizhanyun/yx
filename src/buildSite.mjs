@@ -91,7 +91,7 @@ const build = async (root, site, _duosite, fileRoutingTable) => {
       try {
         fs.copySync(source, target)
       } catch (e) {
-        console.log(e)
+        // console.log(e)
       }
     }
   })

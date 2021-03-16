@@ -2,6 +2,7 @@
 import path from 'path'
 
 import { resolveUrlToFile, removeSuffix } from '../utils.mjs'
+import { pathToFileURL } from 'url'
 
 import {
   bootTemplateProps,
@@ -131,8 +132,11 @@ const buildApiRouter = async (table, siteRoot) => {
   const [url, , file, type] = table
 
   try {
-    router = (await import(pathToFileURL(path.join(siteRoot, 'api', file)))).default
-  } catch (e) {}
+    router = (await import(pathToFileURL(path.join(siteRoot, 'api', file))))
+      .default
+  } catch (e) {
+    // console.log(e)
+  }
 
   if (!router) {
     return {

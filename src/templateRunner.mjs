@@ -1,5 +1,6 @@
 import chalk from 'chalk'
 import path from 'path'
+import { pathToFileURL } from 'url'
 
 /**
  * Boot a template's static props with params
@@ -108,7 +109,9 @@ const bootTemplateStaticPaths = async options => {
   const i18nm = global.i18nMessages
 
   try {
-    bootJs = await import(pathToFileURL(path.join(siteRoot, 'pages', file + '.boot.mjs')))
+    bootJs = await import(
+      pathToFileURL(path.join(siteRoot, 'pages', file + '.boot.mjs'))
+    )
   } catch (e) {
     // console.log(e)
   }

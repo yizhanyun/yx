@@ -5,6 +5,8 @@ import fastify from 'fastify'
 import chalk from 'chalk'
 import chokidar from 'chokidar'
 import { createRequire } from 'module'
+import { pathToFileURL } from 'url'
+
 const require = createRequire(import.meta.url)
 
 import {
@@ -79,9 +81,12 @@ const bootServer = async opts => {
 
   let buildGlobalServices
   try {
-    buildGlobalServices = (await import(pathToFileURL(path.join(root, 'src', 'lang', 'globalServices.mjs'))))
-      .default
-  } catch (e) {}
+    buildGlobalServices = (
+      await import(pathToFileURL(path.join(root, 'src', 'globalServices.mjs')))
+    ).default
+  } catch (e) {
+    // console.log(e)
+  }
 
   const globalServices = buildGlobalServices
     ? await buildGlobalServices(settings, root)
@@ -91,8 +96,12 @@ const bootServer = async opts => {
   let enhance
 
   try {
-    enhance = (await import(pathToFileURL(path.join(root, 'src', 'enhancer.mjs')))).default
-  } catch (e) {}
+    enhance = (
+      await import(pathToFileURL(path.join(root, 'src', 'enhancer.mjs')))
+    ).default
+  } catch (e) {
+    // console.log(e)
+  }
   // Get subsite list
 
   const duositeFastify = fastify({
@@ -149,7 +158,9 @@ const bootServer = async opts => {
     let customBuildGlobal
 
     try {
-      customBuildGlobal = await import(pathToFileURL(path.join(root, 'src', 'buildGlobal.mjs')))
+      customBuildGlobal = await import(
+        pathToFileURL(path.join(root, 'src', 'buildGlobal.mjs'))
+      )
     } catch (e) {
       // console.log(e)
     }

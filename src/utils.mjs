@@ -6,7 +6,7 @@ import fsp from 'fs/promises'
 import deepmerge from 'deepmerge'
 import chalk from 'chalk'
 
-import { pathToFileURL} from 'url'
+import { pathToFileURL } from 'url'
 
 // Get directories of a directory
 const getDirectories = source =>
@@ -145,12 +145,28 @@ const resolveUrlToFile = async (siteRoot, url, viewEngine) => {
 const loadGlobalSettings = async root => {
   let sharedSetting, byEnironmentSetting
   try {
-    sharedSetting = (await import(pathToFileURL(path.join(root, 'settings.mjs')))).default
+    sharedSetting = (
+      await import(pathToFileURL(path.join(root, 'settings.mjs')))
+    ).default
+  } catch (e) {
+    // console.log(e)
+  }
+
+  try {
     byEnironmentSetting =
       process.env.NODE_ENV === 'production'
-        ? (await import(pathToFileURL(path.join(root, 'settings.production.mjs')))).default
-        : (await import(pathToFileURL(path.join(root, 'settings.development.mjs')))).default
+        ? (
+            await import(
+              pathToFileURL(path.join(root, 'settings.production.mjs'))
+            )
+          ).default
+        : (
+            await import(
+              pathToFileURL(path.join(root, 'settings.development.mjs'))
+            )
+          ).default
   } catch (e) {
+    // console.log(e)
   }
 
   return deepmerge(sharedSetting || {}, byEnironmentSetting || {})
@@ -175,7 +191,11 @@ const loadGlobalI18NMessages = async (duositeRoot, _lang) => {
 
   try {
     i18nMessagesSite = (
-      await import(pathToFileURL(path.join(duositeRoot,'src', 'lang','message',`${lang}.mjs`)))
+      await import(
+        pathToFileURL(
+          path.join(duositeRoot, 'src', 'lang', 'messages', `${lang}.mjs`)
+        )
+      )
     ).default
   } catch (e) {
     // console.log(e)
@@ -198,10 +218,18 @@ const loadGlobalI18NMessages = async (duositeRoot, _lang) => {
     try {
       _i18nMessagesSite =
         i18nMessagesSite ||
-        (await import(pathToFileURL(path.join(duositeRoot, 'src', 'lang', 'messages', 'en.mjs')))).default
+        (
+          await import(
+            pathToFileURL(
+              path.join(duositeRoot, 'src', 'lang', 'messages', 'en.mjs')
+            )
+          )
+        ).default
       _i18nMessagesDefault =
         i18nMessagesDefault || (await import('./lang/messages/en.mjs')).default
-    } catch (e) {}
+    } catch (e) {
+      // console.log(e)
+    }
 
     return deepmerge(_i18nMessagesSite || {}, _i18nMessagesDefault || {})
   } else return deepmerge(i18nMessagesSite, i18nMessagesDefault)

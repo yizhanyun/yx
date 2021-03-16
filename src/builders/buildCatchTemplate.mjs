@@ -1,6 +1,7 @@
 import fs from 'fs-extra'
 
 import path from 'path'
+import { pathToFileURL } from 'url'
 
 import chalk from 'chalk'
 
@@ -113,7 +114,9 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
 
   let bootJs
   try {
-    bootJs = await import(pathToFileURL(path.join(siteRoot, 'pages', file + '.boot.mjs')))
+    bootJs = await import(
+      pathToFileURL(path.join(siteRoot, 'pages', file + '.boot.mjs'))
+    )
   } catch (e) {
     // console.log(e)
   }
