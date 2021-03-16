@@ -3,6 +3,9 @@ import GracefulServer from '@gquittet/graceful-server'
 import path from 'path'
 import fastify from 'fastify'
 import chalk from 'chalk'
+import chokidar from 'chokidar'
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
 
 import {
   getDirectories,
@@ -25,7 +28,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 const bootServer = async opts => {
   // load global settings
 
-  const { onStarted, root: _root, build, buildTarget } = opts || {}
+  const { onStarted, root: _root, build, buildTarget, watcher } = opts || {}
 
   const root = _root || process.env.DUOSITE_ROOT || process.cwd()
 
@@ -192,12 +195,76 @@ const bootServer = async opts => {
   duositeFastify.listen(port, function (err, address) {
     if (err) {
       duositeFastify.log.error(err)
-      process.exit(1)
+      process.exit()
     }
     if (onStarted) {
       onStarted(duositeFastify)
     }
     gracefulServer.setReady()
+    if (mode === 'dev') {
+      const watching = [
+        'src/**/*.mjs',
+        'sites/*/pages/**/*.mjs',
+        'sites/*/pages/**/*.marko',
+        'sites/*/components/**/*.marko',
+      ]
+
+      const watcher = chokidar.watch(watching, {
+        persistent: true,
+
+        ignoreInitial: false,
+        followSymlinks: true,
+        cwd: root,
+        disableGlobbing: false,
+
+        usePolling: false,
+        interval: 100,
+        binaryInterval: 300,
+        alwaysStat: false,
+        depth: 99,
+        awaitWriteFinish: {
+          stabilityThreshold: 2000,
+          pollInterval: 100,
+        },
+
+        ignorePermissionErrors: false,
+        atomic: true, // or a custom 'atomicity delay', in milliseconds (default 100)
+      })
+
+      let restarting = false
+      console.log('Start watching...')
+      watcher.on('ready', function () {
+        console.log('Watcher ready...')
+
+        watcher.on('change', function (path) {
+          console.log(path, 'Start restarting...')
+
+          if (!restarting) {
+            restarting = true
+            console.log(path, 'Restarting...')
+            duositeFastify.close().then(() => {
+              // const child = process.on('exit', () => {
+              require('child_process').spawn(
+                process.argv.shift(),
+                process.argv,
+                {
+                  cwd: process.cwd(),
+                  stdio: 'inherit',
+                  detached: false,
+                }
+              )
+              // })
+              // process.exit(0)
+            })
+          }
+
+          // Object.keys(require.cache).forEach(function (id) {
+          //   delete require.cache[id]
+          // })
+        })
+      })
+    }
+
     if (!build) console.log(chalk.blue(i18nm.info), i18nm.startMessage(port))
   })
 }

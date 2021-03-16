@@ -3,7 +3,12 @@ import path from 'path'
 import nodemon from 'nodemon'
 import chalk from 'chalk'
 
+import bootServer from './bootServer.mjs'
+
 import chokidar from 'chokidar'
+
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
 
 import { readFile } from 'fs/promises'
 
@@ -20,8 +25,9 @@ const dev = async () => {
 
   const watching = [
     'src/**/*.mjs',
-    'sites/pages/**/*.mjs',
-    'sites/pages/**/*.marko',
+    'sites/*/pages/**/*.mjs',
+    'sites/*/pages/**/*.marko',
+    'sites/*/components/**/*.marko',
   ]
 
   const watcher = chokidar.watch(watching, {
@@ -45,13 +51,7 @@ const dev = async () => {
     ignorePermissionErrors: false,
     atomic: true, // or a custom 'atomicity delay', in milliseconds (default 100)
   })
-  watcher.on('ready', function () {
-    watcher.on('all', function () {
-      Object.keys(require.cache).forEach(function (id) {
-        delete require.cache[id]
-      })
-    })
-  })
+  bootServer({ watcher })
 }
 
 export default dev
