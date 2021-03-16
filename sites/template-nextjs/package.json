@@ -1,6 +1,7 @@
 {
   "name": "template-nextjs",
   "version": "0.0.1",
+
   "description": "A nextjs template",
   "main": "index.js",
   "license": "MIT",
