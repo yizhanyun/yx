@@ -27,7 +27,6 @@ const settings = await loadGlobalSettings(DUOSITE_ROOT)
 const i18nm = await loadGlobalI18NMessages(__dirname, settings.lang)
 
 const cmd = process.argv[2]
-
 if (
   cmd !== 'prod' &&
   cmd !== 'dev' &&

@@ -151,7 +151,6 @@ const loadGlobalSettings = async root => {
         ? (await import(pathToFileURL(path.join(root, 'settings.production.mjs')))).default
         : (await import(pathToFileURL(path.join(root, 'settings.development.mjs')))).default
   } catch (e) {
-    //console.log(e)
   }
 
   return deepmerge(sharedSetting || {}, byEnironmentSetting || {})
