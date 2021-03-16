@@ -117,3 +117,6 @@ dist
 
 # Duosite production
 .production
+
+# bundle
+**/public/bundle
