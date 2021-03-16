@@ -5,7 +5,6 @@ import chalk from 'chalk'
 import isSubdomainValid from 'is-subdomain-valid'
 
 import fs from 'fs-extra'
-
 import path from 'path'
 
 import {
