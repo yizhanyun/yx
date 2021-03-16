@@ -51,11 +51,11 @@ if (
   } else if (cmd === 'build') {
     const target = process.argv[3]
 
-    bootServer({ build: true, env: 'production', buildTarget: target })
+    bootServer({ build: true, env: 'production', buildTarget: tafbrget })
   } else if (cmd === 'dev') {
     // set cwd to duosite folder
     // set duosite project root to user's project root
-fut
+
     bootServer({ root: DUOSITE_ROOT })
   } else if (cmd === 'new') {
     const fromTemplate = process.argv[3]
@@ -92,8 +92,6 @@ fut
       process.exit(-1)
     }
     fs.mkdirpSync(path.join(DUOSITE_ROOT, 'sites', toSite))
-
-    const filesForCopy = ['settings.mjs', 'settings.production.mjs']
 
     const target = path.join(DUOSITE_ROOT, 'sites', toSite)
     try {

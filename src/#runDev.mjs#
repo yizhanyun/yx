@@ -1,15 +1,25 @@
+import path from 'path'
+
 import bootServer from './bootServer.mjs'
 
 import chokidar from 'chokidar'
 
-import { loadGlobalSettings } from './utils.mjs'
+import { loadGlobalSettings, loadGlobalI18NMessages } from './utils.mjs'
 
 const root = process.env.DUOSITE_ROOT || process.cwd()
 
 const dev = async () => {
   const globalSettings = await loadGlobalSettings(root)
 
-  const watcher = chokidar.watch(globalSettings.watch || [], {
+
+  const watching = [
+    'src/**/*.mjs',
+    'sites/*/pages/**/*.mjs',
+    'sites/*/pages/**/*.marko',
+    'sites/*/components/**/*.marko',
+  ]
+
+  const watcher = chokidar.watch(watching, {
     persistent: true,
 
     ignoreInitial: false,

@@ -31,7 +31,7 @@ const buildSubsitePlugin = async (buildSite, target) => {
     // do nothing if building but not self
     if (buildSite && target !== '*' && target !== site) return
 
-    const { global } = _duosite
+    const { global, watcher } = _duosite
 
     const { root } = global
 
@@ -57,6 +57,14 @@ const buildSubsitePlugin = async (buildSite, target) => {
     }
 
     const settings = deepmerge(sharedSetting || {}, byEnironmentSetting || {})
+
+    if (watcher) {
+      const { watch = [] } = settings || {}
+      for (const _path of watch) {
+        const forWatch = path.join('sites', site, _path)
+        watcher.add(forWatch)
+      }
+    }
 
     const {
       staticRoot = 'static', // Root for statics that are serverved as is.

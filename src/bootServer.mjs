@@ -28,7 +28,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 const bootServer = async opts => {
   // load global settings
 
-  const { onStarted, root: _root, build, buildTarget, watcher } = opts || {}
+  const { onStarted, root: _root, build, buildTarget } = opts || {}
 
   const root = _root || process.env.DUOSITE_ROOT || process.cwd()
 
@@ -36,6 +36,7 @@ const bootServer = async opts => {
 
   const settings = await loadGlobalSettings(root)
 
+  const { watch: globalWatch = [] } = settings || {}
   // const
 
   // root of user project
@@ -174,11 +175,60 @@ const bootServer = async opts => {
 
   // boot subsite servers
 
+  let watcher
+  if (mode === 'dev') {
+    const watching = globalWatch
+
+    watcher = chokidar.watch(watching, {
+      persistent: true,
+
+      ignoreInitial: false,
+      followSymlinks: true,
+      cwd: root,
+      disableGlobbing: false,
+
+      usePolling: false,
+      interval: 100,
+      binaryInterval: 300,
+      alwaysStat: false,
+      depth: 99,
+      awaitWriteFinish: {
+        stabilityThreshold: 2000,
+        pollInterval: 100,
+      },
+
+      ignorePermissionErrors: false,
+      atomic: true, // or a custom 'atomicity delay', in milliseconds (default 100)
+    })
+
+    let restarting = false
+    console.log(chalk.blue(i18nm.info), i18nm.startWatcher)
+    watcher.on('ready', function () {
+      console.log(chalk.blue(i18nm.info), i18nm.startWatcherDone)
+
+      watcher.on('change', function (path) {
+        console.log(chalk.blue(i18nm.info), i18nm.restartDueTo)
+        console.log(chalk.blue(i18nm.info), path)
+        if (!restarting) {
+          restarting = true
+          duositeFastify.close().then(() => {
+            require('child_process').spawn(process.argv.shift(), process.argv, {
+              cwd: process.cwd(),
+              stdio: 'inherit',
+              detached: false,
+            })
+          })
+        }
+      })
+    })
+  }
+
   for (const site of sites) {
     duositeFastify.register(subsitePlugin, {
       prefix: site,
       _duosite: {
         mode,
+        watcher,
         global: {
           root,
           settings: globalSettings,
@@ -201,69 +251,6 @@ const bootServer = async opts => {
       onStarted(duositeFastify)
     }
     gracefulServer.setReady()
-    if (mode === 'dev') {
-      const watching = [
-        'src/**/*.mjs',
-        'sites/*/pages/**/*.mjs',
-        'sites/*/pages/**/*.marko',
-        'sites/*/components/**/*.marko',
-      ]
-
-      const watcher = chokidar.watch(watching, {
-        persistent: true,
-
-        ignoreInitial: false,
-        followSymlinks: true,
-        cwd: root,
-        disableGlobbing: false,
-
-        usePolling: false,
-        interval: 100,
-        binaryInterval: 300,
-        alwaysStat: false,
-        depth: 99,
-        awaitWriteFinish: {
-          stabilityThreshold: 2000,
-          pollInterval: 100,
-        },
-
-        ignorePermissionErrors: false,
-        atomic: true, // or a custom 'atomicity delay', in milliseconds (default 100)
-      })
-
-      let restarting = false
-      console.log('Start watching...')
-      watcher.on('ready', function () {
-        console.log('Watcher ready...')
-
-        watcher.on('change', function (path) {
-          console.log(path, 'Start restarting...')
-
-          if (!restarting) {
-            restarting = true
-            console.log(path, 'Restarting...')
-            duositeFastify.close().then(() => {
-              // const child = process.on('exit', () => {
-              require('child_process').spawn(
-                process.argv.shift(),
-                process.argv,
-                {
-                  cwd: process.cwd(),
-                  stdio: 'inherit',
-                  detached: false,
-                }
-              )
-              // })
-              // process.exit(0)
-            })
-          }
-
-          // Object.keys(require.cache).forEach(function (id) {
-          //   delete require.cache[id]
-          // })
-        })
-      })
-    }
 
     if (!build) console.log(chalk.blue(i18nm.info), i18nm.startMessage(port))
   })

@@ -64,7 +64,6 @@ const build = async (root, site, _duosite, fileRoutingTable) => {
       console.log(chalk.blue(i18nm.info), `${out}`)
       console.log(chalk.blue(i18nm.info), i18nm.runSiteBuildInfoEnd)
     }
-    console.log(chalk.blue(i18nm.info), i18nm.useCustomNodemonJson)
   } catch (e) {
     // console.log(e)
   }
