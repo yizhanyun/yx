@@ -244,7 +244,7 @@ const bootServer = async opts => {
       root,
       siteRootName,
       site,
-      isProduction && !buildSite ? '.production' : ''
+      mode === 'prod' ? '.production' : ''
     )
 
     // load subsite settings

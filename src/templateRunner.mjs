@@ -214,7 +214,7 @@ const buildToFile = async options => {
       )
       console.log(chalk.blue(i18nm.info), i18nm.writeBuildFile(outputHtmlPath))
     } catch (e) {
-      // console.log(e)
+      console.log(e)
     }
   } else if (engine.renderToFile) {
     try {
