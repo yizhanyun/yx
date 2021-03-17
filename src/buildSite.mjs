@@ -79,7 +79,7 @@ const build = async (root, site, _duosite, fileRoutingTable) => {
 
   // process.chdir(cwdNow)
 
-  const foldersForCopy = ['src', 'api', ['public', 'static', 'bundle']]
+  const foldersForCopy = ['src', 'api', ['public', 'static']]
   foldersForCopy.forEach(folder => {
     const _folder = Array.isArray(folder) ? path.join(...folder) : folder
 
