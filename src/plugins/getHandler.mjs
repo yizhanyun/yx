@@ -19,9 +19,15 @@ const genericGetHandler = async function (request, reply) {
 
   const { viewEngine = {} } = settings
 
-  const { ext } = viewEngine
+  const { ext, proxyed = false } = viewEngine
 
   const url = request.params['*']
+
+  if (proxyed) {
+    reply.from(url)
+    return reply
+  }
+
   const r = await resolveUrlToFile(siteRoot, url, viewEngine)
 
   if (!r) {
@@ -156,7 +162,7 @@ const buildApiRouter = async (table, siteRoot) => {
 }
 
 const genericGetRoute = {
-  method: 'GET',
+  method: ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'OPTIONS'],
   url: '*',
   handler: genericGetHandler,
 }

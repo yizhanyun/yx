@@ -6,7 +6,8 @@ import chalk from 'chalk'
 import chokidar from 'chokidar'
 import { createRequire } from 'module'
 import { pathToFileURL } from 'url'
-import fastifyProxy from 'fastify-http-proxy'
+// import fastifyProxy from 'fastify-http-proxy'
+import fastifyProxy from 'fastify-reply-from'
 
 const require = createRequire(import.meta.url)
 
@@ -18,6 +19,7 @@ import {
 } from './utils.mjs'
 
 import buildSubsitePlugin from './plugins/subsite.mjs'
+import buildProxyPlugin from './plugins/proxy.mjs'
 
 const siteRootName = 'sites'
 
@@ -78,6 +80,8 @@ const bootServer = async opts => {
 
   const subsitePlugin = await buildSubsitePlugin(build, buildTarget)
 
+  const proxyPlugin = await buildProxyPlugin(build, buildTarget)
+
   // Build global services
 
   let buildGlobalServices
@@ -110,10 +114,10 @@ const bootServer = async opts => {
       level: isProduction ? 'error' : 'info',
     },
     ...settings.fastify,
-    // rewriteUrl: function (req) {
-    //   const subsite = getSubsite(req.headers.host, defaultSite)
-    //   return subsite + req.url
-    // },
+    rewriteUrl: function (req) {
+      const subsite = getSubsite(req.headers.host, defaultSite)
+      return subsite + req.url
+    },
   })
 
   const gracefulServer = GracefulServer(duositeFastify.server)
@@ -277,11 +281,25 @@ const bootServer = async opts => {
     const { proxyed, upstream } = viewEngine
     if (proxyed) {
       duositeFastify.register(fastifyProxy, {
-        upstream,
+        base: upstream,
         // prefix: site, // optional
-        http2: false, // optional
+        // http2: false, // optional
       })
-      console.log(viewEngine)
+      duositeFastify.register(proxyPlugin, {
+        prefix: site,
+        siteSettings: settings,
+        _duosite: {
+          mode,
+          watcher,
+          global: {
+            root,
+            settings: globalSettings,
+            services: globalServices,
+            i18nMessages: i18nm,
+            lang,
+          },
+        },
+      })
     } else {
       duositeFastify.register(subsitePlugin, {
         prefix: site,
