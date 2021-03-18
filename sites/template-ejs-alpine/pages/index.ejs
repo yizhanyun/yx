@@ -14,6 +14,12 @@
 
     <h1> Hello ejs </h1>
     <hr>
+    <p> EJS import </p>
+
+    <% let uuid = await import('uuid') %>
+    <p> Uuid <span><%= uuid.v4() %><span> </p>
+    <p> Uuid <span><%= uuid.v4() %><span> </p>
+    <hr>
     <p> From ejs include </p>
 
     <%- await include('../src/ejs/show', {user: 'jack'}); %>
