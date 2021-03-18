@@ -13,9 +13,11 @@
     </p>
 
     <h1> Hello ejs </h1>
-    <p> From include </p>
+    <hr>
+    <p> From ejs include </p>
 
     <%- await include('../src/ejs/show', {user: 'jack'}); %>
+    <hr>
     <p>From official alphinjs example</p>
     <div x-data="{ open: false }">
       <button @click="open = true">Open Dropdown</button>
@@ -24,6 +26,9 @@
         Dropdown Body
       </ul>
     </div>
+    <hr>
+    <p>From official spruce example</p>
+
     <div x-data>
       <div x-show="$store.modal.open === 'login'">
         <p>
