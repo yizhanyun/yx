@@ -23,7 +23,6 @@ import buildProxyPlugin from './plugins/proxy.mjs'
 
 const siteRootName = 'sites'
 
-const isProduction = process.env.NODE_ENV === 'production'
 /**
  * @param {Object} opts - options
  * @param {string} root - Project root
@@ -33,9 +32,12 @@ const isProduction = process.env.NODE_ENV === 'production'
 const bootServer = async opts => {
   // load global settings
 
-  const { onStarted, root: _root, build, buildTarget } = opts || {}
+  const { onStarted, root: _root, build, buildTarget, env } = opts || {}
 
   const root = _root || process.env.DUOSITE_ROOT || process.cwd()
+
+  const isProduction =
+    env === 'production' || process.env.NODE_ENV === 'production'
 
   const mode = build ? 'build' : isProduction ? 'prod' : 'dev'
 
