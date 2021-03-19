@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Hello from liquid</title>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+  <p>
+   From boot  <%= text %>
+</p>
+
+<h1> Hello ejs </h1>
+    <p> From include </p>
+
+    <%- await include('../src/ejs/show', {user: 'jack'}); %>
+  </body>
+  </html>
