@@ -39,6 +39,8 @@ const bootServer = async opts => {
   const isProduction =
     env === 'production' || process.env.NODE_ENV === 'production'
 
+  if (isProduction) process.env.NODE_ENV = 'production'
+
   const mode = build ? 'build' : isProduction ? 'prod' : 'dev'
 
   const settings = await loadGlobalSettings(root)
