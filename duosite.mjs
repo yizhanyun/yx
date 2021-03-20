@@ -7,6 +7,7 @@ import isSubdomainValid from 'is-subdomain-valid'
 import fs from 'fs-extra'
 import path from 'path'
 import { readFile } from 'fs/promises'
+import child_process from 'child_process'
 
 import {
   getDirectories,
@@ -115,8 +116,18 @@ if (
         path.join(target, 'package.json'),
         JSON.stringify(sitePackage, null, 2)
       )
+
+      console.log(chalk.blue(i18nm.info), i18nm.installYarnPackages)
+      console.log(chalk.blue(i18nm.info), i18nm.runSthStart)
+      console.log('')
+      // process.chdir(root)
+      const out = child_process.execSync('yarn', {
+        cwd: target,
+      })
+      console.log(`${out}`)
+      console.log(chalk.blue(i18nm.info), i18nm.runSthEnd)
     } catch (e) {
-      // console.log(e)
+      console.log(e)
     }
 
     console.log(chalk.blue(i18nm.info), i18nm.createNewSiteDone(toSite))
