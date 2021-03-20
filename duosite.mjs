@@ -6,6 +6,7 @@ import isSubdomainValid from 'is-subdomain-valid'
 
 import fs from 'fs-extra'
 import path from 'path'
+import { readFile } from 'fs/promises'
 
 import {
   getDirectories,
@@ -68,12 +69,17 @@ if (
       process.exit(-1)
     }
 
-    const subsites = fs
+    const templates = fs
       .readdirSync(path.join(__dirname, 'sites'), { withFileTypes: true })
       .filter(dirent => dirent.isDirectory())
       .map(dirent => dirent.name)
 
-    const exist = subsites.find(name => name === fromTemplate)
+    const subsites = fs
+      .readdirSync(path.join(DUOSITE_ROOT, 'sites'), { withFileTypes: true })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => dirent.name)
+
+    const exist = templates.find(name => name === fromTemplate)
 
     if (!exist) {
       console.log(chalk.yellow(i18nm.warning), i18nm.duositeTemplateNotFound)
@@ -93,7 +99,22 @@ if (
 
     const target = path.join(DUOSITE_ROOT, 'sites', toSite)
     try {
-      fs.copySync(path.join(cwd, 'sites', fromTemplate), target)
+      fs.copySync(path.join(__dirname, 'sites', fromTemplate), target)
+    } catch (e) {
+      // console.log(e)
+    }
+
+    try {
+      const sitePackage = JSON.parse(
+        await readFile(
+          new URL(path.join(target, 'package.json'), import.meta.url)
+        )
+      )
+      sitePackage.name = toSite
+      fs.writeFileSync(
+        path.join(target, 'package.json'),
+        JSON.stringify(sitePackage, null, 2)
+      )
     } catch (e) {
       // console.log(e)
     }
