@@ -7,6 +7,10 @@ Duosite (duo: 多, many in Chinese, site: 站 in Chinese) is a web server that a
 
 Duosite is built on top of the excellent [fastify](https://github.com/fastify/fastify) webserver. Duosite borrowed many ideas from [Nextjs](https://github.com/vercel/next.js). I'd like to thank both teams for their greate work and contribution to open source software.
 
+Duosite embraces **ECMAScript modules** thus requires Node **15** and uses `mjs` for JS source code.
+
+Duosite is functioning now but still under heavy development. You are welcome to try it and submit any suggestions or issues.
+
 ## Core Duosite features
 
 ### Pages of both static HTML and view templates
@@ -35,7 +39,7 @@ Duosite supports subsites and allow each subsite to have its own template engine
 
 ### Compile to generate full static site or mixed static and dynamic site
 
-Like Nextjs, duosite expose a `yarn duosite build <site-name` command, which will scan page folder to decide if a template file should and could be renderred to static html file or files, or should be dynamicly renddered and served.
+Like Nextjs, duosite expose a `yarn duosite build <site-name>` command, which will scan page folder to decide if a template file should and could be renderred to static html file or files, or should be dynamicly renddered and served.
 
 ## Usage
 
@@ -85,7 +89,7 @@ You can create custom global settings by creating two files at root your project
 
 ```
 // shared settings
-module.exports = {
+export default {
   defaultSite: 'www', // default site name
   lang: 'en', // locale
   port: 5000, // server port number
@@ -96,7 +100,7 @@ module.exports = {
 
 ```
 //  settings for development environment
-module.exports = {
+export default {
 // any settings
 }
 ```
@@ -116,7 +120,7 @@ You can create subsite settings by creating two files at root the subsite:
 
 ```
 // shared settings
-module.exports = {
+export default {
   viewEngine: {
     name: 'liquid', // template name
     ext: '.liquid', // template extension
@@ -131,7 +135,7 @@ module.exports = {
 
 ```
 //  settings for development environment
-module.exports = {
+export default {
 // any settings
 }
 ```
@@ -303,7 +307,7 @@ const getServerProps = async ctx => {
   }
 }
 
-module.exports = {
+export default {
   getServerProps,
 }
 
@@ -657,7 +661,7 @@ Npm:
 
 ```
 // 开发、生产环境共享设置
-module.exports = {
+export default {
   defaultSite: 'www', // 默认站点名称
   lang: 'en', // 语言locale
   port: 5000, // 服务端口
@@ -668,7 +672,7 @@ module.exports = {
 
 ```
 //  开发环境设置
-module.exports = {
+export default {
 // 任何设置
 }
 ```
@@ -818,7 +822,7 @@ const getServerProps = async ctx => {
   }
 }
 
-module.exports = {
+export default {
   getServerProps,
 }
 
