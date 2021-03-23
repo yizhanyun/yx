@@ -125,6 +125,8 @@ if (
         cwd: target,
         stdio: 'inherit',
       })
+
+      console.log('')
       console.log(chalk.blue(i18nm.info), i18nm.createNewSiteDone(toSite))
       console.log(chalk.blue(i18nm.info), i18nm.runSthEnd)
     } catch (e) {
