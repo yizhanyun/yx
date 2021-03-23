@@ -121,23 +121,12 @@ if (
       console.log(chalk.blue(i18nm.info), i18nm.runSthStart)
       console.log('')
 
-      child_process.exec(
-        'yarn',
-        {
-          cwd: target,
-        },
-        (error, stdout, stderr) => {
-          if (error) {
-            console.error(chalk.red(i18nm.error), error)
-          } else {
-            if (stdout) console.log(stdout)
-            if (stderr) console.error(stderr)
-            console.log(chalk.blue(i18nm.info), i18nm.createNewSiteDone(toSite))
-          }
-          console.log(chalk.blue(i18nm.info), i18nm.runSthEnd)
-        }
-        // console.log(`${out}`)
-      )
+      child_process.spawnSync('yarn', {
+        cwd: target,
+        stdio: 'inherit',
+      })
+      console.log(chalk.blue(i18nm.info), i18nm.createNewSiteDone(toSite))
+      console.log(chalk.blue(i18nm.info), i18nm.runSthEnd)
     } catch (e) {
       console.log(e)
     }
