@@ -121,16 +121,30 @@ if (
       console.log(chalk.blue(i18nm.info), i18nm.runSthStart)
       console.log('')
       // process.chdir(root)
-      const out = child_process.execSync('yarn', {
-        cwd: target,
-      })
-      console.log(`${out}`)
-      console.log(chalk.blue(i18nm.info), i18nm.runSthEnd)
+      // const out = child_process.execSync('yarn', {
+      //   cwd: target,
+      // })
+
+      child_process.exec(
+        'yarn',
+        {
+          cwd: target,
+        },
+        (error, stdout, stderr) => {
+          if (error) {
+            console.error(`exec error: ${error}`)
+          } else {
+            if (stdout) console.log(stdout)
+            if (stderr) console.error(stderr)
+            console.log(chalk.blue(i18nm.info), i18nm.createNewSiteDone(toSite))
+          }
+          console.log(chalk.blue(i18nm.info), i18nm.runSthEnd)
+        }
+        // console.log(`${out}`)
+      )
     } catch (e) {
       console.log(e)
     }
-
-    console.log(chalk.blue(i18nm.info), i18nm.createNewSiteDone(toSite))
   } else {
     bootServer({ root: DUOSITE_ROOT, env: 'production' })
   }
