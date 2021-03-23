@@ -209,9 +209,19 @@ To power multiple sites, support customization and enhancement at global level a
 
 Duosite will gradually add template project set up for typical frameworks or libraries,  to save you time.
 
-Now following are included.
+Now following templates are included.
+
+`template-alpine` - bare alpine template project
+
+`template-eat` - template of Ejs, Alpinejs, Tailwind stack
+
+**Note** This is by far the most concise and also power stack in my oppion that is close to raw HTML with power of templating with ejs and css with Tailwind. I will write a blog about it later.
 
 `template-blank` - bare html template project
+
+`template-ejs` - template of Ejs
+
+`template-ejs-alpine` - template of Ejs and alpine.
 
 `template-html` -  html template project based on [HTML boilerplat](https://github.com/h5bp/html5-boilerplate)
 
@@ -219,7 +229,15 @@ Now following are included.
 
 `template-alpine` - template for alpine js
 
+`template-marko` - template for marko js
+
+`template-marko-tailwind` - template for marko js and tailwind
+
 `template-liquid` - template for liquidjs template engine
+
+`template-nextjs` - template of nextjs.
+
+**Note** Because of nextjs' desgin and complexity, it is NOT possible to run nextjs as an engine so in order to support unified nextjs development experience, duosite will run as proxy to nextjs server, when a request such as `http://next-js-site.localhost:5000/post` arrives, the quest is proxied to the next server running at subsite `next-js-site`. If you want to run multiple nextjs subsites, they should be configred with different port and the port should be configred in the settings of the subsite.
 
 You can run `yarn duosite ls` to show list of templates.
 
