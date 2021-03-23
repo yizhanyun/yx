@@ -120,10 +120,6 @@ if (
       console.log(chalk.blue(i18nm.info), i18nm.installYarnPackages)
       console.log(chalk.blue(i18nm.info), i18nm.runSthStart)
       console.log('')
-      // process.chdir(root)
-      // const out = child_process.execSync('yarn', {
-      //   cwd: target,
-      // })
 
       child_process.exec(
         'yarn',
@@ -132,7 +128,7 @@ if (
         },
         (error, stdout, stderr) => {
           if (error) {
-            console.error(`exec error: ${error}`)
+            console.error(chalk.red(i18nm.error), error)
           } else {
             if (stdout) console.log(stdout)
             if (stderr) console.error(stderr)
