@@ -108,7 +108,7 @@ if (
 
     try {
       const sitePackage = JSON.parse(
-        fs.readFileSync(path.join(target, 'package.json'), 'utf8'), 
+        fs.readFileSync(path.join(target, 'package.json'), 'utf8')
       )
       sitePackage.name = toSite
       fs.writeFileSync(
