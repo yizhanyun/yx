@@ -75,6 +75,7 @@ if (
       .filter(dirent => dirent.isDirectory())
       .map(dirent => dirent.name)
 
+    fs.ensureDirSync(path.join(DUOSITE_ROOT, 'sites'))
     const subsites = fs
       .readdirSync(path.join(DUOSITE_ROOT, 'sites'), { withFileTypes: true })
       .filter(dirent => dirent.isDirectory())
@@ -107,9 +108,7 @@ if (
 
     try {
       const sitePackage = JSON.parse(
-        await readFile(
-          new URL(path.join(target, 'package.json'), import.meta.url)
-        )
+        fs.readFileSync(path.join(target, 'package.json'), 'utf8'), 
       )
       sitePackage.name = toSite
       fs.writeFileSync(

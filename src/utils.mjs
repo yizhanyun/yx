@@ -365,7 +365,7 @@ const buildFilesRoutingTable = (root, ext) => {
   )
 
   const routes = filesTable.map(([filename, filetype]) => {
-    const segments = filename.split('/').filter(s => !!s)
+    const segments = filename.split(path.sep).filter(s => !!s)
     return [...segmentsToRoute(segments), filename]
   })
 
@@ -395,7 +395,7 @@ const buildApiRoutingTable = (root, ext, target = 'fastify') => {
 
   const routes = dirTree
     .map(([filename, filetype]) => {
-      const segments = filename.split('/').filter(s => !!s)
+      const segments = filename.split(path.sep).filter(s => !!s)
       return [...segmentsToRoute(segments), filename]
     })
     .filter(([routeType]) => routeType !== 'error')

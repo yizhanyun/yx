@@ -1,0 +1,7 @@
+{
+  "name": "template-blank",
+  "version": "0.0.1",
+  "description": "Blank template",
+  "main": "index.js",
+  "license": "MIT"
+}

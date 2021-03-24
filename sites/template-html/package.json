@@ -1,0 +1,7 @@
+{
+  "name": "template-html",
+  "version": "0.0.1",
+  "description": "HTML template based on html5-boilerplate",
+  "main": "index.js",
+  "license": "MIT"
+}
