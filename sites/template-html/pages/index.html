@@ -23,8 +23,16 @@
 
   <body>
     <!-- Add your site or application content here -->
-    <p>Hello world! This is HTML5 Boilerplate.</p>
+    <p>Hello world! This is HTML5 Boilerplate...</p>
     <script src="js/vendor/modernizr-3.11.4.min.js"></script>
     <script src="js/app.js"></script>
+    <script>
+      document.write(
+        '<script src="http://' +
+          (location.host || 'localhost').split(':')[0] +
+          ':35729/livereload.js"></' +
+          'script>'
+      )
+    </script>
   </body>
 </html>

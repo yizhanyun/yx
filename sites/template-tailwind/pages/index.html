@@ -8,7 +8,16 @@
   </head>
   <body>
     <p class="text-lg bg-green-100 p-8">
-      hello <span class="text-3xl text-gray-800 font-bold">tailwind</span>
+      hello <span class="text-3xl text-gray-800 font-bold">tailwind</span> with
+      livereload
     </p>
+    <script>
+      document.write(
+        '<script src="http://' +
+          (location.host || 'localhost').split(':')[0] +
+          ':35729/livereload.js"></' +
+          'script>'
+      )
+    </script>
   </body>
 </html>
