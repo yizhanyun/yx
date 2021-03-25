@@ -16,6 +16,7 @@ const require = createRequire(import.meta.url)
 import {
   getDirectories,
   getSubsite,
+  breakFullpath,
   loadGlobalSettings,
   loadGlobalI18NMessages,
 } from './utils.mjs'
@@ -291,6 +292,8 @@ const bootServer = async opts => {
   if (mode === 'dev') {
     // watch and restart
 
+    // globalWatch.push(path.join(root, siteRootName))
+
     const watching = globalWatch
 
     const { livereload: reloadConfig } = settings
@@ -332,7 +335,14 @@ const bootServer = async opts => {
       watcher.on('change', function (path) {
         console.log(chalk.blue(i18nm.info), i18nm.restartDueTo)
         console.log(chalk.blue(i18nm.info), path)
-        if (!restarting) {
+        let shouldRestart = false
+        const srcStat = fs.statSync(path)
+        if (srcStat.isDirectory()) shouldRestart = true
+        else {
+          const [_, filename] = breakFullpath(path)
+          if (filename.startsWith('settings.')) shouldRestart = true
+        }
+        if (!restarting && shouldRestart) {
           restarting = true
           livereloadServer.close()
           duositeFastify.close().then(() => {
@@ -341,6 +351,10 @@ const bootServer = async opts => {
               stdio: 'inherit',
               detached: false,
             })
+          })
+        } else {
+          Object.keys(require.cache).forEach(function (id) {
+            delete require.cache[id]
           })
         }
       })
