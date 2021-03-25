@@ -301,7 +301,6 @@ const bootServer = async opts => {
     let livereloadServer
     if (!reloadConfig || (reloadConfig && !reloadConfig.disabled)) {
       const port = 35729
-
       livereloadServer = livereload.createServer({ port, extraExts })
       livereloadServer.watch(liveWatchFolders)
     }
