@@ -1,7 +1,7 @@
 {
   "name": "duosite",
   "description": "A web server for many sites",
-  "version": "0.1.28",
+  "version": "0.1.29",
   "repository": "https://github.com/yizhanyun/duosite.git",
   "scripts": {
     "dev": "node dev.mjs",
