@@ -9,6 +9,8 @@ import { pathToFileURL } from 'url'
 // import fastifyProxy from 'fastify-http-proxy'
 import fastifyProxy from 'fastify-reply-from'
 
+import livereload from 'livereload'
+
 const require = createRequire(import.meta.url)
 
 import {
@@ -196,52 +198,9 @@ const bootServer = async opts => {
   // boot subsite servers
 
   let watcher
-  if (mode === 'dev') {
-    const watching = globalWatch
+  const liveWatchFolders = []
 
-    watcher = chokidar.watch(watching, {
-      persistent: true,
-
-      ignoreInitial: false,
-      followSymlinks: true,
-      cwd: root,
-      disableGlobbing: false,
-
-      usePolling: false,
-      interval: 100,
-      binaryInterval: 300,
-      alwaysStat: false,
-      depth: 99,
-      awaitWriteFinish: {
-        stabilityThreshold: 2000,
-        pollInterval: 100,
-      },
-
-      ignorePermissionErrors: false,
-      atomic: true, // or a custom 'atomicity delay', in milliseconds (default 100)
-    })
-
-    let restarting = false
-    console.log(chalk.blue(i18nm.info), i18nm.startWatcher)
-    watcher.on('ready', function () {
-      console.log(chalk.blue(i18nm.info), i18nm.startWatcherDone)
-
-      watcher.on('change', function (path) {
-        console.log(chalk.blue(i18nm.info), i18nm.restartDueTo)
-        console.log(chalk.blue(i18nm.info), path)
-        if (!restarting) {
-          restarting = true
-          duositeFastify.close().then(() => {
-            require('child_process').spawn(process.argv.shift(), process.argv, {
-              cwd: process.cwd(),
-              stdio: 'inherit',
-              detached: false,
-            })
-          })
-        }
-      })
-    })
-  }
+  const extraExts = []
 
   for (const site of sites) {
     const siteRoot = path.join(
@@ -282,7 +241,13 @@ const bootServer = async opts => {
 
     const { viewEngine = {} } = settings || {}
 
-    const { proxyed, upstream } = viewEngine
+    const { proxyed, upstream, ext } = viewEngine
+
+    liveWatchFolders.push(path.join(root, siteRootName, site, 'pages'))
+    liveWatchFolders.push(path.join(root, siteRootName, site, 'public'))
+    liveWatchFolders.push(path.join(root, siteRootName, site, 'src'))
+    if (ext) extraExts.push(ext.replace('.', ''))
+
     if (proxyed) {
       duositeFastify.register(fastifyProxy, {
         base: upstream,
@@ -321,6 +286,65 @@ const bootServer = async opts => {
         },
       })
     }
+  }
+
+  if (mode === 'dev') {
+    // watch and restart
+
+    const watching = globalWatch
+
+    const { livereload: reloadConfig } = settings
+    let livereloadServer
+    if (!reloadConfig || (reloadConfig && !reloadConfig.disabled)) {
+      const port = 35729
+
+      livereloadServer = livereload.createServer({ port, extraExts })
+      livereloadServer.watch(liveWatchFolders)
+    }
+
+    watcher = chokidar.watch(watching, {
+      persistent: true,
+
+      ignoreInitial: false,
+      followSymlinks: true,
+      cwd: root,
+      disableGlobbing: false,
+
+      usePolling: false,
+      interval: 100,
+      binaryInterval: 300,
+      alwaysStat: false,
+      depth: 99,
+      awaitWriteFinish: {
+        stabilityThreshold: 2000,
+        pollInterval: 100,
+      },
+
+      ignorePermissionErrors: false,
+      atomic: true, // or a custom 'atomicity delay', in milliseconds (default 100)
+    })
+
+    let restarting = false
+    console.log(chalk.blue(i18nm.info), i18nm.startWatcher)
+    watcher.on('ready', function () {
+      console.log(chalk.blue(i18nm.info), i18nm.startWatcherDone)
+
+      watcher.on('change', function (path) {
+        console.log(chalk.blue(i18nm.info), i18nm.restartDueTo)
+        console.log(chalk.blue(i18nm.info), path)
+        if (!restarting) {
+          restarting = true
+          livereloadServer.close()
+          duositeFastify.close().then(() => {
+            require('child_process').spawn(process.argv.shift(), process.argv, {
+              cwd: process.cwd(),
+              stdio: 'inherit',
+              detached: false,
+            })
+          })
+        }
+      })
+    })
   }
 
   // Run the server!

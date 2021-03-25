@@ -11,6 +11,9 @@ const settings = {
       user: 'demo_only',
     },
   },
+  livereload: {
+    disabled: false,
+  },
 }
 
 export default settings
