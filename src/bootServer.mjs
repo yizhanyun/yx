@@ -1,3 +1,4 @@
+import fs from 'fs-extra'
 import GracefulServer from '@gquittet/graceful-server'
 import deepmerge from 'deepmerge'
 import path from 'path'
