@@ -4,7 +4,7 @@
 
 **0.2.0 Update**
 
-Now Duosite reached a milestone of 0.2.0. Livereload has been added to support native html, ejs, alpine, tailwind and EAT stack (Ejs, Alpine, Tailwind) templates.
+Now Duosite reached a milestone of 0.2.0. Livereload has been added and support html, ejs, alpine, tailwind and EAT stack (Ejs, Alpine, Tailwind) templates.
 
 When you run `yarn duosite new template-eat|template-blank|template-html site-1`, launch server with `yarn duosite dev`, and edit your page, or css, your browser will live reload your page and your edit will be effective immediately.
 
