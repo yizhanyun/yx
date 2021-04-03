@@ -1,8 +1,8 @@
 {
-  "name": "duosite",
+  "name": "yx",
   "description": "A web server for many sites",
   "version": "0.2.3",
-  "repository": "https://github.com/yizhanyun/duosite.git",
+  "repository": "https://github.com/yizhanyun/yx.git",
   "scripts": {
     "dev": "node dev.mjs",
     "build": "node build.mjs",
@@ -26,7 +26,7 @@
     "tslib": "^2.1.0"
   },
   "bin": {
-    "duosite": "./duosite.mjs"
+    "yx": "./yx.mjs"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.8",
