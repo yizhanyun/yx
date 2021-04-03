@@ -9,13 +9,13 @@ import { removeSuffix } from '../utils.mjs'
 
 import { bootTemplateProps, buildToFile } from '../templateRunner.mjs'
 
-const buildStaticTemplate = async (routeTable, root, site, _duosite) => {
+const buildStaticTemplate = async (routeTable, root, site, _yx) => {
   const [, , file] = routeTable
 
   const {
     site: { root: siteRoot },
     global,
-  } = _duosite
+  } = _yx
 
   const i18nm = global.i18nMessages
 
@@ -43,14 +43,14 @@ const buildStaticTemplate = async (routeTable, root, site, _duosite) => {
   } else {
     const { staticProps } = await bootTemplateProps({
       file,
-      _duosite,
+      _yx,
       whichOnes: ['static'],
     })
 
     await buildToFile({
       outputFileName: removeSuffix(file),
       file,
-      _duosite,
+      _yx,
       booted: staticProps,
     })
   }

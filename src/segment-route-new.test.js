@@ -104,7 +104,7 @@ test('Parse route segments new 14', () => {
 
 test('Build file routing table case 1', () => {
   const routingTable = buildFileRoutingTable(
-    '/home/fqye/projects/duosite-mono/duosite/sites/test-1/pages',
+    '/home/fqye/projects/yx-mono/yx/sites/test-1/pages',
     '.liquid'
   )
 
@@ -113,7 +113,7 @@ test('Build file routing table case 1', () => {
 
 test('Build file route url variables table case 1', () => {
   const routingTable = buildFileRoutingTable(
-    '/home/fqye/projects/duosite-mono/duosite/sites/test-1/pages',
+    '/home/fqye/projects/yx-mono/yx/sites/test-1/pages',
     '.liquid'
   )
 

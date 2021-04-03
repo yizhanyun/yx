@@ -2,89 +2,95 @@
 [中文](#中文)
 
 
+**0.2.4 Update**
+
+Duosite has been renamed to `yx`, for only one reason, shorter to run as a cli.
+
+Now `yx` could be interprted as `Your eXpansive` server , or in Chinese `游侠(You Xia)`
+
 **0.2.0 Update**
 
-Now Duosite reached a milestone of 0.2.0. Livereload has been added supporting live reload of html, ejs, alpine, tailwind and EAT stack (Ejs, Alpine, Tailwind) templates.
+Now yx reached a milestone of 0.2.0. Livereload has been added supporting live reload of html, ejs, alpine, tailwind and EAT stack (Ejs, Alpine, Tailwind) templates.
 
-When you run `yarn duosite new template-blank site-1`, launch server with `yarn duosite dev`, and edit your index.html under `site-1/pages`, your browser will live reload your page and your edit will be effective immediately.
+When you run `yarn yx new template-blank site-1`, launch server with `yarn yx dev`, and edit your index.html under `site-1/pages`, your browser will live reload your page and your edit will be effective immediately.
 
 
-# 多站 duosite
+# 游侠 yx
 
-Duosite (duo: 多, many in Chinese, site: 站 in Chinese) is a web server that aims to host and run many sub sites, each with its own sub setting, folder structure and template / view engine, file system based routing, static site generation but also supports advanced nodejs server side programming.
+yx (duo: 多, many in Chinese, site: 站 in Chinese) is a web server that aims to host and run many sub sites, each with its own sub setting, folder structure and template / view engine, file system based routing, static site generation but also supports advanced nodejs server side programming.
 
-Duosite is built on top of the excellent [fastify](https://github.com/fastify/fastify) webserver. Duosite borrowed many ideas from [Nextjs](https://github.com/vercel/next.js). I'd like to thank both teams for their greate work and contribution to open source software.
+yx is built on top of the excellent [fastify](https://github.com/fastify/fastify) webserver. yx borrowed many ideas from [Nextjs](https://github.com/vercel/next.js). I'd like to thank both teams for their greate work and contribution to open source software.
 
-Duosite embraces **ECMAScript modules** thus requires Node **15** and uses `mjs` for JS source code.
+yx embraces **ECMAScript modules** thus requires Node **15** and uses `mjs` for JS source code.
 
-Duosite is functioning now but still under heavy development. You are welcome to try it and submit any suggestions or issues.
+yx is functioning now but still under heavy development. You are welcome to try it and submit any suggestions or issues.
 
-## Core Duosite features
+## Core yx features
 
 ### Pages of both static HTML and view templates
 
-Like Next.js, Duosite renders and serves pages from `<site>/pages` folder. Unlike Next.js, Duosite supports static HTML files and also renders template engine files, for example [liquidjs](https://github.com/harttle/liquidjs) and [ejs](https://github.com/mde/ejs).
+Like Next.js, yx renders and serves pages from `<site>/pages` folder. Unlike Next.js, yx supports static HTML files and also renders template engine files, for example [liquidjs](https://github.com/harttle/liquidjs) and [ejs](https://github.com/mde/ejs).
 
 ### Filebased routing
 
-Duosite supports Nextjs style file based routing, in the format of `/<segments>/[route1]/[route2]/[[...captureAll]].[template-ext]`.
+yx supports Nextjs style file based routing, in the format of `/<segments>/[route1]/[route2]/[[...captureAll]].[template-ext]`.
 
 It also supports three dat feteching methods for template renderring, and static html generation, `getStaticProps`, `getServerProps` and `getStaticPaths`.
 
 ### Companion boot.mjs to unify data loading
 
-Duosite has one unique design, a companion `boot.mjs` for loading data for template renderring.
+yx has one unique design, a companion `boot.mjs` for loading data for template renderring.
 
-One common task is to load initial data for template renderring. To support file based routing, when renderring template under pages, duosite would look up a companion js file, `<template-file-name>.boot.mjs`, which should export one or all of three async functions: `getStaticProps`, `getServerProps`, `getStaticPaths`
+One common task is to load initial data for template renderring. To support file based routing, when renderring template under pages, yx would look up a companion js file, `<template-file-name>.boot.mjs`, which should export one or all of three async functions: `getStaticProps`, `getServerProps`, `getStaticPaths`
 
 ### Server enhancement
 
-Drawing on `fastify`'s plugin based design, Duosite allows deep customization and enhancement of built-in server. It allows developers to provide global service builder and site service builder to added shared services, allow global enhancer and site enhancer to enrich web server and add any routing rules and handlers to build-in server.
+Drawing on `fastify`'s plugin based design, yx allows deep customization and enhancement of built-in server. It allows developers to provide global service builder and site service builder to added shared services, allow global enhancer and site enhancer to enrich web server and add any routing rules and handlers to build-in server.
 
 ### Subsites and indepent engines
 
-Duosite supports subsites and allow each subsite to have its own template engines and renderrers. You can hve one site of `ejs` engine and another of `liquidjs` engine for experiments, benchmarking, testing and production.
+yx supports subsites and allow each subsite to have its own template engines and renderrers. You can hve one site of `ejs` engine and another of `liquidjs` engine for experiments, benchmarking, testing and production.
 
 ### Compile to generate full static site or mixed static and dynamic site
 
-Like Nextjs, duosite expose a `yarn duosite build <site-name>` command, which will scan page folder to decide if a template file should and could be renderred to static html file or files, or should be dynamicly renddered and served.
+Like Nextjs, yx expose a `yarn yx build <site-name>` command, which will scan page folder to decide if a template file should and could be renderred to static html file or files, or should be dynamicly renddered and served.
 
 ## Usage
 
-Duosite embraces ECMAScript modules thus requires node15 and uses `mjs` for JS source code.
+yx embraces ECMAScript modules thus requires node15 and uses `mjs` for JS source code.
 
 ### Install
 
 Yarn:
 
-`yarn add duosite`
+`yarn add yx`
 
 Npm:
 
-`npm install duosite`
+`npm install yx`
 
 This project uses yarn. So documentation below uses yarn too.
 
 
 ### List templates
 
-`yarn duosite ls`
+`yarn yx ls`
 
 ### Create new site from template
 
-`yarn duosite new <template-name> <new-site-name>`
+`yarn yx new <template-name> <new-site-name>`
 
 The new site name is subdomain name so it must comply with subdomain rules
 
 ### Run development server
 
-`yarn duosite dev`
+`yarn yx dev`
 
 ### Visit a subsite:
 
 Open your browser and visit `<sub-site-name>.localhost:5000`.
 
-Duosite uses 5000 as default port. You can change it by modifying `settings.mjs`
+yx uses 5000 as default port. You can change it by modifying `settings.mjs`
 
 ### Custom settings
 
@@ -115,7 +121,7 @@ export default {
 
 Eventual setting is a deep merge of `settings.mjs` and `settings.development.mjs, the latter overwrites the former.
 
-Currently duosite only uses `defaultSite`, `lang` and `port`.
+Currently yx only uses `defaultSite`, `lang` and `port`.
 
 In future it may support more settings
 
@@ -148,7 +154,7 @@ export default {
 }
 ```
 
-Currently duosite only uses `viewEngine`.
+Currently yx only uses `viewEngine`.
 
 Eventual setting is a deep merge of `settings.mjs` and `settings.development.mjs`, the latter overwrites the former.
 
@@ -160,18 +166,18 @@ In future it may support more settings
 
 The current goal is to provide a convinient environment for expirementing, studing and demoing web technology that allow co-exist of multiple subsites.
 
-When it matures, duosite may target production depoyment. But that is NOT the goal yet.
+When it matures, yx may target production depoyment. But that is NOT the goal yet.
 
 ### Subsite
 
 Each subsite is indepent.
 
-Duosite doens't make much many assumptions about subsites, only three simple folder structure rules and one special reserved extensions:
+yx doens't make much many assumptions about subsites, only three simple folder structure rules and one special reserved extensions:
 
 - <site-root>/pages : where to put html / template files etc.
 - <site-root>/public/static: where to put assets that don't require processing.
 - <site-root>/public/bundle: where to put assets generated by bundle tools or compilers.
-- <site-root>/pages/**/<filename>.boot.mjs: this file extension is specially reserved for booting data for templates. Duosite will NOT server files from pages folder with this exention. But it will serve this file from `static` and `bundle` folder
+- <site-root>/pages/**/<filename>.boot.mjs: this file extension is specially reserved for booting data for templates. yx will NOT server files from pages folder with this exention. But it will serve this file from `static` and `bundle` folder
 
 
 But if you choose so you can put any static contents in side `pages` folders as well.
@@ -180,7 +186,7 @@ And if you are a `fastify` developer who wants to further enhance your subsite, 
 
 ### Structured booting
 
-To power multiple sites, support customization and enhancement at global level and subsite level, duosite took a very structure booting process to prepare the server:
+To power multiple sites, support customization and enhancement at global level and subsite level, yx took a very structure booting process to prepare the server:
 
 ```
 -- start server
@@ -200,7 +206,7 @@ To power multiple sites, support customization and enhancement at global level a
       |- build subsiteServices
       |- build subsiteEnhancer
       |- build subsiteEngine
-      |- decorate `request._duosite` object with
+      |- decorate `request._yx` object with
         |- global
           |- settings
           |- services
@@ -219,7 +225,7 @@ To power multiple sites, support customization and enhancement at global level a
 ```
 ### Template Projects
 
-Duosite will gradually add template project set up for typical frameworks or libraries,  to save you time.
+yx will gradually add template project set up for typical frameworks or libraries,  to save you time.
 
 Now following templates are included.
 
@@ -249,17 +255,17 @@ Now following templates are included.
 
 `template-nextjs` - template of nextjs.
 
-**Note** Because of nextjs' desgin and complexity, it is NOT possible to run nextjs as an engine so in order to support unified nextjs development experience, duosite will run as proxy to nextjs server, when a request such as `http://next-js-site.localhost:5000/post` arrives, the quest is proxied to the next server running at subsite `next-js-site`. If you want to run multiple nextjs subsites, they should be configred with different port and the port should be configred in the settings of the subsite.
+**Note** Because of nextjs' desgin and complexity, it is NOT possible to run nextjs as an engine so in order to support unified nextjs development experience, yx will run as proxy to nextjs server, when a request such as `http://next-js-site.localhost:5000/post` arrives, the quest is proxied to the next server running at subsite `next-js-site`. If you want to run multiple nextjs subsites, they should be configred with different port and the port should be configred in the settings of the subsite.
 
-You can run `yarn duosite ls` to show list of templates.
+You can run `yarn yx ls` to show list of templates.
 
-You can also run `yarn duosite new <template-name> <target-site-name>` to create a site with a template.
+You can also run `yarn yx new <template-name> <target-site-name>` to create a site with a template.
 
 You are welcome to submit pull request to add more templates.
 
 ### View Engine / Template Engine
 
-One goal of duosite is to allow users to experiment view engines easily.
+One goal of yx is to allow users to experiment view engines easily.
 
 Currently it only provides rudimental support for liquid engine developed of [harttle/liquidjs](https://github.com/harttle/liquidjs).
 
@@ -267,7 +273,7 @@ More is coming.
 
 ### Unified booting view / template
 
-When duosite renders a template file, let's say `index.liquid`, it will look at the same folder a file named `index.liquid.boot.mjs`, which should export an asycn function getServerProps with following signature:
+When yx renders a template file, let's say `index.liquid`, it will look at the same folder a file named `index.liquid.boot.mjs`, which should export an asycn function getServerProps with following signature:
 
 ```
 const getServerProps = async (ctx) => data
@@ -282,14 +288,14 @@ const getServerProps = async (ctx) => data
 }
 ```
 
-Duosite will pass down `{...data, _ctx: ctx}` to the template engine
+yx will pass down `{...data, _ctx: ctx}` to the template engine
 
 
 You can try with below:
 
-`yarn duosite new template-liquid liquid-1`
+`yarn yx new template-liquid liquid-1`
 
-`yarn duosite dev`
+`yarn yx dev`
 
 Visit `liquid-1.localhost:5000`
 
@@ -322,9 +328,9 @@ export default {
 ```
 
 
-### Duosite enhancers
+### yx enhancers
 
-Duosite should allow developers to enhance fasity server:
+yx should allow developers to enhance fasity server:
 
 - global enhancer: enhance the global fastify server
 - site enhancer: enhance the local site server
@@ -334,7 +340,7 @@ Duosite should allow developers to enhance fasity server:
 Booter will require this file `<root>/src/enhancer.mjs` to get the enhancer function, which should have following signature:
 
 ```
-const enhancer = (fastify, duositeRoot, duositeSettings, globalServices) => void
+const enhancer = (fastify, yxRoot, yxSettings, globalServices) => void
 ```
 
 Server booter will call enhancer with the global fastify object, siteRoot,  siteSettings and globalServices
@@ -351,7 +357,7 @@ Subsite server booter will call enhancer with the global fastify object, subsite
 
 #### Local view engine first, then global default view engine
 
-Duosite provides global default view engines. Developers can bring their own view engines.
+yx provides global default view engines. Developers can bring their own view engines.
 
 Each subsite can provide its own engines through this file:
 
@@ -381,7 +387,7 @@ Sometimes server needs to pass down some sharedSettings to all subsites. Site se
 
 ### globalServices
 
-Sometimes server needs to pass down global services such as database connection etc. to all subsites. Duosite booter will require this file `<root>/src/globalServices.mjs`, which should export default `buildGlobalServices` function with following signature:
+Sometimes server needs to pass down global services such as database connection etc. to all subsites. yx booter will require this file `<root>/src/globalServices.mjs`, which should export default `buildGlobalServices` function with following signature:
 
 ```
 const buildGlobalServices = (settings, root) => Object
@@ -394,7 +400,7 @@ Of course because I used it before and liked it, but also some of its cool featu
 
 ### rewriteUrl
 
-This one cool feature rewriteUrl allows duosite to rewrite a request like `my-site-in-ejs.localhost/index.ejs` to `localhost/my-site-in-ejs/index.ejs`. This allows duosite to use Fasity's plugin with a prefix feature that makes it transparent to develop router and handlers for subsite like a normal request without a subsite context.
+This one cool feature rewriteUrl allows yx to rewrite a request like `my-site-in-ejs.localhost/index.ejs` to `localhost/my-site-in-ejs/index.ejs`. This allows yx to use Fasity's plugin with a prefix feature that makes it transparent to develop router and handlers for subsite like a normal request without a subsite context.
 
 ### plugin with prefix and isoloated subserver
 
@@ -403,16 +409,16 @@ Fastify supports plugin with `prefix`, with each plugin's fastify server indeped
 
 ## Design and development ideas
 
-This section logs important designs, ideas, reationale and choices along the development. As duosite is still at early stage, this section is NOT intended to be complete and well structured but rather to reflect design ideas and choices down the road.
+This section logs important designs, ideas, reationale and choices along the development. As yx is still at early stage, this section is NOT intended to be complete and well structured but rather to reflect design ideas and choices down the road.
 
-### Duosite Project Folder structure
+### yx Project Folder structure
 
 ```
-<duosite project root>
+<yx project root>
  |- prod.mjs : code to start production server
  |- build.mjs : code to start building processproduction server
  |- dev.mjs : code to start development server
- |- duosite.mjs : code for duosite bin
+ |- yx.mjs : code for yx bin
  |- settings.mjs : shared settings accross environment
  |- settings.development.mjs: settings for development only
  |- settings.production.mjs` : settings for production
@@ -449,7 +455,7 @@ This section logs important designs, ideas, reationale and choices along the dev
 
 #### Static files
 
-Duosite mandates url starts with `/static/`  or `/bundle/` as static files and will be served as is, not subject to any other interpretation or redirect.
+yx mandates url starts with `/static/`  or `/bundle/` as static files and will be served as is, not subject to any other interpretation or redirect.
 
 `static` is intended for static files requiring no processing. They should be managed by source control tools.
 
@@ -474,9 +480,9 @@ The server will serve files with follwing try rules in order, a term borrowed fr
 Root folder of each site's pages is `<site-name>/pages`.
 
 
-### Duosite server settings
+### yx server settings
 
-Duosite server settings are composed of three files:
+yx server settings are composed of three files:
 
 ```
 - settings.mjs : shared settings accross environment
@@ -490,7 +496,7 @@ Eventual setting will be a deep merge of `settings.mjs` and`settings.[developmen
 
 Each subsite's settings for renderring each subsite.
 
-Similar to duosite server, it has:
+Similar to yx server, it has:
 
 ```
 - settings.mjs : shared settings accross environment
@@ -500,18 +506,18 @@ Similar to duosite server, it has:
 
 Eventual setting will be a deep merge of `settings.mjs` and`settings.[development|production].mjs`, the latter has higher priority.
 
-### Request decoration to add  `_duosite` to `request`
+### Request decoration to add  `_yx` to `request`
 
-When duosite is booted, each subsite's settings, view engines, plugins etc. should be initiated and passed down as property `_duosite` of `request` to handlers.
+When yx is booted, each subsite's settings, view engines, plugins etc. should be initiated and passed down as property `_yx` of `request` to handlers.
 
-### Boot duosite
+### Boot yx
 
-Duosite is booted with following steps:
+yx is booted with following steps:
 
 1. load server settings
 2. scan sites folder, load site list and site settings
 3. initiate view engine and other plugins with site settings
-4. enhance `request` with `_duosite` property, which is a object with properties and methods for the subsite's handlers to use.
+4. enhance `request` with `_yx` property, which is a object with properties and methods for the subsite's handlers to use.
 
 ### Booting functions
 
@@ -526,7 +532,7 @@ Duosite is booted with following steps:
 
 ### GET try rules in more detail
 
-When a request hit, the URL will be resovled to a handler. The handler needs to decide the rules to try different resources. Duosite follows the following rules:
+When a request hit, the URL will be resovled to a handler. The handler needs to decide the rules to try different resources. yx follows the following rules:
 
 1. ends with `.[non view engine / template ext]`: server static file.
 2. ends with `.[view engine ext]`: run engine, render file and serve output
@@ -534,9 +540,9 @@ When a request hit, the URL will be resovled to a handler. The handler needs to 
 4. ends with `/abc`, try `/abc.html`, `/abc.[view engine ext]`, `/abc/index.html`, `/index.[view engine ext]`
 5. when resolve to view template, try to locate `abc.ext.boot.mjs`, run `getServerProps, getStaticProps`
 
-### `_duosite` object
+### `_yx` object
 
-Duosit's boot process builds up `_duosite` object, which contains all settings, services and engines built up by duosite. It is also passed down as `request._duosite` for routers to use.
+Duosit's boot process builds up `_yx` object, which contains all settings, services and engines built up by yx. It is also passed down as `request._yx` for routers to use.
 
 ```
 {
@@ -564,14 +570,14 @@ Duosit's boot process builds up `_duosite` object, which contains all settings, 
 i18n is supported by dictionary of message or function per key to generate message for each locale with following folder structure:
 
 ```
-<duosite-root>
+<yx-root>
   |- src
     |- lang
       |- messages  // for server and application messages
 
 ```
 
-i18n will be merged in the order of <duosite-source>/src/lang and <site-root>/src/lang/
+i18n will be merged in the order of <yx-source>/src/lang and <site-root>/src/lang/
 site i18n will loaded from site.
 
 ```
@@ -590,40 +596,40 @@ MIT
 
 # 中文
 
-# duosite
-Duosite (duo: 多)， 多站，是一个可以支持独立多子站点的web服务器。每个子站点有自己的独立设置、目录、模板(template) / View引擎，同时也支持基于文件的路由（类似于nextjs）（该特性还在开发中）
+# yx
+yx (duo: 多)， 游侠，是一个可以支持独立多子站点的web服务器。每个子站点有自己的独立设置、目录、模板(template) / View引擎，同时也支持基于文件的路由（类似于nextjs）（该特性还在开发中）
 
-Duosite基于[fastify](https://github.com/fastify/fastify) web服务器开发。多站 duosite也从[Nextjs](https://github.com/vercel/next.js)借鉴了大量的设计理念。这里我要对两个团队对开源软件届的贡献表示感谢。
+yx基于[fastify](https://github.com/fastify/fastify) web服务器开发。游侠 yx也从[Nextjs](https://github.com/vercel/next.js)借鉴了大量的设计理念。这里我要对两个团队对开源软件届的贡献表示感谢。
 
-## 多站Duosite核心特征
+## 游侠yx核心特征
 
 ### 同时支持静态HTML与模板引擎页面
 
-和Next.js一样, Duosite从 `<site>/pages` 目录渲染和发送页面. 和 Next.js 不同, 多站Duosite支持静态 HTML 文件，也支持渲染模板引擎文件，例如 [liquidjs](https://github.com/harttle/liquidjs).
+和Next.js一样, yx从 `<site>/pages` 目录渲染和发送页面. 和 Next.js 不同, 游侠yx支持静态 HTML 文件，也支持渲染模板引擎文件，例如 [liquidjs](https://github.com/harttle/liquidjs).
 
 ### 基于文件的路由
 
-Duosite支持 Nextjs风格的基于文件的路由，格式为 `/<segments>/[route1]/[route2]/[[...captureAll]].[template-ext]`.
+yx支持 Nextjs风格的基于文件的路由，格式为 `/<segments>/[route1]/[route2]/[[...captureAll]].[template-ext]`.
 
-Duosite也支持3种获取数据、渲染模板文件、生成静态页面的方法, `getStaticProps`, `getServerProps` and `getStaticPaths`.
+yx也支持3种获取数据、渲染模板文件、生成静态页面的方法, `getStaticProps`, `getServerProps` and `getStaticPaths`.
 
 ### 使用伴侣boot.mjs文件统一数据加载
 
-Duosite有一个独一无二的设计，使用伴侣 `boot.mjs` 文件来加载数，渲染模板。
+yx有一个独一无二的设计，使用伴侣 `boot.mjs` 文件来加载数，渲染模板。
 
-模板渲染的一个共同任务是加载初始数据来渲染模板。为支持基于文件的路由，在`pages`目录下渲染模板时， duosite首先会查找是否有 `<template-file-name>.boot.mjs`名的伴侣文件, 该文件应该发布三个异步函数: `getStaticProps`, `getServerProps`, `getStaticPaths`中的一个或多个。
+模板渲染的一个共同任务是加载初始数据来渲染模板。为支持基于文件的路由，在`pages`目录下渲染模板时， yx首先会查找是否有 `<template-file-name>.boot.mjs`名的伴侣文件, 该文件应该发布三个异步函数: `getStaticProps`, `getServerProps`, `getStaticPaths`中的一个或多个。
 
 ### 强化服务器
 
-利用 `fastify`的 plugin设计， Duosite 支持对标准服务器的深度定制和强化， 允许开发者提供全局和站点服务构建器，以及全集和站点增强器，来强化服务器，增加任何路由规则和处理程序。
+利用 `fastify`的 plugin设计， yx 支持对标准服务器的深度定制和强化， 允许开发者提供全局和站点服务构建器，以及全集和站点增强器，来强化服务器，增加任何路由规则和处理程序。
 
 ### 子站点与独立引擎
 
-Duosite支持子站点，允许每个子站点有独立的模板引擎和渲染器。例如允许一个站点使用 `ejs` 引擎，另外一个使用 `liquidjs` 引擎。
+yx支持子站点，允许每个子站点有独立的模板引擎和渲染器。例如允许一个站点使用 `ejs` 引擎，另外一个使用 `liquidjs` 引擎。
 
 ### 编译生成融合静态站点和动态站点的生产版本
 
-借鉴Nextjs，Duosite支持编译命令, `yarn duosite build <site-name>`。编译器将会根据文件路由规则、模板引擎的伴侣文件发布的获取数据的方法，自动判断是否生成静态文件、或需要动态渲染。
+借鉴Nextjs，yx支持编译命令, `yarn yx build <site-name>`。编译器将会根据文件路由规则、模板引擎的伴侣文件发布的获取数据的方法，自动判断是否生成静态文件、或需要动态渲染。
 
 ## 用法
 
@@ -633,33 +639,33 @@ Yarn:
 
 Yarn:
 
-`yarn add duosite`
+`yarn add yx`
 
 Npm:
 
-`npm install duosite`
+`npm install yx`
 
 本项目使用yarn，所以后续文档也使用yarn作为说明。
 
 ### 列举模板
 
-`yarn duosite ls`
+`yarn yx ls`
 
 ### 使用模板创建新站点
 
-`yarn duosite new <template-name> <new-site-name>`
+`yarn yx new <template-name> <new-site-name>`
 
 新站点的名字是子域名，所以必须服务子域名的规则。
 
 ### 运行开发服务器
 
-`yarn duosite dev`
+`yarn yx dev`
 
 ### 访问子站点
 
 打开浏览器，访问`<sub-site-name>.localhost:5000`.
 
-多站duosite使用5000作为默认端口。可以修改`settings.mjs`设置不同端口。
+游侠yx使用5000作为默认端口。可以修改`settings.mjs`设置不同端口。
 
 #### 全局 （跨站点）设置
 
@@ -690,7 +696,7 @@ export default {
 
 最终设置为`settings.mjs` 与 `settings.development.mjs`的深度合并, 后者覆盖前者。
 
-目前 多站 duosite 只使用 `defaultSite`, `lang` 与 `port`.
+目前 游侠 yx 只使用 `defaultSite`, `lang` 与 `port`.
 
 未来会使用更多设置。
 
@@ -698,18 +704,18 @@ export default {
 
 本项目的当前目标是提供一个允许多子站点并存、方便的实验、学习与演示web技术的服务器环境。
 
-当时机成熟时，duosite可能会瞄准生成部署。但这不是当前目标。
+当时机成熟时，yx可能会瞄准生成部署。但这不是当前目标。
 
 ### 子站点
 
 每个子站点之间独立。
 
-多站 duosite 对子站点不做过多假设，只有三个简单的目录结构要求和一个保留文件后缀名。
+游侠 yx 对子站点不做过多假设，只有三个简单的目录结构要求和一个保留文件后缀名。
 
 - <site-root>/pages : 用于html / 模板文件等
 - <site-root>/public/static: 用于不需要额外处理的静态文件
 - <site-root>/public/bundle: 用于使用打包工具或编译工具生成静态文件
-- <site-root>/pages/**/<filename>.boot.mjs:`.boot.mjs`文件扩展用作为模板预加载数据。 多站 duosite不会从`pages`目录发送该后缀的文件，但会从 `static` 与 `bundle` 目录发送该后缀的文件。
+- <site-root>/pages/**/<filename>.boot.mjs:`.boot.mjs`文件扩展用作为模板预加载数据。 游侠 yx不会从`pages`目录发送该后缀的文件，但会从 `static` 与 `bundle` 目录发送该后缀的文件。
 
 
 不过如果您愿意，也可以在 `pages` 目录放置任何静态文件。
@@ -718,7 +724,7 @@ export default {
 
 ### 结构化boot服务器
 
-为了支撑多站点，支持定制，支持全局以及子站点强化服务器，多站采用结构化启动流程准备服务器：
+为了支撑游侠点，支持定制，支持全局以及子站点强化服务器，游侠采用结构化启动流程准备服务器：
 
 ```
 -- 启动服务器
@@ -734,7 +740,7 @@ export default {
       |- 构建子站点服务
       |- 构建子站点增强器
       |- 构建子站点模板/view引擎
-      |- 装饰/生成 `request._duosite` 对象，属性包括
+      |- 装饰/生成 `request._yx` 对象，属性包括
         |- lang
         |- global
           |- settings
@@ -754,7 +760,7 @@ export default {
 
 ### 项目模板
 
-多站 duosite 后续将逐步为典型的框架和库增加预设置的项目模板，为您节省时间。
+游侠 yx 后续将逐步为典型的框架和库增加预设置的项目模板，为您节省时间。
 
 目前包括:
 
@@ -766,15 +772,15 @@ export default {
 
 `template-liquid` - liquidjs模板引擎
 
-您可以运行`yarn duosite ls` 显示项目模板列表。
+您可以运行`yarn yx ls` 显示项目模板列表。
 
-您也可以运行 `yarn duosite new <项目模板名template-name> <目标站点名target-site-name>`， 使用模板创建新项目。
+您也可以运行 `yarn yx new <项目模板名template-name> <目标站点名target-site-name>`， 使用模板创建新项目。
 
 欢迎您提交pull请求，增加更多模板。
 
 ### HTML View引擎 / 模板引擎
 
-多站的一个目标是方便实验不同的HTML view引擎 / 模板引擎。
+游侠的一个目标是方便实验不同的HTML view引擎 / 模板引擎。
 
 当前只配置了对[harttle/liquidjs](https://github.com/harttle/liquidjs)引擎的基本支持。
 
@@ -782,7 +788,7 @@ export default {
 
 ### 统一的初始化view / template方法
 
-当 多站 duosite 渲染一个html模板时，比如 `index.liquid`, 会首先在同一目录下寻找 `index.liquid.boot.mjs`文件。该文件应该export提供一个名为`getServerProps` 的异步函数，该函数有如下签名：
+当 游侠 yx 渲染一个html模板时，比如 `index.liquid`, 会首先在同一目录下寻找 `index.liquid.boot.mjs`文件。该文件应该export提供一个名为`getServerProps` 的异步函数，该函数有如下签名：
 
 ```
 const getServerProps = async (ctx) => data
@@ -797,14 +803,14 @@ const getServerProps = async (ctx) => data
 }
 ```
 
-多站将会把 `{...data, _ctx: ctx}` 发送给模板引擎。
+游侠将会把 `{...data, _ctx: ctx}` 发送给模板引擎。
 
 
 您可以尝试一下：
 
-`yarn duosite new template-liquid liquid-1`
+`yarn yx new template-liquid liquid-1`
 
-`yarn duosite dev`
+`yarn yx dev`
 
 访问 `liquid-1.localhost:5000`
 
@@ -836,27 +842,27 @@ export default {
 
 ```
 
-### 多站duosite增强器
+### 游侠yx增强器
 
-多站duosite支持fastify开发者强化fastify服务：
+游侠yx支持fastify开发者强化fastify服务：
 
 - 全局强化器：增强全局fastify服务器
 - 站点强化器: 增强子站点服务器
-- 站点模板/view 引擎替代：子站点可以提供自己的引擎，取代duosite默认引擎
+- 站点模板/view 引擎替代：子站点可以提供自己的引擎，取代yx默认引擎
 
 #### 全局enhancer
 
-多站duosite booter将会 require文件 `<root>/src/enhancer.mjs` 获得强化器函数，该函数应该有如下签名：
+游侠yx booter将会 require文件 `<root>/src/enhancer.mjs` 获得强化器函数，该函数应该有如下签名：
 
 ```
-const enhancer = (fastify, duositeRoot, duositeSettings, globalServices) => void
+const enhancer = (fastify, yxRoot, yxSettings, globalServices) => void
 ```
 
 服务器booter将使用全局fastify服务器调用该函数。
 
 #### 子站点enhancer
 
-多站duosite booter将会require文件 `<root>/sites/<subsite>/src/enhancer.mjs` 获得子站点强化器函数，该函数有如下签名：
+游侠yx booter将会require文件 `<root>/sites/<subsite>/src/enhancer.mjs` 获得子站点强化器函数，该函数有如下签名：
 
 ```
 const enhancer = (fastify, subsiteRoot, siteSettings, globalSettings, globalServices) => void
@@ -864,9 +870,9 @@ const enhancer = (fastify, subsiteRoot, siteSettings, globalSettings, globalServ
 
 子站点服务器将在每个子站点调用该函数。
 
-#### 本地模板/view引擎有限，然后duosite默认引擎
+#### 本地模板/view引擎有限，然后yx默认引擎
 
-多站提供一组默认模板/view引擎。开发者可以提供自己的引擎。
+游侠提供一组默认模板/view引擎。开发者可以提供自己的引擎。
 
 每个子站点通过如下文件提供引擎：
 
@@ -896,20 +902,20 @@ async renderFile(filepath, data)
 
 #### globalServices
 
-有时服务器需要将全局服务例如数据库连接发送到每个子站点服务器。多站duosite将require本文件`<root>/src/globalServices.mjs`, 该文件应该export默认 `buildGlobalServices` 函数。 函数签名应为:
+有时服务器需要将全局服务例如数据库连接发送到每个子站点服务器。游侠yx将require本文件`<root>/src/globalServices.mjs`, 该文件应该export默认 `buildGlobalServices` 函数。 函数签名应为:
 
 ```
 const buildGlobalServices = (settings, root) => serviceObject
 ```
 
 
-## 为什么选择Fastify为基础开发多站 duosite
+## 为什么选择Fastify为基础开发游侠 yx
 
 当然因为我们用过Fastify，而且也觉得Fastify不错，不过更主要是因为它的一些很不错的功能。
 
 ### rewriteUrl
 
- rewriteUrl 让多站duosite可以把其一个类似于 `my-site-in-ejs.localhost/index.ejs` 的请求重写为 `localhost/my-site-in-ejs/index.ejs`. 这个功能结合下面描述的支持前缀的plugin功能，让多站duosite可以就像没有子站点一样，方便的开发路由器与handler。
+ rewriteUrl 让游侠yx可以把其一个类似于 `my-site-in-ejs.localhost/index.ejs` 的请求重写为 `localhost/my-site-in-ejs/index.ejs`. 这个功能结合下面描述的支持前缀的plugin功能，让游侠yx可以就像没有子站点一样，方便的开发路由器与handler。
 
 ### 带前缀与独立子服务器的plugin
 
@@ -918,12 +924,12 @@ Fastify支持带有 `prefix`的plugin, 每个plugin的fastify是个独立的子�
 
 ## 设计与开发思想
 
-这部分记录duosite开发中的重要的设计，想法，理念与选择决定。 由于多站 duosite正在早期阶段，本部分不追求完备性和良好的结构，而是及时反应开发中设计理念和决定。
+这部分记录yx开发中的重要的设计，想法，理念与选择决定。 由于游侠 yx正在早期阶段，本部分不追求完备性和良好的结构，而是及时反应开发中设计理念和决定。
 
-### 多站Duosite 代码目录结构
+### 游侠yx 代码目录结构
 
 ```
-<duosite代码根目录>
+<yx代码根目录>
  |- server.mjs : 启动服务器代码
  |- bootServer.mjs : 初始化服务器代码
  |- dev.mjs : 开发环境启动服务器代码
@@ -962,7 +968,7 @@ Fastify支持带有 `prefix`的plugin, 每个plugin的fastify是个独立的子�
 
 #### 静态文件
 
-多站Duosite 规定 以 `/static/`或`/bundle/` 开始的url，都指向静态文件，直接发送，不会进行任何解析处理。
+游侠yx 规定 以 `/static/`或`/bundle/` 开始的url，都指向静态文件，直接发送，不会进行任何解析处理。
 
 `static` 用作不需要额外处理的文件，应该使用代码管理工具如git等管理。
 
@@ -986,9 +992,9 @@ Fastify支持带有 `prefix`的plugin, 每个plugin的fastify是个独立的子�
 
 页面文件根目录为 `<site-name>/pages`.
 
-### 多站Duosite服务器配置
+### 游侠yx服务器配置
 
-多站服务器配置有三个部分构成：
+游侠服务器配置有三个部分构成：
 
 ```
 - settings.mjs : 跨环境配置
@@ -1002,7 +1008,7 @@ Fastify支持带有 `prefix`的plugin, 每个plugin的fastify是个独立的子�
 
 每个子站点的配置用作渲染每个子站点。
 
-与多站duosite服务器相似：
+与游侠yx服务器相似：
 
 
 ```
@@ -1034,9 +1040,9 @@ Fastify支持带有 `prefix`的plugin, 每个plugin的fastify是个独立的子�
 4. 以 `/abc`结尾, 尝试 `/abc.html`, `/abc.[view-ext]`, `/abc/index.html`, `/index.[view-ext]`
 5. 当解析到模板时，同目录下寻找boot.mjs文件 `[filename].boot.mjs`, 运行 `getServerProps, getStaticProps`
 
-### `_duosite` object
+### `_yx` object
 
-`request._duosite` 有如下属性
+`request._yx` 有如下属性
 
 ```
 {
@@ -1049,10 +1055,10 @@ Fastify支持带有 `prefix`的plugin, 每个plugin的fastify是个独立的子�
 
 ### i18n
 
-i18n 通过字典方式实现，每个key对应的值为字符串，或返回字符串的函数。多站服务器运行消息i18n的目录为：
+i18n 通过字典方式实现，每个key对应的值为字符串，或返回字符串的函数。游侠服务器运行消息i18n的目录为：
 
 ```
-<duosite-root>
+<yx-root>
   |- src
     |- lang
       |- messages

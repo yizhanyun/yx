@@ -4,7 +4,7 @@ import { Liquid } from 'liquidjs'
 import fs from 'fs'
 import { breakFullpath } from '../utils.mjs'
 
-const build = async _duosite => {
+const build = async _yx => {
   try {
     const {
       global: { i18nMessages: i18n },
@@ -14,7 +14,7 @@ const build = async _duosite => {
         },
         root,
       },
-    } = _duosite
+    } = _yx
 
     switch (ext) {
       case '.liquid': {

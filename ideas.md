@@ -24,7 +24,7 @@ params: {
     catchType: static / catch / catchAll
     file: resolved filepath
     url:
-    _duosite
+    _yx
 }
 
 dev mode:

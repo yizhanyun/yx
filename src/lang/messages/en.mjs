@@ -5,14 +5,14 @@ export default {
   copyFolder: folder => `Copy ${folder}`,
   copySettings: 'Copy settings',
   createNewSiteDone: site => `Create new site ${site} done`,
-  duositeNewSiteExists: 'New site already exists',
-  duositeNewUsage:
-    '!Error: Wrong arguments. \nUsage: \n  duosite new <template-name> <new-site-name>',
-  duositeSubdomainError: 'Not a legal subdomain name',
-  duositeTemplateNotFound: 'Template not found',
-  duositeUsage:
-    '!Error:Wrong argument. \nUsage:\n  duosite ls - show templates\n  duosite dev - run devevelopment\n  duosite prod = run production\n  duosite new - create new site from template',
-  duositeWrongTemplateName: 'Wrong template name',
+  yxNewSiteExists: 'New site already exists',
+  yxNewUsage:
+    '!Error: Wrong arguments. \nUsage: \n  yx new <template-name> <new-site-name>',
+  yxSubdomainError: 'Not a legal subdomain name',
+  yxTemplateNotFound: 'Template not found',
+  yxUsage:
+    '!Error:Wrong argument. \nUsage:\n  yx ls - show templates\n  yx dev - run devevelopment\n  yx prod = run production\n  yx new - create new site from template',
+  yxWrongTemplateName: 'Wrong template name',
   engineNotSupported: 'Unsupported view engine',
   finishedBuilding: 'Finished building. Shutting down...',
   productionNotReady: '!Warning: Production build is not released yet',

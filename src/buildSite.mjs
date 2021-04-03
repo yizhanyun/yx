@@ -11,8 +11,8 @@ import buildHtml from './builders/buildHtml.mjs'
 import buildStaticTemplate from './builders/buildStaticTemplate.mjs'
 import buildCatchTemplate from './builders/buildCatchTemplate.mjs'
 
-const build = async (root, site, _duosite, fileRoutingTable) => {
-  const { global, site: siteConfig = {} } = _duosite
+const build = async (root, site, _yx, fileRoutingTable) => {
+  const { global, site: siteConfig = {} } = _yx
 
   const { settings: globalSettings, i18nMessages: i18nm, lang } = global
   const { settings: siteSettings = {} } = siteConfig
@@ -40,11 +40,11 @@ const build = async (root, site, _duosite, fileRoutingTable) => {
     if (type === 'static') {
       if (file.endsWith('.html')) {
         console.log(chalk.blue(i18nm.info), i18nm.buildHtml(file))
-        await buildHtml(table, root, site, _duosite)
+        await buildHtml(table, root, site, _yx)
       } else if (viewEngine.ext && file.endsWith(viewEngine.ext)) {
-        await buildStaticTemplate(table, root, site, _duosite)
+        await buildStaticTemplate(table, root, site, _yx)
       }
-    } else await buildCatchTemplate(table, root, site, _duosite)
+    } else await buildCatchTemplate(table, root, site, _yx)
   }
 
   // const cwdNow = process.cwd()

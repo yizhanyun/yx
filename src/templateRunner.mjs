@@ -8,18 +8,18 @@ import { pathToFileURL } from 'url'
  * @param {string} file - template file, root is 'pages'
  * @param {Object} params - params
  * @param {string []} whichOnes - array of ['static', 'server', 'paths']
- * @param {Object} _duosite - duosite object
+ * @param {Object} _yx - yx object
  * @param {Object} request - request object
  * @param {Object} reply - reply object -
  */
 
 const bootTemplateProps = async options => {
-  const { file, params, _duosite, request, reply, whichOnes } = options
+  const { file, params, _yx, request, reply, whichOnes } = options
 
   const {
     site: { root: siteRoot, engine },
     global,
-  } = _duosite
+  } = _yx
 
   const i18nm = global.i18nMessages
 
@@ -42,7 +42,7 @@ const bootTemplateProps = async options => {
       for (const _type of type) {
         if (_type === 'server' && bootJs && bootJs.getServerProps) {
           booted.serverProps = await bootJs.getServerProps({
-            _duosite,
+            _yx,
             params,
             request,
             reply,
@@ -52,7 +52,7 @@ const bootTemplateProps = async options => {
 
         if (_type === 'static' && bootJs && bootJs.getStaticProps) {
           booted.staticProps = await bootJs.getStaticProps({
-            _duosite,
+            _yx,
             params,
             request,
             reply,
@@ -63,7 +63,7 @@ const bootTemplateProps = async options => {
     }
     if (type === 'static' && bootJs && bootJs.getStaticProps) {
       booted.staticProps = await bootJs.getStaticProps({
-        _duosite,
+        _yx,
         params,
         request,
         reply,
@@ -71,7 +71,7 @@ const bootTemplateProps = async options => {
     }
     if (type === 'server' && bootJs && bootJs.serverProps) {
       booted.serverProps = await bootJs.getServerProps({
-        _duosite,
+        _yx,
         params,
         request,
         reply,
@@ -79,7 +79,7 @@ const bootTemplateProps = async options => {
     }
 
     if (type === 'paths' && bootJs && bootJs.getStaticPaths) {
-      const pathsGot = (await bootJs.getStaticPaths({ _duosite })) || {}
+      const pathsGot = (await bootJs.getStaticPaths({ _yx })) || {}
       booted.staticPaths = pathsGot.paths
       booted.fallback = pathsGot.fallback
     }
@@ -92,19 +92,19 @@ const bootTemplateProps = async options => {
  * Boot boot template's static paths
  * @param {Object} options - param options
  * @param {string} file - template file
- * @param {Object} _duosite - duosite object
+ * @param {Object} _yx - yx object
  * @param {Object} request - request object
  * @param {Object} reply - reply object -
  */
 
 const bootTemplateStaticPaths = async options => {
-  const { file, _duosite, request, reply } = options
+  const { file, _yx, request, reply } = options
 
   let bootJs, staticPaths, fallback
   const {
     site: { root: siteRoot, engine },
     global,
-  } = _duosite
+  } = _yx
 
   const i18nm = global.i18nMessages
 
@@ -116,7 +116,7 @@ const bootTemplateStaticPaths = async options => {
     // console.log(e)
   }
   if (bootJs && bootJs.getStaticProps) {
-    const pathsGot = (await bootJs.getStaticPaths({ _duosite })) || {}
+    const pathsGot = (await bootJs.getStaticPaths({ _yx })) || {}
     staticPaths = pathsGot.paths
     fallback = pathsGot.fallback
   }
@@ -131,19 +131,19 @@ const bootTemplateStaticPaths = async options => {
  * Server a template with already booted value
  * @param {Object} options - param options
  * @param {Object} params - routing parameters
- * @param {Object} _duosite - duosite object
+ * @param {Object} _yx - yx object
  * @param {Object} booted - already booted
  * @param {Object} request - request object
  * @param {Object} reply - reply object -
  */
 
 const serveTemplate = async options => {
-  const { params, _duosite, booted, request, reply, file: _file } = options
+  const { params, _yx, booted, request, reply, file: _file } = options
   const file = path.join('pages', _file)
   const {
     site: { root: siteRoot, engine },
     global,
-  } = _duosite
+  } = _yx
 
   const i18nm = global.i18nMessages
 
@@ -153,7 +153,7 @@ const serveTemplate = async options => {
     const htmlStream = engine.renderToStream(file, {
       ...booted,
       params,
-      _ctx: { request, reply, _duosite },
+      _ctx: { request, reply, _yx },
     })
 
     reply.send(htmlStream)
@@ -161,14 +161,14 @@ const serveTemplate = async options => {
     const htmlString = await engine.renderToStringAsync(file, {
       ...booted,
       params,
-      _ctx: { request, reply, _duosite },
+      _ctx: { request, reply, _yx },
     })
     reply.send(htmlString)
   } else if (engine.renderToString) {
     const htmlString = engine.renderToStringAsync(file, {
       ...booted,
       params,
-      _ctx: { request, reply, _duosite },
+      _ctx: { request, reply, _yx },
     })
     reply.send(htmlString)
   } else {
@@ -181,17 +181,17 @@ const serveTemplate = async options => {
  * @param {Object} options - param options
  * @param {string} outputFileName - output file name
  * @param {string} file - inputfile name
- * @param {Object} _duosite - duosite object
+ * @param {Object} _yx - yx object
  * @param {Object} booted - already booted
  */
 
 const buildToFile = async options => {
-  const { outputFileName, file, _duosite, booted } = options
+  const { outputFileName, file, _yx, booted } = options
 
   const {
     site: { root: siteRoot, engine },
     global,
-  } = _duosite
+  } = _yx
 
   const i18nm = global.i18nMessages
 
@@ -208,7 +208,7 @@ const buildToFile = async options => {
         path.join('pages', file),
         {
           ...booted,
-          _ctx: { _duosite },
+          _ctx: { _yx },
         },
         outputHtmlPath
       )
@@ -231,7 +231,7 @@ const buildToFile = async options => {
         path.join('pages', file),
         {
           ...booted,
-          _ctx: { _duosite },
+          _ctx: { _yx },
         },
         outputHtmlPath
       )

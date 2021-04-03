@@ -22,16 +22,16 @@ const isProduction = process.env.NODE_ENV === 'production'
 
 //  Plugin to handle each subsite's request
 
-// opts: { prefix, _duosite: { siteRoot }}
+// opts: { prefix, _yx: { siteRoot }}
 
 const buildSubsitePlugin = async (buildSite, target) => {
   const subsite = async function (fastify, opts, done) {
-    const { _duosite, prefix: site, siteSettings: settings } = opts
+    const { _yx, prefix: site, siteSettings: settings } = opts
 
     // do nothing if building but not self
     if (buildSite && target !== '*' && target !== site) return
 
-    const { global, watcher } = _duosite
+    const { global, watcher } = _yx
 
     const { root } = global
 
@@ -71,7 +71,7 @@ const buildSubsitePlugin = async (buildSite, target) => {
     }
 
     const siteServices = buildSiteServices
-      ? await buildSiteServices(_duosite, settings, site, root)
+      ? await buildSiteServices(_yx, settings, site, root)
       : {}
 
     // build site  enhancer
@@ -105,7 +105,7 @@ const buildSubsitePlugin = async (buildSite, target) => {
         // use local provided engines
 
         engine = await buildTemplateEngine({
-          ..._duosite,
+          ..._yx,
           site: {
             root: siteRoot,
             settings,
@@ -123,7 +123,7 @@ const buildSubsitePlugin = async (buildSite, target) => {
         }
         if (buildTemplateEngine) {
           engine = await buildTemplateEngine({
-            ..._duosite,
+            ..._yx,
             site: {
               root: siteRoot,
               settings,
@@ -150,10 +150,10 @@ const buildSubsitePlugin = async (buildSite, target) => {
       })
     }
 
-    fastify.decorateRequest('_duosite', null)
+    fastify.decorateRequest('_yx', null)
 
-    const duositeConfig = {
-      ..._duosite,
+    const yxConfig = {
+      ..._yx,
       site: {
         root: siteRoot,
         settings,
@@ -164,11 +164,11 @@ const buildSubsitePlugin = async (buildSite, target) => {
       },
     }
 
-    // enhance request with _duosite
+    // enhance request with _yx
 
     fastify.addHook('preHandler', (request, reply, done) => {
-      request._duosite = {
-        ...duositeConfig,
+      request._yx = {
+        ...yxConfig,
         url:
           request.url[0] === '/'
             ? request.url.replace('/' + site, '')
@@ -218,7 +218,7 @@ const buildSubsitePlugin = async (buildSite, target) => {
       // console.log(e)
     }
 
-    enhance && (await enhance(fastify, duositeConfig))
+    enhance && (await enhance(fastify, yxConfig))
 
     if (buildSite && (target === '*' || target === site)) {
       let defaultBuildSite
@@ -241,21 +241,19 @@ const buildSubsitePlugin = async (buildSite, target) => {
         (customBuildSite && customBuildSite.prebuild) ||
         (defaultBuildSite && defaultBuildSite.prebuild)
 
-      prebuild &&
-        (await prebuild(siteRoot, site, duositeConfig, fileRoutingTable))
+      prebuild && (await prebuild(siteRoot, site, yxConfig, fileRoutingTable))
 
       const _build =
         (customBuildSite && customBuildSite.build) ||
         (defaultBuildSite && defaultBuildSite.build)
 
-      _build && (await _build(siteRoot, site, duositeConfig, fileRoutingTable))
+      _build && (await _build(siteRoot, site, yxConfig, fileRoutingTable))
 
       const postbuild =
         (customBuildSite && customBuildSite.postbuild) ||
         (defaultBuildSite && defaultBuildSite.postbuild)
 
-      postbuild &&
-        (await postbuild(siteRoot, site, duositeConfig, fileRoutingTable))
+      postbuild && (await postbuild(siteRoot, site, yxConfig, fileRoutingTable))
     }
 
     done()

@@ -1,8 +1,8 @@
 // Local enhancer
 
-const enhance = (fastify, _duosite) => {
+const enhance = (fastify, _yx) => {
   fastify.get('/', function (request, reply) {
-    const { _duosite } = request
+    const { _yx } = request
 
     reply.send({ hello: 'world from overrided get handler in enhancer' })
   })

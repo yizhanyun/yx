@@ -1,5 +1,5 @@
 function HomePage() {
-  return <div>Welcome to Next.js through duosite!</div>
+  return <div>Welcome to Next.js through yx!</div>
 }
 
 export default HomePage

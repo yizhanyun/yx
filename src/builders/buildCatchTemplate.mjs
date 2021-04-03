@@ -8,19 +8,19 @@ import chalk from 'chalk'
 import { buildGeneratedFileName } from '../utils.mjs'
 import { bootTemplateProps } from '../templateRunner.mjs'
 
-const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
+const buildCatchTemplate = async (routeTable, root, site, _yx) => {
   const [, table, file] = routeTable
 
   const {
     site: { root: siteRoot, engine },
     global,
-  } = _duosite
+  } = _yx
 
   const i18nm = global.i18nMessages
 
   const { staticPaths, fallback } = await bootTemplateProps({
     file,
-    _duosite,
+    _yx,
     whichOnes: ['paths'],
   })
 
@@ -30,7 +30,7 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
       const outputFileName = buildGeneratedFileName(table, params)
       const { staticProps: booted } = await bootTemplateProps({
         file,
-        _duosite,
+        _yx,
         params,
         whichOnes: ['static'],
       })
@@ -50,7 +50,7 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
               path.join('pages', file),
               {
                 ...booted,
-                _ctx: { _duosite },
+                _ctx: { _yx },
               },
               outputHtmlPath
             )
@@ -74,7 +74,7 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
               path.join('pages', file),
               {
                 ...booted,
-                _ctx: { _duosite },
+                _ctx: { _yx },
               },
               outputHtmlPath
             )
@@ -88,7 +88,7 @@ const buildCatchTemplate = async (routeTable, root, site, _duosite) => {
         } else {
           const output = await engine.renderFile(path.join('pages', file), {
             ...booted,
-            _ctx: { _duosite },
+            _ctx: { _yx },
           })
 
           try {

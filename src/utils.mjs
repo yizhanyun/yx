@@ -138,7 +138,7 @@ const resolveUrlToFile = async (siteRoot, url, viewEngine) => {
 }
 
 /** Load global settings
- * @param { string} duositeRoot - duosite root
+ * @param { string} yxRoot - yx root
  * @return { Object } globalSettings - global settings
  */
 
@@ -173,12 +173,12 @@ const loadGlobalSettings = async root => {
 }
 
 /** Load global i18n messages
- * @param { string} duositeRoot - duosite root
+ * @param { string} yxRoot - yx root
  * @param { string} lang - language locale
  * @return { Object } i18n messages
  */
 
-const loadGlobalI18NMessages = async (duositeRoot, _lang) => {
+const loadGlobalI18NMessages = async (yxRoot, _lang) => {
   if (!_lang)
     console.log(
       chalk.yellow('■ warning'),
@@ -193,7 +193,7 @@ const loadGlobalI18NMessages = async (duositeRoot, _lang) => {
     i18nMessagesSite = (
       await import(
         pathToFileURL(
-          path.join(duositeRoot, 'src', 'lang', 'messages', `${lang}.mjs`)
+          path.join(yxRoot, 'src', 'lang', 'messages', `${lang}.mjs`)
         )
       )
     ).default
@@ -221,7 +221,7 @@ const loadGlobalI18NMessages = async (duositeRoot, _lang) => {
         (
           await import(
             pathToFileURL(
-              path.join(duositeRoot, 'src', 'lang', 'messages', 'en.mjs')
+              path.join(yxRoot, 'src', 'lang', 'messages', 'en.mjs')
             )
           )
         ).default

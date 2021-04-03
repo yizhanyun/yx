@@ -38,7 +38,7 @@ const bootServer = async opts => {
 
   const { onStarted, root: _root, build, buildTarget, env } = opts || {}
 
-  const root = _root || process.env.DUOSITE_ROOT || process.cwd()
+  const root = _root || process.env.YX_ROOT || process.cwd()
 
   const isProduction =
     env === 'production' || process.env.NODE_ENV === 'production'
@@ -117,7 +117,7 @@ const bootServer = async opts => {
   }
   // Get subsite list
 
-  const duositeFastify = fastify({
+  const yxFastify = fastify({
     logger: {
       level: isProduction ? 'error' : 'info',
     },
@@ -128,29 +128,29 @@ const bootServer = async opts => {
     },
   })
 
-  const gracefulServer = GracefulServer(duositeFastify.server)
+  const gracefulServer = GracefulServer(yxFastify.server)
 
   gracefulServer.on(GracefulServer.READY, () => {
     if (build) {
       console.log(chalk.blue(i18nm.info), i18nm.finishedBuilding)
-      duositeFastify && duositeFastify.close()
+      yxFastify && yxFastify.close()
     }
     // else console.log(chalk.blue(i18nm.info),i18nm.serverReady)
   })
 
   gracefulServer.on(GracefulServer.SHUTTING_DOWN, () => {
     console.log(chalk.blue(i18nm.info), i18nm.serverShuttingDown)
-    duositeFastify && duositeFastify.close()
+    yxFastify && yxFastify.close()
   })
 
   gracefulServer.on(GracefulServer.SHUTDOWN, error => {
     if (error)
       console.log(chalk.blue(i18nm.info), i18nm.serverDownFor, error.message)
-    duositeFastify && duositeFastify.close()
+    yxFastify && yxFastify.close()
   })
 
   enhance &&
-    (await enhance(duositeFastify, settings, {
+    (await enhance(yxFastify, settings, {
       global: {
         root,
         settings: globalSettings,
@@ -251,15 +251,15 @@ const bootServer = async opts => {
     if (ext) extraExts.push(ext.replace('.', ''))
 
     if (proxyed) {
-      duositeFastify.register(fastifyProxy, {
+      yxFastify.register(fastifyProxy, {
         base: upstream,
         // prefix: site, // optional
         // http2: false, // optional
       })
-      duositeFastify.register(proxyPlugin, {
+      yxFastify.register(proxyPlugin, {
         prefix: site,
         siteSettings: settings,
-        _duosite: {
+        _yx: {
           mode,
           watcher,
           global: {
@@ -272,10 +272,10 @@ const bootServer = async opts => {
         },
       })
     } else {
-      duositeFastify.register(subsitePlugin, {
+      yxFastify.register(subsitePlugin, {
         prefix: site,
         siteSettings: settings,
-        _duosite: {
+        _yx: {
           mode,
           watcher,
           global: {
@@ -345,7 +345,7 @@ const bootServer = async opts => {
         if (!restarting && shouldRestart) {
           restarting = true
           livereloadServer.close()
-          duositeFastify.close().then(() => {
+          yxFastify.close().then(() => {
             require('child_process').spawn(process.argv.shift(), process.argv, {
               cwd: process.cwd(),
               stdio: 'inherit',
@@ -363,13 +363,13 @@ const bootServer = async opts => {
 
   // Run the server!
 
-  duositeFastify.listen(port, function (err, address) {
+  yxFastify.listen(port, function (err, address) {
     if (err) {
-      duositeFastify.log.error(err)
+      yxFastify.log.error(err)
       process.exit()
     }
     if (onStarted) {
-      onStarted(duositeFastify)
+      onStarted(yxFastify)
     }
     gracefulServer.setReady()
 

@@ -11,11 +11,11 @@ import {
 } from '../templateRunner.mjs'
 
 const genericGetHandler = async function (request, reply) {
-  const { _duosite } = request
+  const { _yx } = request
 
   const {
     site: { root: siteRoot, settings = {} },
-  } = _duosite
+  } = _yx
 
   const { viewEngine = {} } = settings
 
@@ -48,7 +48,7 @@ const genericGetHandler = async function (request, reply) {
     const { serverProps, staticProps } = await bootTemplateProps({
       file,
       params: request.params,
-      _duosite,
+      _yx,
       request,
       reply,
       whichOnes: [['server', 'static']],
@@ -58,7 +58,7 @@ const genericGetHandler = async function (request, reply) {
 
     serveTemplate({
       params: request.params,
-      _duosite,
+      _yx,
       booted,
       request,
       reply,
@@ -77,17 +77,17 @@ const buildFileRouteHanlder = table => {
   const handler = async (request, reply) => {
     // render template
 
-    const { _duosite } = request
+    const { _yx } = request
 
     const {
       // global: { i18nMessages: i18nm },
       site: { root: siteRoot },
-    } = _duosite
+    } = _yx
 
     const {
       site: { settings = {} },
       url: subsiteUrl,
-    } = _duosite
+    } = _yx
 
     const { viewEngine = {} } = settings
 
@@ -101,7 +101,7 @@ const buildFileRouteHanlder = table => {
       const { serverProps, staticProps } = await bootTemplateProps({
         params: request.params,
         file,
-        _duosite,
+        _yx,
         request,
         reply,
         whichOnes: ['static', 'server'],
@@ -111,7 +111,7 @@ const buildFileRouteHanlder = table => {
 
       serveTemplate({
         params: request.params,
-        _duosite,
+        _yx,
         booted,
         request,
         reply,
@@ -122,7 +122,7 @@ const buildFileRouteHanlder = table => {
         const outputFileName = subsiteUrl.endsWith(viewEngine.ext)
           ? removeSuffix(subsiteUrl)
           : subsiteUrl
-        buildToFile({ outputFileName, file, _duosite, booted })
+        buildToFile({ outputFileName, file, _yx, booted })
       }
       return reply
     }

@@ -5,14 +5,13 @@ export default {
   copyFolder: folder => `拷贝目录${folder}`,
   copySettings: '拷贝设置',
   createNewSiteDone: site => `成功创建 ${site} `,
-  duositeNewSiteExists: ' 新站点已存在',
-  duositeNewUsage:
-    '错误的参数. \n用法:\n  duosite new <template-name> <new-site-name>',
-  duositeSubdomainError: ' 新站点名称不是合法的子域名',
-  duositeTemplateNotFound: '模板未找到',
-  duositeUsage:
-    '错误的参数. \n用法:\n  duosite ls - 模板列表\n  duosite dev - 运行开发环境\n  duosite prod - 运行生产环境\n  duosite new - 使用模板创建新站点',
-  duositeWrongTemplateName: '错误的模板名',
+  yxNewSiteExists: ' 新站点已存在',
+  yxNewUsage: '错误的参数. \n用法:\n  yx new <template-name> <new-site-name>',
+  yxSubdomainError: ' 新站点名称不是合法的子域名',
+  yxTemplateNotFound: '模板未找到',
+  yxUsage:
+    '错误的参数. \n用法:\n  yx ls - 模板列表\n  yx dev - 运行开发环境\n  yx prod - 运行生产环境\n  yx new - 使用模板创建新站点',
+  yxWrongTemplateName: '错误的模板名',
   engineNotSupported: '不支持的引擎',
   finishedBuilding: '完成编译. 停止服务器...',
   productionNotReady: '!警告: 生产版本尚未发布',

@@ -4,7 +4,7 @@ import chokidar from 'chokidar'
 
 import { loadGlobalSettings } from './utils.mjs'
 
-const root = process.env.DUOSITE_ROOT || process.cwd()
+const root = process.env.YX_ROOT || process.cwd()
 const dev = async () => {
   const globalSettings = await loadGlobalSettings(root)
   const watcher = chokidar.watch(globalSettings.watch || [], {

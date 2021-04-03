@@ -2,10 +2,10 @@ import lasso from 'lasso'
 
 const isProduction = process.env.NODE_ENV === 'production'
 
-const prebuild = async (siteRoot, site, duositeConfig, fileRoutingTable) => {
+const prebuild = async (siteRoot, site, yxConfig, fileRoutingTable) => {
   const {
     site: { root, name },
-  } = _duosite
+  } = _yx
 
   const outputDir = path.join(root, '.production', 'public', 'bundle')
   try {

@@ -1,5 +1,5 @@
 // const getServerProps = async ctx => {
-//   const { params, _duosite } = ctx
+//   const { params, _yx } = ctx
 
 //   return {
 //     text: `Server Hello from  index.liquid.boot.js. ID: ${params.id}`,
@@ -7,7 +7,7 @@
 // }
 
 const getStaticProps = async ctx => {
-  const { params, _duosite } = ctx
+  const { params, _yx } = ctx
   return {
     text: `Static Hello from  index.liquid.boot.js. ID: ${params.id}`,
     id: params.id,

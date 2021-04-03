@@ -21,9 +21,9 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const DUOSITE_ROOT = process.cwd()
+const YX_ROOT = process.cwd()
 
-const settings = await loadGlobalSettings(DUOSITE_ROOT)
+const settings = await loadGlobalSettings(YX_ROOT)
 
 const i18nm = await loadGlobalI18NMessages(__dirname, settings.lang)
 
@@ -35,7 +35,7 @@ if (
   cmd !== 'ls' &&
   cmd !== 'build'
 ) {
-  console.warn(chalk.yellow(i18nm.duositeUsage))
+  console.warn(chalk.yellow(i18nm.yxUsage))
   process.exit(-1)
 } else {
   const cwd = __dirname
@@ -53,20 +53,20 @@ if (
 
     bootServer({ build: true, env: 'production', buildTarget: target })
   } else if (cmd === 'dev') {
-    // set cwd to duosite folder
-    // set duosite project root to user's project root
+    // set cwd to yx folder
+    // set yx project root to user's project root
 
-    bootServer({ root: DUOSITE_ROOT })
+    bootServer({ root: YX_ROOT })
   } else if (cmd === 'new') {
     const fromTemplate = process.argv[3]
     const toSite = process.argv[4]
     if (!fromTemplate || !toSite) {
-      console.log(chalk.yellow(i18nm.warning), i18nm.duositeNewUsage)
+      console.log(chalk.yellow(i18nm.warning), i18nm.yxNewUsage)
       process.exit(-1)
     }
 
     if (!fromTemplate.startsWith('template-')) {
-      console.log(chalk.yellow(i18nm.warning), i18nm.duositeWrongTemplateName)
+      console.log(chalk.yellow(i18nm.warning), i18nm.yxWrongTemplateName)
       process.exit(-1)
     }
 
@@ -75,31 +75,31 @@ if (
       .filter(dirent => dirent.isDirectory())
       .map(dirent => dirent.name)
 
-    fs.ensureDirSync(path.join(DUOSITE_ROOT, 'sites'))
+    fs.ensureDirSync(path.join(YX_ROOT, 'sites'))
     const subsites = fs
-      .readdirSync(path.join(DUOSITE_ROOT, 'sites'), { withFileTypes: true })
+      .readdirSync(path.join(YX_ROOT, 'sites'), { withFileTypes: true })
       .filter(dirent => dirent.isDirectory())
       .map(dirent => dirent.name)
 
     const exist = templates.find(name => name === fromTemplate)
 
     if (!exist) {
-      console.log(chalk.yellow(i18nm.warning), i18nm.duositeTemplateNotFound)
+      console.log(chalk.yellow(i18nm.warning), i18nm.yxTemplateNotFound)
       process.exit(-1)
     }
 
     if (!isSubdomainValid(toSite)) {
-      console.log(chalk.yellow(i18nm.warning), i18nm.duositeSubdomainError)
+      console.log(chalk.yellow(i18nm.warning), i18nm.yxSubdomainError)
       process.exit(-1)
     }
 
     if (subsites.find(name => name === toSite)) {
-      console.log(chalk.yellow(i18nm.warning), i18nm.duositeNewSiteExists)
+      console.log(chalk.yellow(i18nm.warning), i18nm.yxNewSiteExists)
       process.exit(-1)
     }
-    fs.mkdirpSync(path.join(DUOSITE_ROOT, 'sites', toSite))
+    fs.mkdirpSync(path.join(YX_ROOT, 'sites', toSite))
 
-    const target = path.join(DUOSITE_ROOT, 'sites', toSite)
+    const target = path.join(YX_ROOT, 'sites', toSite)
     try {
       fs.copySync(path.join(__dirname, 'sites', fromTemplate), target)
     } catch (e) {
@@ -132,6 +132,6 @@ if (
       console.log(e)
     }
   } else {
-    bootServer({ root: DUOSITE_ROOT, env: 'production' })
+    bootServer({ root: YX_ROOT, env: 'production' })
   }
 }

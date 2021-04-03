@@ -5,12 +5,12 @@ import lasso from 'lasso'
 
 const isProduction = process.env.NODE_ENV === 'production'
 
-const enhance = async (fastify, _duosite) => {
+const enhance = async (fastify, _yx) => {
   fastify.register(fastifyMarko)
 
   const {
     site: { root, name },
-  } = _duosite
+  } = _yx
 
   const outputDir = path.join(root, 'public', 'bundle')
 

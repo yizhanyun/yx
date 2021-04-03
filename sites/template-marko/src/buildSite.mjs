@@ -3,10 +3,10 @@ import path from 'path'
 
 const isProduction = process.env.NODE_ENV === 'production'
 
-const prebuild = async (siteRoot, site, _duosite, fileRoutingTable) => {
+const prebuild = async (siteRoot, site, _yx, fileRoutingTable) => {
   const {
     site: { root, name },
-  } = _duosite
+  } = _yx
 
   const outputDir = path.join(root, '.production', 'public', 'bundle')
   try {

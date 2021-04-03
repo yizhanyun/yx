@@ -1,7 +1,7 @@
-const enhance = async (fastify, _duosite) => {
+const enhance = async (fastify, _yx) => {
   const {
     site: { services },
-  } = _duosite
+  } = _yx
   fastify.route({
     method: 'GET',
     url: '/add/salt/:food',
