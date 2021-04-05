@@ -36,7 +36,8 @@ const siteRootName = 'sites'
 const bootServer = async opts => {
   // load global settings
 
-  const { onStarted, root: _root, build, buildTarget, env } = opts || {}
+  const { onStarted, root: _root, build, buildTarget, env, onBuildDone } =
+    opts || {}
 
   const root = _root || process.env.YX_ROOT || process.cwd()
 
@@ -134,6 +135,7 @@ const bootServer = async opts => {
     if (build) {
       console.log(chalk.blue(i18nm.info), i18nm.finishedBuilding)
       yxFastify && yxFastify.close()
+      onBuildDone && onBuildDone()
     }
     // else console.log(chalk.blue(i18nm.info),i18nm.serverReady)
   })

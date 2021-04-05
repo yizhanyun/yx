@@ -66,13 +66,29 @@ if (
         console.warn(chalk.yellow(i18nm.siteNotFound))
         process.exit(-1)
       } else {
-        for (const site of subsites) {
-          await bootServer({
-            build: true,
-            env: 'production',
-            buildTarget: site,
-          })
+        const forBuilding = subsites.reverse()
+
+        const first = forBuilding.pop()
+
+        const onBuildDone = () => {
+          const target = forBuilding.pop()
+          if (target) {
+            bootServer({
+              build: true,
+              env: 'production',
+              buildTarget: target,
+              onBuildDone,
+            })
+          }
         }
+        // for (const site of subsites) {
+        await bootServer({
+          build: true,
+          env: 'production',
+          buildTarget: first,
+          onBuildDone,
+        })
+        // }
       }
     } else bootServer({ build: true, env: 'production', buildTarget: target })
   } else if (cmd === 'dev') {
