@@ -12,7 +12,7 @@ export default {
   yxSubdomainError: ' 新站点名称不是合法的子域名',
   yxTemplateNotFound: '模板未找到',
   yxUsage:
-    '错误的参数. \n用法:\n  yx ls - 模板列表\n  yx dev - 运行开发环境\n  yx prod - 运行生产环境\n  yx new - 使用模板创建新站点',
+    '错误的参数. \n用法:\n  yx ls - 模板列表\n  yx dev - 运行开发环境\n  yx prod - 运行生产环境\n  yx new - 使用模板创建新站点\n  yx build <target>|all - 编译目标站点或所有站点',
   yxWrongTemplateName: '错误的模板名',
   engineNotSupported: '不支持的引擎',
   finishedBuilding: '完成编译. 停止服务器...',
@@ -28,7 +28,7 @@ export default {
   startMessage: port => `服务器已成功启动。端口${port}`,
   writeBuildFile: file => `将编译结果写到${file}`,
   foundHowManySites: number => `找到${number}个模板`,
-  finishedBuilding: '编译结束,关闭中...',
+  finishedBuilding: '编译结束,关闭中...\n',
   buildServerSideRender: file => `编译服务器端渲染文件 ${file}`,
   buildStaticRender: file => `编译静态渲染文件 ${file}`,
   runSiteBuild: '运行站点编译命令 yarn build',

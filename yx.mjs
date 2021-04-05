@@ -50,7 +50,31 @@ if (
   } else if (cmd === 'build') {
     const target = process.argv[3]
 
-    bootServer({ build: true, env: 'production', buildTarget: target })
+    console.log(cmd, target)
+
+    if (!target) {
+      console.warn(chalk.yellow(i18nm.yxUsage))
+      process.exit(-1)
+    }
+    if (target === 'all') {
+      const subsites = fs
+        .readdirSync(path.join(YX_ROOT, 'sites'), { withFileTypes: true })
+        .filter(dirent => dirent.isDirectory())
+        .map(dirent => dirent.name)
+
+      if (!subsites || subsites.length === 0) {
+        console.warn(chalk.yellow(i18nm.siteNotFound))
+        process.exit(-1)
+      } else {
+        for (const site of subsites) {
+          await bootServer({
+            build: true,
+            env: 'production',
+            buildTarget: site,
+          })
+        }
+      }
+    } else bootServer({ build: true, env: 'production', buildTarget: target })
   } else if (cmd === 'dev') {
     // set cwd to yx folder
     // set yx project root to user's project root
