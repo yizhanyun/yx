@@ -1,7 +1,0 @@
-{
-  "name": "template-liquid",
-  "version": "0.0.1",
-  "description": "Liquid template",
-  "main": "index.js",
-  "license": "MIT"
-}

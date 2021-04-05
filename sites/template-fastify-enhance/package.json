@@ -1,7 +1,0 @@
-{
-  "name": "template-fastify-enhance",
-  "version": "0.0.1",
-  "description": "Yx enhancement with fastify",
-  "main": "index.js",
-  "license": "MIT"
-}

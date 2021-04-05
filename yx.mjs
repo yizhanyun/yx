@@ -8,6 +8,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import { readFile } from 'fs/promises'
 import child_process from 'child_process'
+import templates from './.templates.mjs'
 
 import {
   getDirectories,
@@ -41,9 +42,7 @@ if (
   const cwd = __dirname
 
   if (cmd === 'ls') {
-    const sites = getDirectories(path.join(cwd, 'sites')).filter(site =>
-      site.startsWith('template-')
-    )
+    const { official: sites } = templates
     console.log(chalk.blue(i18nm.info), i18nm.foundHowManySites(sites.length))
     sites.forEach(site => {
       console.log(`  ${site}`)
@@ -65,15 +64,18 @@ if (
       process.exit(-1)
     }
 
-    if (!fromTemplate.startsWith('template-')) {
+    if (
+      !fromTemplate.startsWith('template-') &&
+      !fromTemplate.startsWith('https')
+    ) {
       console.log(chalk.yellow(i18nm.warning), i18nm.yxWrongTemplateName)
       process.exit(-1)
     }
 
-    const templates = fs
-      .readdirSync(path.join(__dirname, 'sites'), { withFileTypes: true })
-      .filter(dirent => dirent.isDirectory())
-      .map(dirent => dirent.name)
+    // const templates = fs
+    //   .readdirSync(path.join(__dirname, 'sites'), { withFileTypes: true })
+    //   .filter(dirent => dirent.isDirectory())
+    //   .map(dirent => dirent.name)
 
     fs.ensureDirSync(path.join(YX_ROOT, 'sites'))
     const subsites = fs
@@ -81,12 +83,12 @@ if (
       .filter(dirent => dirent.isDirectory())
       .map(dirent => dirent.name)
 
-    const exist = templates.find(name => name === fromTemplate)
+    // const exist = templates.find(name => name === fromTemplate)
 
-    if (!exist) {
-      console.log(chalk.yellow(i18nm.warning), i18nm.yxTemplateNotFound)
-      process.exit(-1)
-    }
+    // if (!exist) {
+    //   console.log(chalk.yellow(i18nm.warning), i18nm.yxTemplateNotFound)
+    //   process.exit(-1)
+    // }
 
     if (!isSubdomainValid(toSite)) {
       console.log(chalk.yellow(i18nm.warning), i18nm.yxSubdomainError)
@@ -97,39 +99,49 @@ if (
       console.log(chalk.yellow(i18nm.warning), i18nm.yxNewSiteExists)
       process.exit(-1)
     }
-    fs.mkdirpSync(path.join(YX_ROOT, 'sites', toSite))
+    fs.mkdirpSync(path.join(YX_ROOT, 'sites'))
 
     const target = path.join(YX_ROOT, 'sites', toSite)
-    try {
-      fs.copySync(path.join(__dirname, 'sites', fromTemplate), target)
-    } catch (e) {
-      // console.log(e)
-    }
 
-    try {
-      const sitePackage = JSON.parse(
-        fs.readFileSync(path.join(target, 'package.json'), 'utf8')
-      )
-      sitePackage.name = toSite
-      fs.writeFileSync(
-        path.join(target, 'package.json'),
-        JSON.stringify(sitePackage, null, 2)
-      )
+    const cmd = 'git'
+    const args = (fromTemplate.startsWith('template-')
+      ? `clone https://github.com/yizhanyun/${fromTemplate} sites/${toSite}`
+      : `clone ${fromTemplate} sites/${toSite}`
+    ).split(' ')
 
-      console.log(chalk.blue(i18nm.info), i18nm.installYarnPackages)
-      console.log(chalk.blue(i18nm.info), i18nm.runSthStart)
-      console.log('')
+    const result = child_process.spawnSync(cmd, args, {
+      cwd: YX_ROOT,
+      stdio: 'inherit',
+    })
 
-      child_process.spawnSync('yarn', {
-        cwd: target,
-        stdio: 'inherit',
-      })
+    if (!result.error) {
+      try {
+        const sitePackage = JSON.parse(
+          fs.readFileSync(path.join(target, 'package.json'), 'utf8')
+        )
+        sitePackage.name = toSite
+        fs.writeFileSync(
+          path.join(target, 'package.json'),
+          JSON.stringify(sitePackage, null, 2)
+        )
 
-      console.log('')
-      console.log(chalk.blue(i18nm.info), i18nm.createNewSiteDone(toSite))
-      console.log(chalk.blue(i18nm.info), i18nm.runSthEnd)
-    } catch (e) {
-      console.log(e)
+        fs.removeSync(path.join(target, '.git'))
+
+        console.log(chalk.blue(i18nm.info), i18nm.installYarnPackages)
+        console.log(chalk.blue(i18nm.info), i18nm.runSthStart)
+        console.log('')
+
+        child_process.spawnSync('yarn', {
+          cwd: target,
+          stdio: 'inherit',
+        })
+
+        console.log('')
+        console.log(chalk.blue(i18nm.info), i18nm.createNewSiteDone(toSite))
+        console.log(chalk.blue(i18nm.info), i18nm.runSthEnd)
+      } catch (e) {
+        console.log(e)
+      }
     }
   } else {
     bootServer({ root: YX_ROOT, env: 'production' })

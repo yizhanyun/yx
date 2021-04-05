@@ -7,7 +7,7 @@
     "dev": "node dev.mjs",
     "build": "node build.mjs",
     "prod": "NODE_ENV=production node prod.mjs",
-    "yx": "yx",
+    "yx": "node yx.mjs",
     "test": "jest",
     "lint": "yarn eslint ./*.mjs src/**/*.js ./sites/**/*.js ./*.mjs src/**/*.mjs ./sites/**/*.mjs"
   },
