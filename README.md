@@ -17,7 +17,7 @@ When you run `yarn yx new template-blank site-1`, launch server with `yarn yx de
 
 # 英雄 yx
 
-yx (duo: 多, many in Chinese, site: 站 in Chinese) is a web server that aims to host and run many sub sites, each with its own sub setting, folder structure and template / view engine, file system based routing, static site generation but also supports advanced nodejs server side programming.
+`yx` is a web server that aims to host and run many sub sites, each with its own sub setting, folder structure and template / view engine, file system based routing, static site generation but also supports advanced nodejs server side programming.
 
 yx is built on top of the excellent [fastify](https://github.com/fastify/fastify) webserver. yx borrowed many ideas from [Nextjs](https://github.com/vercel/next.js). I'd like to thank both teams for their greate work and contribution to open source software.
 
@@ -597,7 +597,7 @@ MIT
 # 中文
 
 # yx
-yx (duo: 多)， 英雄，是一个可以支持独立多子站点的web服务器。每个子站点有自己的独立设置、目录、模板(template) / View引擎，同时也支持基于文件的路由（类似于nextjs）（该特性还在开发中）
+`yx`， 英雄，是一个可以支持独立多子站点的web服务器。每个子站点有自己的独立设置、目录、模板(template) / View引擎，同时也支持基于文件的路由（类似于nextjs）（该特性还在开发中）
 
 yx基于[fastify](https://github.com/fastify/fastify) web服务器开发。英雄 yx也从[Nextjs](https://github.com/vercel/next.js)借鉴了大量的设计理念。这里我要对两个团队对开源软件届的贡献表示感谢。
 
