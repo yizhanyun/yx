@@ -120,3 +120,6 @@ dist
 
 # bundle
 **/public/bundle
+
+# testing sites
+xyz*/

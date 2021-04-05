@@ -33,7 +33,6 @@ const buildStaticTemplate = async (routeTable, root, site, _yx) => {
 
     filesForCopy.forEach(file => {
       const target = path.join(root, '.production', 'pages', file)
-      console.log(chalk.blue(i18nm.info), i18nm.buildServerSideRender(file))
       try {
         fs.copySync(path.join(root, 'pages', file), target)
       } catch (e) {

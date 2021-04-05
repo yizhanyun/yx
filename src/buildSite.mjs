@@ -57,12 +57,10 @@ const build = async (root, site, _yx, fileRoutingTable) => {
       console.log(chalk.blue(i18nm.info), i18nm.runSiteBuild)
 
       // process.chdir(root)
-      const out = child_process.execSync('yarn build', {
+      child_process.execSync('yarn build', {
         cwd: root,
+        stdio: 'inherit',
       })
-      console.log(chalk.blue(i18nm.info), i18nm.runSiteBuildInfoStart)
-      console.log(chalk.blue(i18nm.info), `${out}`)
-      console.log(chalk.blue(i18nm.info), i18nm.runSiteBuildInfoEnd)
     }
   } catch (e) {
     // console.log(e)
