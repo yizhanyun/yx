@@ -4,6 +4,8 @@ export default {
   cleanPreviousBuild: '清理之前的编译版本',
   copyFolder: folder => `拷贝目录${folder}`,
   copySettings: '拷贝设置',
+  createNewSiteStart: site => `开始创建 ${site} `,
+  createNewSiteFailed: site => `创建 ${site} 失败`,
   createNewSiteDone: site => `成功创建 ${site} `,
   yxNewSiteExists: ' 新站点已存在',
   yxNewUsage: '错误的参数. \n用法:\n  yx new <template-name> <new-site-name>',

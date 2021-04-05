@@ -72,23 +72,11 @@ if (
       process.exit(-1)
     }
 
-    // const templates = fs
-    //   .readdirSync(path.join(__dirname, 'sites'), { withFileTypes: true })
-    //   .filter(dirent => dirent.isDirectory())
-    //   .map(dirent => dirent.name)
-
     fs.ensureDirSync(path.join(YX_ROOT, 'sites'))
     const subsites = fs
       .readdirSync(path.join(YX_ROOT, 'sites'), { withFileTypes: true })
       .filter(dirent => dirent.isDirectory())
       .map(dirent => dirent.name)
-
-    // const exist = templates.find(name => name === fromTemplate)
-
-    // if (!exist) {
-    //   console.log(chalk.yellow(i18nm.warning), i18nm.yxTemplateNotFound)
-    //   process.exit(-1)
-    // }
 
     if (!isSubdomainValid(toSite)) {
       console.log(chalk.yellow(i18nm.warning), i18nm.yxSubdomainError)
@@ -109,12 +97,20 @@ if (
       : `clone ${fromTemplate} sites/${toSite}`
     ).split(' ')
 
+    console.log(chalk.blue(i18nm.info), i18nm.createNewSiteStart(toSite))
+
     const result = child_process.spawnSync(cmd, args, {
       cwd: YX_ROOT,
       stdio: 'inherit',
     })
 
-    if (!result.error) {
+    if (result.status) {
+      console.log(
+        chalk.yellow(i18nm.warning),
+        i18nm.createNewSiteFailed(toSite)
+      )
+      process.exit(-1)
+    } else {
       try {
         const sitePackage = JSON.parse(
           fs.readFileSync(path.join(target, 'package.json'), 'utf8')

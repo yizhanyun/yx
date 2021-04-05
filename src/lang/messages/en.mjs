@@ -4,7 +4,11 @@ export default {
   cleanPreviousBuild: 'Clean previous build',
   copyFolder: folder => `Copy ${folder}`,
   copySettings: 'Copy settings',
+  createNewSiteStart: site => `Start creating ${site} `,
+
   createNewSiteDone: site => `Create new site ${site} done`,
+  createNewSiteFailed: site => `Create ${site} failed`,
+
   yxNewSiteExists: 'New site already exists',
   yxNewUsage:
     '!Error: Wrong arguments. \nUsage: \n  yx new <template-name> <new-site-name>',
