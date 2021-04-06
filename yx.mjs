@@ -180,6 +180,8 @@ if (
       }
     }
   } else {
+    process.env.NODE_ENV = 'production'
+
     bootServer({ root: YX_ROOT, env: 'production' })
   }
 }
