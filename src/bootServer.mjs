@@ -124,6 +124,9 @@ const bootServer = async opts => {
     },
     ...settings.fastify,
     rewriteUrl: function (req) {
+      const _subsite = request.header['x-yz-subdomain']
+      if (_subsite) return _subsite
+
       const subsite = getSubsite(req.headers.host, defaultSite)
       return subsite + req.url
     },
