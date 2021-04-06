@@ -62,6 +62,7 @@ const bootServer = async opts => {
   const {
     defaultSite = 'www',
     lang = 'en',
+    host = 'localhost',
     port = 5000,
     globalSettings = {},
   } = settings
@@ -368,7 +369,7 @@ const bootServer = async opts => {
 
   // Run the server!
 
-  yxFastify.listen(port, function (err, address) {
+  yxFastify.listen(port, host, function (err, address) {
     if (err) {
       yxFastify.log.error(err)
       process.exit()
