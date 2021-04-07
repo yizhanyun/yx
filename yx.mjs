@@ -6,15 +6,10 @@ import isSubdomainValid from 'is-subdomain-valid'
 
 import fs from 'fs-extra'
 import path from 'path'
-import { readFile } from 'fs/promises'
-import child_process from 'child_process'
+import childProcess from 'child_process'
 import templates from './.templates.mjs'
 
-import {
-  getDirectories,
-  loadGlobalSettings,
-  loadGlobalI18NMessages,
-} from './src/utils.mjs'
+import { loadGlobalSettings, loadGlobalI18NMessages } from './src/utils.mjs'
 
 import bootServer from './src/bootServer.mjs'
 
@@ -39,8 +34,6 @@ if (
   console.warn(chalk.yellow(i18nm.yxUsage))
   process.exit(-1)
 } else {
-  const cwd = __dirname
-
   if (cmd === 'ls') {
     const { official: sites } = templates
     console.log(chalk.blue(i18nm.info), i18nm.foundHowManySites(sites.length))
@@ -139,7 +132,7 @@ if (
 
     console.log(chalk.blue(i18nm.info), i18nm.createNewSiteStart(toSite))
 
-    const result = child_process.spawnSync(cmd, args, {
+    const result = childProcess.spawnSync(cmd, args, {
       cwd: YX_ROOT,
       stdio: 'inherit',
     })
@@ -167,7 +160,7 @@ if (
         console.log(chalk.blue(i18nm.info), i18nm.runSthStart)
         console.log('')
 
-        child_process.spawnSync('yarn', {
+        childProcess.spawnSync('yarn', {
           cwd: target,
           stdio: 'inherit',
         })

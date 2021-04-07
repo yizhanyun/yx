@@ -8,7 +8,7 @@
     "build": "node build.mjs",
     "prod": "NODE_ENV=production node prod.mjs",
     "yx": "node yx.mjs",
-    "test": "jest",
+    "test": "jest --config=jest.config.js",
     "lint": "yarn eslint ./*.mjs src/**/*.js ./sites/**/*.js ./*.mjs src/**/*.mjs ./sites/**/*.mjs"
   },
   "dependencies": {
@@ -30,6 +30,8 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.8",
+    "@babel/preset-env": "^7.13.12",
+    "babel-jest": "^26.6.3",
     "eslint": "^7.21.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",

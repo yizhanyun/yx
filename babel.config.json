@@ -1,3 +1,13 @@
 {
-  "plugins": ["@babel/plugin-syntax-top-level-await"]
+  "plugins": ["@babel/plugin-syntax-top-level-await"],
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "node": true
+        }
+      }
+    ]
+  ]
 }

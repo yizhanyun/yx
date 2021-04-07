@@ -86,7 +86,7 @@ const buildSubsitePlugin = async (buildSite, target) => {
     }
     // build site engine
 
-    const { name, ext, proxyed } = viewEngine
+    const { name, ext } = viewEngine
 
     let engine
 
