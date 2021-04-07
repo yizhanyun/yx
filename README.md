@@ -6,7 +6,7 @@
 
 Duosite has been renamed to `yx`, for only one reason, shorter to run as a cli.
 
-Now `yx` could be interprted as `Yi Xiu` server, `Yi Xiu, 一休` is a cartoon monk who is super intelligent.
+Now `yx` could be interpreted as `You Xia` server, `You Xia, 游侠` means ranger or sword man in Chinese.
 
 **0.2.0 Update**
 
@@ -15,7 +15,7 @@ Now yx reached a milestone of 0.2.0. Livereload has been added supporting live r
 When you run `yarn yx new template-blank site-1`, launch server with `yarn yx dev`, and edit your index.html under `site-1/pages`, your browser will live reload your page and your edit will be effective immediately.
 
 
-# 一休 yx
+# 游侠 yx
 
 `yx` is a web server that aims to host and run many sub sites, each with its own sub setting, folder structure and template / view engine, file system based routing, static site generation but also supports advanced nodejs server side programming.
 
@@ -597,15 +597,15 @@ MIT
 # 中文
 
 # yx
-`yx`， 一休，是一个可以支持独立多子站点的web服务器。每个子站点有自己的独立设置、目录、模板(template) / View引擎，同时也支持基于文件的路由（类似于nextjs）（该特性还在开发中）
+`yx`， 游侠，是一个可以支持独立多子站点的web服务器。每个子站点有自己的独立设置、目录、模板(template) / View引擎，同时也支持基于文件的路由（类似于nextjs）（该特性还在开发中）
 
-yx基于[fastify](https://github.com/fastify/fastify) web服务器开发。一休 yx也从[Nextjs](https://github.com/vercel/next.js)借鉴了大量的设计理念。这里我要对两个团队对开源软件届的贡献表示感谢。
+yx基于[fastify](https://github.com/fastify/fastify) web服务器开发。游侠 yx也从[Nextjs](https://github.com/vercel/next.js)借鉴了大量的设计理念。这里我要对两个团队对开源软件届的贡献表示感谢。
 
-## 一休yx核心特征
+## 游侠yx核心特征
 
 ### 同时支持静态HTML与模板引擎页面
 
-和Next.js一样, yx从 `<site>/pages` 目录渲染和发送页面. 和 Next.js 不同, 一休yx支持静态 HTML 文件，也支持渲染模板引擎文件，例如 [liquidjs](https://github.com/harttle/liquidjs).
+和Next.js一样, yx从 `<site>/pages` 目录渲染和发送页面. 和 Next.js 不同, 游侠yx支持静态 HTML 文件，也支持渲染模板引擎文件，例如 [liquidjs](https://github.com/harttle/liquidjs).
 
 ### 基于文件的路由
 
@@ -665,7 +665,7 @@ Npm:
 
 打开浏览器，访问`<sub-site-name>.localhost:5000`.
 
-一休yx使用5000作为默认端口。可以修改`settings.mjs`设置不同端口。
+游侠yx使用5000作为默认端口。可以修改`settings.mjs`设置不同端口。
 
 #### 全局 （跨站点）设置
 
@@ -696,7 +696,7 @@ export default {
 
 最终设置为`settings.mjs` 与 `settings.development.mjs`的深度合并, 后者覆盖前者。
 
-目前 一休 yx 只使用 `defaultSite`, `lang` 与 `port`.
+目前 游侠 yx 只使用 `defaultSite`, `lang` 与 `port`.
 
 未来会使用更多设置。
 
@@ -710,12 +710,12 @@ export default {
 
 每个子站点之间独立。
 
-一休 yx 对子站点不做过多假设，只有三个简单的目录结构要求和一个保留文件后缀名。
+游侠 yx 对子站点不做过多假设，只有三个简单的目录结构要求和一个保留文件后缀名。
 
 - <site-root>/pages : 用于html / 模板文件等
 - <site-root>/public/static: 用于不需要额外处理的静态文件
 - <site-root>/public/bundle: 用于使用打包工具或编译工具生成静态文件
-- <site-root>/pages/**/<filename>.boot.mjs:`.boot.mjs`文件扩展用作为模板预加载数据。 一休 yx不会从`pages`目录发送该后缀的文件，但会从 `static` 与 `bundle` 目录发送该后缀的文件。
+- <site-root>/pages/**/<filename>.boot.mjs:`.boot.mjs`文件扩展用作为模板预加载数据。 游侠 yx不会从`pages`目录发送该后缀的文件，但会从 `static` 与 `bundle` 目录发送该后缀的文件。
 
 
 不过如果您愿意，也可以在 `pages` 目录放置任何静态文件。
@@ -724,7 +724,7 @@ export default {
 
 ### 结构化boot服务器
 
-为了支撑多站点，支持定制，支持全局以及子站点强化服务器，一休采用结构化启动流程准备服务器：
+为了支撑多站点，支持定制，支持全局以及子站点强化服务器，游侠采用结构化启动流程准备服务器：
 
 ```
 -- 启动服务器
@@ -760,7 +760,7 @@ export default {
 
 ### 项目模板
 
-一休 yx 后续将逐步为典型的框架和库增加预设置的项目模板，为您节省时间。
+游侠 yx 后续将逐步为典型的框架和库增加预设置的项目模板，为您节省时间。
 
 目前包括:
 
@@ -780,7 +780,7 @@ export default {
 
 ### HTML View引擎 / 模板引擎
 
-一休的一个目标是方便实验不同的HTML view引擎 / 模板引擎。
+游侠的一个目标是方便实验不同的HTML view引擎 / 模板引擎。
 
 当前只配置了对[harttle/liquidjs](https://github.com/harttle/liquidjs)引擎的基本支持。
 
@@ -788,7 +788,7 @@ export default {
 
 ### 统一的初始化view / template方法
 
-当 一休 yx 渲染一个html模板时，比如 `index.liquid`, 会首先在同一目录下寻找 `index.liquid.boot.mjs`文件。该文件应该export提供一个名为`getServerProps` 的异步函数，该函数有如下签名：
+当 游侠 yx 渲染一个html模板时，比如 `index.liquid`, 会首先在同一目录下寻找 `index.liquid.boot.mjs`文件。该文件应该export提供一个名为`getServerProps` 的异步函数，该函数有如下签名：
 
 ```
 const getServerProps = async (ctx) => data
@@ -803,7 +803,7 @@ const getServerProps = async (ctx) => data
 }
 ```
 
-一休将会把 `{...data, _ctx: ctx}` 发送给模板引擎。
+游侠将会把 `{...data, _ctx: ctx}` 发送给模板引擎。
 
 
 您可以尝试一下：
@@ -842,9 +842,9 @@ export default {
 
 ```
 
-### 一休yx增强器
+### 游侠yx增强器
 
-一休yx支持fastify开发者强化fastify服务：
+游侠yx支持fastify开发者强化fastify服务：
 
 - 全局强化器：增强全局fastify服务器
 - 站点强化器: 增强子站点服务器
@@ -852,7 +852,7 @@ export default {
 
 #### 全局enhancer
 
-一休yx booter将会 require文件 `<root>/src/enhancer.mjs` 获得强化器函数，该函数应该有如下签名：
+游侠yx booter将会 require文件 `<root>/src/enhancer.mjs` 获得强化器函数，该函数应该有如下签名：
 
 ```
 const enhancer = (fastify, yxRoot, yxSettings, globalServices) => void
@@ -862,7 +862,7 @@ const enhancer = (fastify, yxRoot, yxSettings, globalServices) => void
 
 #### 子站点enhancer
 
-一休yx booter将会require文件 `<root>/sites/<subsite>/src/enhancer.mjs` 获得子站点强化器函数，该函数有如下签名：
+游侠yx booter将会require文件 `<root>/sites/<subsite>/src/enhancer.mjs` 获得子站点强化器函数，该函数有如下签名：
 
 ```
 const enhancer = (fastify, subsiteRoot, siteSettings, globalSettings, globalServices) => void
@@ -872,7 +872,7 @@ const enhancer = (fastify, subsiteRoot, siteSettings, globalSettings, globalServ
 
 #### 本地模板/view引擎有限，然后yx默认引擎
 
-一休提供一组默认模板/view引擎。开发者可以提供自己的引擎。
+游侠提供一组默认模板/view引擎。开发者可以提供自己的引擎。
 
 每个子站点通过如下文件提供引擎：
 
@@ -902,20 +902,20 @@ async renderFile(filepath, data)
 
 #### globalServices
 
-有时服务器需要将全局服务例如数据库连接发送到每个子站点服务器。一休yx将require本文件`<root>/src/globalServices.mjs`, 该文件应该export默认 `buildGlobalServices` 函数。 函数签名应为:
+有时服务器需要将全局服务例如数据库连接发送到每个子站点服务器。游侠yx将require本文件`<root>/src/globalServices.mjs`, 该文件应该export默认 `buildGlobalServices` 函数。 函数签名应为:
 
 ```
 const buildGlobalServices = (settings, root) => serviceObject
 ```
 
 
-## 为什么选择Fastify为基础开发一休 yx
+## 为什么选择Fastify为基础开发游侠 yx
 
 当然因为我们用过Fastify，而且也觉得Fastify不错，不过更主要是因为它的一些很不错的功能。
 
 ### rewriteUrl
 
- rewriteUrl 让一休yx可以把其一个类似于 `my-site-in-ejs.localhost/index.ejs` 的请求重写为 `localhost/my-site-in-ejs/index.ejs`. 这个功能结合下面描述的支持前缀的plugin功能，让一休yx可以就像没有子站点一样，方便的开发路由器与handler。
+ rewriteUrl 让游侠yx可以把其一个类似于 `my-site-in-ejs.localhost/index.ejs` 的请求重写为 `localhost/my-site-in-ejs/index.ejs`. 这个功能结合下面描述的支持前缀的plugin功能，让一休yx可以就像没有子站点一样，方便的开发路由器与handler。
 
 ### 带前缀与独立子服务器的plugin
 
