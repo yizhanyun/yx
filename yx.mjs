@@ -111,10 +111,10 @@ if (
       .filter(dirent => dirent.isDirectory())
       .map(dirent => dirent.name)
 
-    if (!isSubdomainValid(toSite)) {
-      console.log(chalk.yellow(i18nm.warning), i18nm.yxSubdomainError)
-      process.exit(-1)
-    }
+    // if (!isSubdomainValid(toSite)) {
+    //   console.log(chalk.yellow(i18nm.warning), i18nm.yxSubdomainError)
+    //   process.exit(-1)
+    // }
 
     if (subsites.find(name => name === toSite)) {
       console.log(chalk.yellow(i18nm.warning), i18nm.yxNewSiteExists)
