@@ -1,7 +1,7 @@
 {
   "name": "yx",
   "description": "A web server for many sites",
-  "version": "0.2.17",
+  "version": "0.2.19",
   "repository": "https://github.com/yizhanyun/yx.git",
   "scripts": {
     "dev": "node dev.mjs",
