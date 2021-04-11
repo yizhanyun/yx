@@ -2,6 +2,8 @@
 [中文](#中文)
 
 
+![logo](./log/yx-logo.png)
+
 **0.2.4 Update**
 
 Duosite has been renamed to `yx`, for only one reason, shorter to run as a cli.
