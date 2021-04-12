@@ -63,7 +63,7 @@ const bootServer = async opts => {
     defaultSite = 'www',
     lang = 'en',
     host = 'localhost',
-    port = 5000,
+    port: _port = 5000,
     globalSettings = {},
   } = settings
 
@@ -85,6 +85,8 @@ const bootServer = async opts => {
     console.log(chalk.red(i18nm.error), i18nm.siteNotFound)
     return
   }
+
+  const port = build ? _port + 111 : _port
 
   // const load plugin
 
