@@ -11,7 +11,7 @@ export default {
 
   yxNewSiteExists: 'New site already exists',
   yxNewUsage:
-    '!Error: Wrong arguments. \nUsage: \n  yx new <template-name> <new-site-name>',
+    '!Error: Wrong arguments. \nUsage: \n  yx new <template-name> <new-site-name>. If <template-name> starts with xyz, <new-site-name> can be ignored',
   yxSubdomainError: 'Not a legal subdomain name',
   yxTemplateNotFound: 'Template not found',
   yxUsage:
@@ -46,4 +46,6 @@ export default {
   info: '■ info',
   error: '■ error',
   warning: '■ warning',
+  notAllowed: 'Not allowed',
+  download: 'Downloading',
 }

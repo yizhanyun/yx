@@ -8,7 +8,8 @@ export default {
   createNewSiteFailed: site => `创建 ${site} 失败`,
   createNewSiteDone: site => `成功创建 ${site} `,
   yxNewSiteExists: ' 新站点已存在',
-  yxNewUsage: '错误的参数. \n用法:\n  yx new <template-name> <new-site-name>',
+  yxNewUsage:
+    '错误的参数. \n用法:\n  yx new <template-name> <new-site-name>. 如果<template-name>以xyz开头，<new-site-name>可以省略',
   yxSubdomainError: ' 新站点名称不是合法的子域名',
   yxTemplateNotFound: '模板未找到',
   yxUsage:
@@ -44,4 +45,6 @@ export default {
   info: '■ 信息',
   error: '■ 错误',
   warning: '■ 警告',
+  notAllowed: '没有权限',
+  download: '下载中',
 }
