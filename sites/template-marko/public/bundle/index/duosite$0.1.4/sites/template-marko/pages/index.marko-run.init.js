@@ -1,1 +1,0 @@
-$_mod.run("/duosite$0.1.4/sites/template-marko/pages/index.marko.init");

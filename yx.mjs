@@ -1,17 +1,18 @@
 #!/usr/bin/env node
 
+import commandLineUsage from 'command-line-usage'
+import fetch from 'node-fetch'
 import chalk from 'chalk'
 
-import isSubdomainValid from 'is-subdomain-valid'
+import commandLineArgs from 'command-line-args'
 
 import fs from 'fs-extra'
 import path from 'path'
-import childProcess from 'child_process'
-import templates from './.templates.mjs'
+import Jimp from 'jimp'
+
+import { Image, createCanvas } from 'canvas'
 
 import { loadGlobalSettings, loadGlobalI18NMessages } from './src/utils.mjs'
-
-import bootServer from './src/bootServer.mjs'
 
 import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
@@ -24,157 +25,235 @@ const settings = await loadGlobalSettings(YX_ROOT)
 const i18nm = await loadGlobalI18NMessages(__dirname, settings.lang)
 
 const cmd = process.argv[2]
-if (
-  cmd !== 'prod' &&
-  cmd !== 'dev' &&
-  cmd !== 'new' &&
-  cmd !== 'ls' &&
-  cmd !== 'build'
-) {
-  console.warn(chalk.yellow(i18nm.yxUsage))
-  process.exit(-1)
-} else {
-  if (cmd === 'ls') {
-    const { official: sites } = templates
-    console.log(chalk.blue(i18nm.info), i18nm.foundHowManySites(sites.length))
-    sites.forEach(site => {
-      console.log(`  ${site}`)
+
+const sections = [
+  {
+    header: '上链易NFT作品集下载工具',
+    content: '使用项目密钥和作品集ID下载整个作品集',
+  },
+  {
+    header: '命令格式',
+    content: 'npx nftstudio download <参数> ',
+  },
+
+  {
+    header: '参数',
+    optionList: [
+      {
+        name: 'token',
+        typeLabel: '{underline string}',
+        alias: 't',
+        description: '项目密钥.从项目设置获得',
+      },
+      {
+        name: 'collection',
+        alias: 'c',
+        description: '作品集ID.从作品集信息获得',
+      },
+      {
+        name: 'out',
+        alias: 'o',
+        description: '作品集输出目录，必须为空目录。默认为当前目录',
+      },
+
+      {
+        name: 'help',
+        alias: 'h',
+        description: '输出本指南',
+      },
+    ],
+  },
+  {
+    header: '示例',
+    content: [
+      {
+        name: '示例1',
+        summary:
+          'npx nftstudio download -t acbdef -c 1234-abcd -o "/abc/def"        #指定输出目录',
+      },
+      {
+        name: '示例2',
+        summary:
+          'npx nftstudio download -t acbdef -c 1234-abcd        #使用当前目录作为输出目录',
+      },
+    ],
+  },
+]
+const usage = commandLineUsage(sections)
+
+/* first - parse the main command */
+const mainDefinitions = [{ name: 'command', defaultOption: true }]
+const mainOptions = commandLineArgs(mainDefinitions, {
+  stopAtFirstUnknown: true,
+})
+
+const argv = mainOptions._unknown || []
+
+let mergeOptions
+
+if (mainOptions.command === 'download') {
+  try {
+    const mergeDefinitions = [
+      { name: 'token', alias: 't' },
+      { name: 'collection', alias: 'c' },
+      { name: 'out', alias: 'o', defaultValue: '.' },
+    ]
+    mergeOptions = commandLineArgs(mergeDefinitions, {
+      argv,
+      stopAtFirstUnknown: false,
     })
-  } else if (cmd === 'build') {
-    const target = process.argv[3]
-
-    console.log(cmd, target)
-
-    if (!target) {
-      console.warn(chalk.yellow(i18nm.yxUsage))
-      process.exit(-1)
-    }
-    if (target === 'all') {
-      const subsites = fs
-        .readdirSync(path.join(YX_ROOT, 'sites'), { withFileTypes: true })
-        .filter(dirent => dirent.isDirectory())
-        .map(dirent => dirent.name)
-
-      if (!subsites || subsites.length === 0) {
-        console.warn(chalk.yellow(i18nm.siteNotFound))
-        process.exit(-1)
-      } else {
-        const forBuilding = subsites.reverse()
-
-        const first = forBuilding.pop()
-
-        const onBuildDone = () => {
-          const target = forBuilding.pop()
-          if (target) {
-            bootServer({
-              build: true,
-              env: 'production',
-              buildTarget: target,
-              onBuildDone,
-            })
-          }
-        }
-        // for (const site of subsites) {
-        await bootServer({
-          build: true,
-          env: 'production',
-          buildTarget: first,
-          onBuildDone,
-        })
-        // }
-      }
-    } else bootServer({ build: true, env: 'production', buildTarget: target })
-  } else if (cmd === 'dev') {
-    // set cwd to yx folder
-    // set yx project root to user's project root
-
-    bootServer({ root: YX_ROOT })
-  } else if (cmd === 'new') {
-    const fromTemplate = process.argv[3]
-    const toSite = process.argv[4]
-    if (!fromTemplate || !toSite) {
-      console.log(chalk.yellow(i18nm.warning), i18nm.yxNewUsage)
-      process.exit(-1)
-    }
-
-    if (
-      !fromTemplate.startsWith('template-') &&
-      !fromTemplate.startsWith('https')
-    ) {
-      console.log(chalk.yellow(i18nm.warning), i18nm.yxWrongTemplateName)
-      process.exit(-1)
-    }
-
-    fs.ensureDirSync(path.join(YX_ROOT, 'sites'))
-    const subsites = fs
-      .readdirSync(path.join(YX_ROOT, 'sites'), { withFileTypes: true })
-      .filter(dirent => dirent.isDirectory())
-      .map(dirent => dirent.name)
-
-    if (!isSubdomainValid(toSite)) {
-      console.log(chalk.yellow(i18nm.warning), i18nm.yxSubdomainError)
-      process.exit(-1)
-    }
-
-    if (subsites.find(name => name === toSite)) {
-      console.log(chalk.yellow(i18nm.warning), i18nm.yxNewSiteExists)
-      process.exit(-1)
-    }
-    fs.mkdirpSync(path.join(YX_ROOT, 'sites'))
-
-    const target = path.join(YX_ROOT, 'sites', toSite)
-
-    const cmd = 'git'
-    const args = (fromTemplate.startsWith('template-')
-      ? `clone https://github.com/yizhanyun/${fromTemplate} sites/${toSite}`
-      : `clone ${fromTemplate} sites/${toSite}`
-    ).split(' ')
-
-    console.log(chalk.blue(i18nm.info), i18nm.createNewSiteStart(toSite))
-
-    const result = childProcess.spawnSync(cmd, args, {
-      cwd: YX_ROOT,
-      stdio: 'inherit',
-    })
-
-    if (result.status) {
-      console.log(
-        chalk.yellow(i18nm.warning),
-        i18nm.createNewSiteFailed(toSite)
-      )
-      process.exit(-1)
-    } else {
-      try {
-        const sitePackage = JSON.parse(
-          fs.readFileSync(path.join(target, 'package.json'), 'utf8')
-        )
-        sitePackage.name = toSite
-        fs.writeFileSync(
-          path.join(target, 'package.json'),
-          JSON.stringify(sitePackage, null, 2)
-        )
-
-        fs.removeSync(path.join(target, '.git'))
-
-        console.log(chalk.blue(i18nm.info), i18nm.installYarnPackages)
-        console.log(chalk.blue(i18nm.info), i18nm.runSthStart)
-        console.log('')
-
-        childProcess.spawnSync('yarn', {
-          cwd: target,
-          stdio: 'inherit',
-        })
-
-        console.log('')
-        console.log(chalk.blue(i18nm.info), i18nm.createNewSiteDone(toSite))
-        console.log(chalk.blue(i18nm.info), i18nm.runSthEnd)
-      } catch (e) {
-        console.log(e)
-      }
-    }
-  } else {
-    process.env.NODE_ENV = 'production'
-
-    bootServer({ root: YX_ROOT, env: 'production' })
+  } catch (e) {
+    console.warn(chalk.yellow('命令格式错误'))
+    console.log(usage)
+    process.exit(-1)
   }
+} else {
+  console.warn(chalk.yellow('命令格式错误'))
+  console.log(usage)
+  process.exit(-1)
 }
+
+if (!mergeOptions.token || !mergeOptions.collection) {
+  console.warn(chalk.yellow('\n命令格式错误\n\n使用方法：'))
+  console.log(usage)
+  process.exit(-1)
+}
+
+const { token, collection, out } = mergeOptions
+
+const children = fs.readdirSync(out)
+
+if (children && children.length > 0) {
+  console.log(chalk.yellow(`您的输出目录有内容，请选择空目录作为输出目录。`))
+  process.exit(-1)
+}
+const apiRoot =
+  process.env['SHANGLIANYI_API_ROOT'] || 'https://shanglianyi.cn/server/api/v1/'
+
+console.log('获取作品集数据')
+
+const headers = {
+  ['x-shanglianyi-project-token']: `Bearer ${token}`,
+}
+
+const getCollectionResp = await fetch(
+  `${apiRoot}/_sdk/collection?collection_id=${collection}`,
+  {
+    headers,
+  }
+)
+
+const status = getCollectionResp.status
+
+if (status === 400) {
+  console.warn(chalk.yellow('作品集ID格式错误'))
+  process.exit(-1)
+}
+
+if (status === 403) {
+  console.warn(chalk.yellow('没有权限'))
+  process.exit(-1)
+}
+
+if (status === 404) {
+  console.warn(chalk.yellow('没有找到项目或作品集'))
+  process.exit(-1)
+}
+
+if (status > 299) {
+  console.warn(chalk.yellow('未知错误'))
+  process.exit(-1)
+}
+
+const collectionJson = await getCollectionResp.json()
+
+const { name, data } = collectionJson
+
+const { snap_shot, generated_seqs } = data
+
+// console.log(seqs)
+// process.exit(1)
+console.log('获取作品集素材')
+
+const { components, classes } = snap_shot
+
+const downloaded = []
+
+let width, height
+for (const component of components) {
+  const newItems = []
+
+  const { items, groupName } = component
+  let i = 0
+  for (const item of items) {
+    const { key } = item
+    const url = `${apiRoot}/_project_file/${key}`
+    const resp = await fetch(url, { headers })
+    const status = resp.status
+    if (status === 200) {
+      const imageBuffer = await resp.arrayBuffer()
+      const image = new Image()
+      image.src = Buffer.from(imageBuffer)
+      newItems.push({ ...item, image })
+      // console.log(image)
+      width = image.width
+      height = image.height
+      i++
+      console.log(chalk.green(`下载完成部件 ${groupName} 第 ${i} 个素材`))
+      // }
+    } else {
+      console.log(chalk.red('下载素材出错。请检查网络后重试'))
+      process.exit(-1)
+    }
+  }
+  downloaded.push({ ...component, items: newItems })
+}
+
+const ranksRange = new Array(classes.length + 1).fill(1)
+
+let generatedCount = 0
+
+let total = 0
+
+const values = Object.values(generated_seqs)
+
+values.forEach(seqs => {
+  total += seqs.length
+})
+
+ranksRange.forEach((_, rankIndex) => {
+  const seqs = generated_seqs[rankIndex]
+
+  const classSetting = classes[rankIndex]
+  const { name = '未分级' } = classSetting || {}
+  const rankPath = path.join(out, name)
+  try {
+    fs.mkdirSync(rankPath)
+  } catch (e) {
+    // ignore
+  }
+
+  // each rank
+  seqs.forEach((seq, outputIndex) => {
+    // each output
+
+    const canvas = createCanvas(width, height)
+    const ctx = canvas.getContext('2d')
+
+    // combine images
+
+    seq.forEach((imageIndex, componentIndex) => {
+      const component = downloaded[componentIndex]
+      const { items } = component
+      if (imageIndex >= 0) {
+        // console.log(items[imageIndex])
+        const { image } = items[imageIndex]
+        ctx.drawImage(image, 0, 0)
+      }
+    })
+    const outBuf = canvas.toBuffer()
+    fs.writeFileSync(path.join(rankPath, `${outputIndex}.png`), outBuf)
+    generatedCount += 1
+    console.log(chalk.green(`成功输出 (${generatedCount} / ${total})`))
+  })
+})
